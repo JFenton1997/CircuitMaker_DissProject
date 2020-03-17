@@ -20,7 +20,7 @@ public class GridMove : MonoBehaviour
     private Vector2 colliderSize;
     private Wire w;
     private Node n;
-
+    private bool attachable;
     public void MoveStart()
     {
         normColor = this.GetComponent<SpriteRenderer>().color;
@@ -54,41 +54,7 @@ public class GridMove : MonoBehaviour
 
                     if (gameObject.GetComponent<Wire>())
                     {
-                        if (hitInfo.gameObject != gameObject)
-                        {
-                            Debug.Log(hitInfo.name);
-                            if (hitInfo.gameObject.tag == "Wire")
-                            {
-                                Debug.LogError("wire");
-                                w = hitInfo.gameObject.GetComponent<Wire>();
-                                attachable = true;
-                                
-                            }
-                            else if (hitInfo.gameObject.tag == "Node")
-                            {
-                                Debug.Log(hitInfo.gameObject.GetComponent<Node>().ConnectedWire);
-                                if(hitInfo.gameObject.GetComponent<Node>().ConnectedWire == null){
-                                    Debug.LogError("node");
-                                    n = hitInfo.gameObject.GetComponent<Node>();
-                                    attachable = true;
-                                }else{
-                                        blocked = true;
-                                        this.GetComponent<SpriteRenderer>().color = blockedColor;
-                                        attachable = false;
-                                }
-
-                            }
-                            else if (hitInfo.gameObject.tag == "CircuitComponent")
-                            {
-                                blocked = true;
-                                this.GetComponent<SpriteRenderer>().color = blockedColor;
-                            }
-                            else
-                            {
-                                blocked = false;
-                                this.GetComponent<SpriteRenderer>().color = dragColor;
-                            }
-                        }
+                        wireFuctionality(hitInfo);
                     }
                     else
                     {
@@ -107,11 +73,6 @@ public class GridMove : MonoBehaviour
                     }
                 }
 
-            }
-            if (attachable == true)
-            {
-                blocked = false;
-                this.GetComponent<SpriteRenderer>().color = dragColor;
             }
 
             if (Input.GetKeyDown(KeyCode.Q))
@@ -138,13 +99,14 @@ public class GridMove : MonoBehaviour
                             gameObject.GetComponent<Wire>().addConnection(n);
                             n.updateWire(gameObject.GetComponent<Wire>());
                         }
-                        else if(w)
+                        else if (w)
                         {
                             Debug.LogError("W added");
                             gameObject.GetComponent<Wire>().addConnection(w);
                             w.addConnection(gameObject.GetComponent<Wire>());
                         }
-                        else{
+                        else
+                        {
 
                         }
                     }
@@ -191,6 +153,53 @@ public class GridMove : MonoBehaviour
 
     }
 
+
+    private void wireFuctionality(Collider2D hitInfo){     
+                        if (hitInfo.gameObject != gameObject)
+                        {
+                            Debug.Log(hitInfo.name);
+                            if (hitInfo.gameObject.tag == "Wire")
+                            {
+                                Debug.LogError("wire");
+                                w = hitInfo.gameObject.GetComponent<Wire>();
+                                attachable = true;
+
+                            }
+                            else if (hitInfo.gameObject.tag == "Node")
+                            {
+                                Debug.Log(hitInfo.gameObject.GetComponent<Node>().ConnectedWire);
+                                if (hitInfo.gameObject.GetComponent<Node>().ConnectedWire == null)
+                                {
+                                    Debug.LogError("node");
+                                    n = hitInfo.gameObject.GetComponent<Node>();
+                                    attachable = true;
+                                }
+                                else
+                                {
+                                    blocked = true;
+                                    this.GetComponent<SpriteRenderer>().color = blockedColor;
+                                    attachable = false;
+                                }
+
+                            }
+                            else if (hitInfo.gameObject.tag == "CircuitComponent")
+                            {
+                                blocked = true;
+                                this.GetComponent<SpriteRenderer>().color = blockedColor;
+                            }
+                            else
+                            {
+                                blocked = false;
+                                this.GetComponent<SpriteRenderer>().color = dragColor;
+                            }
+                        }
+                        if (attachable == true)
+                        {
+                            blocked = false;
+                            this.GetComponent<SpriteRenderer>().color = dragColor;
+                        }
+
+    }
 
 }
 
