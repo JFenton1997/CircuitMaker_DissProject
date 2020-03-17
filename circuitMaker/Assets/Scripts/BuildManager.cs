@@ -5,6 +5,8 @@ using UnityEngine.EventSystems;
 
 public class BuildManager: MonoBehaviour
 {
+    int index;
+
     public static BuildManager instance;
     private void Awake() {
         if(instance != null){
@@ -12,11 +14,11 @@ public class BuildManager: MonoBehaviour
             return;
         }
         instance=this;
+        index = 0;
         Debug.Log("Build Instance Created");
     }
 
     private CircuitComponentBlueprint circuitComponentToBuild; 
-	public bool CanBuild { get { return circuitComponentToBuild != null; } }
     public void SelectCoponentToBuild(CircuitComponentBlueprint circuitComponent){
         circuitComponentToBuild = circuitComponent;
         CreateComponent();
@@ -25,13 +27,18 @@ public class BuildManager: MonoBehaviour
     }
 
 
-    public void TestActivation(string message){
-        Debug.Log(message);
-    }
     private void CreateComponent(){
-        GameObject circuitComponent = (GameObject)Instantiate(circuitComponentToBuild.prefab, Input.mousePosition, Quaternion.identity);
-        Debug.Log(circuitComponentToBuild.name);
-        circuitComponent.GetComponent<ComponentMove>().MoveStart();
+        GameObject circuitComponent = (GameObject)Instantiate(circuitComponentToBuild.prefab, new Vector2(10000,10000), Quaternion.identity,transform);
+        circuitComponent.name = circuitComponentToBuild.name.ToString();
+        if(circuitComponent.GetComponent<CircuitComponent>()){
+            Debug.Log("circuit comp");
+            circuitComponent.GetComponent<GridMove>().MoveStart();
+        }else if(circuitComponent.GetComponent<Wire>()){
+            Debug.Log("wire");
+            circuitComponent.GetComponent<Wire>().createdFromButton();
+        }
+
+
     }
 
 }

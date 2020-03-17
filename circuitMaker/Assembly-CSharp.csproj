@@ -54,9 +54,13 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\BuildManager.cs" />
+     <Compile Include="Assets\Scripts\CircuitComponent.cs" />
      <Compile Include="Assets\Scripts\CircuitComponentBlueprint.cs" />
-     <Compile Include="Assets\Scripts\ComponentMove.cs" />
      <Compile Include="Assets\Scripts\ComponentUISelect.cs" />
+     <Compile Include="Assets\Scripts\DrawWire.cs" />
+     <Compile Include="Assets\Scripts\GridMove.cs" />
+     <Compile Include="Assets\Scripts\Node.cs" />
+     <Compile Include="Assets\Scripts\Wire.cs" />
  <Reference Include="Unity.TextMeshPro.Editor">
  <HintPath>C:/Users/xxlig/Documents/GitHub/3rdYearDiss/circuitMaker/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
  </Reference>

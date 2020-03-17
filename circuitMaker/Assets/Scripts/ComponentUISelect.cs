@@ -1,11 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections;
+
 
 public class ComponentUISelect : MonoBehaviour
 {
-    public CircuitComponentBlueprint cell;
-    // Update is called once per frame
+    public  CircuitComponentBlueprint Cell;
+	public  CircuitComponentBlueprint Wire;
+
+
 	BuildManager buildManager;
 
 	void Start ()
@@ -16,7 +18,11 @@ public class ComponentUISelect : MonoBehaviour
 
 	public void SelectCellToBuild ()
 	{
-		Debug.Log("Cell Selected");
-		buildManager.SelectCoponentToBuild(cell);
+		buildManager.SelectCoponentToBuild(Cell);
 	}
+
+	public void SelectWireToBuild (){
+		buildManager.SelectCoponentToBuild(Wire);
+	}
+    public CircuitComponentBlueprint getWire() => Wire;
 }

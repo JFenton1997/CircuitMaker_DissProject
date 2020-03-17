@@ -8,16 +8,16 @@ public class CircuitComponentBlueprint {
         Cell = 0,
         Light = 1,
         Resister = 2,
-        Switch = 3
+        Switch = 3,
+
+        Wire = 4
 
     }
 
 
 	public GameObject prefab;
     public CircuitComponentName name;
-    public float voltage;
-    public float current;
-    public float resistance;
+
 
 
 }
