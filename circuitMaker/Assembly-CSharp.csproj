@@ -60,6 +60,8 @@
      <Compile Include="Assets\Scripts\DrawWire.cs" />
      <Compile Include="Assets\Scripts\GridMove.cs" />
      <Compile Include="Assets\Scripts\Node.cs" />
+     <Compile Include="Assets\Scripts\Utilities.cs" />
+     <Compile Include="Assets\Scripts\UxManager.cs" />
      <Compile Include="Assets\Scripts\Wire.cs" />
  <Reference Include="Unity.TextMeshPro.Editor">
  <HintPath>C:/Users/xxlig/Documents/GitHub/3rdYearDiss/circuitMaker/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>

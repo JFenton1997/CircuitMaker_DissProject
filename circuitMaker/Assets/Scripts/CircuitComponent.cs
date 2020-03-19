@@ -1,37 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static CircuitComponentBlueprint;
+using static Utilities;
+
 
 public class CircuitComponent : MonoBehaviour
 {
 
+    public values values;
     public new CircuitComponentName name;
-    public float current;
-    public float voltage;
-    public float resistance;
 
-    private Node inNode;
-    private Node outNode;
+    private Node nodeA;
+    private Node nodeB;
 
 
-    private void Awake() {
-        try{
-            outNode = transform.GetChild(0).gameObject.GetComponent<Node>();
-            inNode = transform.GetChild(1).gameObject.GetComponent<Node>();
-        }catch{
+    private void Awake()
+    {
+        try
+        {
+            nodeA = transform.GetChild(0).gameObject.GetComponent<Node>();
+            nodeB = transform.GetChild(1).gameObject.GetComponent<Node>();
+            values = new values();
+        }
+        catch
+        {
             Debug.LogError(this.name + " failed to find nodes");
         }
     }
     // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

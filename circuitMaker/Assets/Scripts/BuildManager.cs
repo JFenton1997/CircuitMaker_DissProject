@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static Utilities;
 
 public class BuildManager: MonoBehaviour
 {
@@ -20,8 +21,28 @@ public class BuildManager: MonoBehaviour
 
     private CircuitComponentBlueprint circuitComponentToBuild; 
     public void SelectCoponentToBuild(CircuitComponentBlueprint circuitComponent){
-        circuitComponentToBuild = circuitComponent;
-        CreateComponent();
+        if(circuitComponent.name == CircuitComponentName.Cell){
+            foreach(Transform child in transform){
+                try{
+                    if(child.GetComponentInChildren<CircuitComponent>().name == CircuitComponentName.Cell){
+                        Debug.Log("cell already exists");
+                        return;
+                    }
+                    else{
+                        break;
+
+                    }
+                }catch{
+                    Debug.Log(child +" has no circuit component");
+                }
+                
+            }
+
+        }
+                    circuitComponentToBuild = circuitComponent;
+            Debug.Log("build "+ circuitComponent.name);
+            CreateComponent();
+
 
 
     }
@@ -31,10 +52,9 @@ public class BuildManager: MonoBehaviour
         GameObject circuitComponent = (GameObject)Instantiate(circuitComponentToBuild.prefab, new Vector2(10000,10000), Quaternion.identity,transform);
         circuitComponent.name = circuitComponentToBuild.name.ToString();
         if(circuitComponent.GetComponent<CircuitComponent>()){
-            Debug.Log("circuit comp");
             circuitComponent.GetComponent<GridMove>().MoveStart();
+            circuitComponent.GetComponent<CircuitComponent>().name = circuitComponentToBuild.name;
         }else if(circuitComponent.GetComponent<Wire>()){
-            Debug.Log("wire");
             circuitComponent.GetComponent<Wire>().createdFromButton();
         }
 

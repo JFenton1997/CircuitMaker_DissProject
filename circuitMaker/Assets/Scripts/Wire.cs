@@ -23,7 +23,6 @@ public class Wire : MonoBehaviour
     public void createdFromButton(){
         Debug.Log("triggered");
         spriteRenderer.enabled= true;
-        bool isMoving = true;
         gridMove.enabled = true;
         gridMove.MoveStart();
 
@@ -54,17 +53,16 @@ public class Wire : MonoBehaviour
     public void removeConnection(Node n){
         connectedNode.Remove(n);
     }
-    public void gridMoveEnded(){
+    public void GridMoveEnded(){
         gridMove.enabled = false;
         createdFromUnconnectedWire();
     }
 
-    public void drawingEnded(){
+    public void EndWireDraw(){
         drawWire.enabled = false;
     }
 
     private void OnDestroy() {
-        Debug.Log("woot");
         foreach(Wire w in connectedWires){
             w.removeConnection(this);
         }

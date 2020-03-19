@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7170899372823459075}
   - component: {fileID: 8520929820093948291}
   m_Layer: 8
-  m_Name: circuitNodeOut
+  m_Name: nodeA
   m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -267,7 +267,7 @@ GameObject:
   - component: {fileID: 863036198}
   - component: {fileID: 863036197}
   m_Layer: 8
-  m_Name: circuitNodeIn
+  m_Name: nodeB
   m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

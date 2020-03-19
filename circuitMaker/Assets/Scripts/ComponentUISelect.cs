@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using static Utilities;
 
 
 public class ComponentUISelect : MonoBehaviour
 {
+	[SerializeField]
     public  CircuitComponentBlueprint Cell;
+	[SerializeField]
 	public  CircuitComponentBlueprint Wire;
 
 
@@ -24,5 +27,4 @@ public class ComponentUISelect : MonoBehaviour
 	public void SelectWireToBuild (){
 		buildManager.SelectCoponentToBuild(Wire);
 	}
-    public CircuitComponentBlueprint getWire() => Wire;
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Utilities;
 
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(LineRenderer))]
@@ -16,6 +17,7 @@ public class DrawWire : MonoBehaviour
     // Start is called before the first frame update
     public void StartDrawingLine()
     {
+        SendMessageUpwards("StartWireDraw");
         wire = this.GetComponent<Wire>();
         boxCollider = GetComponent<BoxCollider2D>();
         drawingLine = true;
@@ -27,6 +29,7 @@ public class DrawWire : MonoBehaviour
     }
 
     // Update is called once per frame
+    [System.Obsolete]
     private void Update()
     {
         if (drawingLine)
@@ -38,7 +41,6 @@ public class DrawWire : MonoBehaviour
                 if (Input.GetMouseButtonDown(0))
                 {
                     drawingLine = false;
-                    Debug.Log(drawingLine);
                     if (raycast)
                     {
                         Debug.Log(hit);
@@ -52,6 +54,7 @@ public class DrawWire : MonoBehaviour
                             wire.addConnection(hit.GetComponent<Node>());
                             hit.GetComponent<Node>().updateWire(wire);
                         }
+                        SendMessageUpwards("EndWireDraw");
                     }
                     else
                     {
@@ -62,7 +65,7 @@ public class DrawWire : MonoBehaviour
                         wire.addConnection(newWire.GetComponent<Wire>());
                     }
                     updateBoxCollider();
-                    SendMessage("drawingEnded");
+                    
 
                 }
             }
@@ -70,7 +73,6 @@ public class DrawWire : MonoBehaviour
 
             if (Input.GetMouseButtonDown(1))
             {
-                Debug.Log("delete wire");
                 Destroy(gameObject);
             }
         }
@@ -110,6 +112,7 @@ public class DrawWire : MonoBehaviour
         return hitInfo;
     }
 
+    [System.Obsolete]
     private bool isValid(RaycastHit2D raycast)
     {
         if (raycast)
@@ -119,13 +122,13 @@ public class DrawWire : MonoBehaviour
             if (objectTag == "CircuitComponent")
             {
                 lineRenderer.SetColors(Color.red, Color.red);
-                lineRenderer.SetPosition(1,raycast.point);
+                lineRenderer.SetPosition(1, raycast.point);
                 return false;
             }
             else
             {
                 lineRenderer.SetColors(Color.black, Color.black);
-                lineRenderer.SetPosition(1,raycast.point);
+                lineRenderer.SetPosition(1, raycast.point);
                 return true;
             }
         }
@@ -138,12 +141,10 @@ public class DrawWire : MonoBehaviour
 
     private void updateBoxCollider()
     {
-        Debug.Log(boxCollider.size.ToString());
         Vector3 lineStart = lineRenderer.GetPosition(0);
         Vector3 lineEnd = lineRenderer.GetPosition(1);
         float deltaX = lineStart.x - lineEnd.x;
         float deltaY = lineStart.y - lineEnd.y;
-        Debug.Log(deltaX + "  " + deltaY);
         if (Mathf.Abs(deltaX) > Mathf.Abs(deltaY))
         {
             boxCollider.offset = new Vector2(deltaX / -2, 0);

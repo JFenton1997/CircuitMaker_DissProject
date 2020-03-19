@@ -1,8 +1,7 @@
 Circuit Side
 -add functionality to conponents
 -read and convert circuit to datatype
--incorperate UI limitations on Users
-    a- limit button clicks in modes.
+-incorperate UI limitations on Users [X]
 -polish UI
 
 AVOW side
