@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using static Utilities;
+using Utilities;
 
 [System.Serializable]
 public class CircuitComponentBlueprint {
@@ -9,7 +9,7 @@ public class CircuitComponentBlueprint {
 
 
 	public GameObject prefab;
-    public CircuitComponentName name;
+    public ComponentType type;
 
 
 

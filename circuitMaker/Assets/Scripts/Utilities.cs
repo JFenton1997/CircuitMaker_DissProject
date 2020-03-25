@@ -2,87 +2,75 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class Utilities
+
+
+namespace Utilities
 {
+    [System.Serializable]
     public class Pair<A, B>
     {
-        public Pair()
-        {
-        }
-
+        public Pair(){}
         public Pair(A a, B b)
         {
             this.a = a;
             this.b = b;
         }
-
+        [SerializeField]
         public A a { get; set; }
+        [SerializeField]
         public B b { get; set; }
+
+
 
     };
 
-    public enum CircuitComponentName{
-        Cell = 0,
-        Light = 1,
-        Resister = 2,
-        Switch = 3,
 
-        Wire = 4
 
-    }
-    public class values
+        [System.Serializable]
+    public class Pair
     {
-
-
-        public Pair<float, bool> Current;
-        public Pair<float, bool> Voltage;
-        public Pair<float, bool> Resistance;
-
-        public values()
+        [SerializeField]
+        private float _value;
+        [SerializeField]
+        private bool _hidden;
+        public Pair(){}
+        public Pair(float value, bool hidden)
         {
-            Current = new Pair<float, bool>(0f, true);
-            Voltage = new Pair<float, bool>(0f, true);
-            Resistance = new Pair<float, bool>(0f, true);
+            this._value = value;
+            this._hidden = hidden;
         }
 
-        public void updateValue(char c, float newValue)
-        {
-            switch (c)
-            {
-                case 'v':
-                    Voltage.a = newValue;
-                    break;
-                case 'c':
-                    Current.a = newValue;
-                    break;
-                case 'r':
-                    Current.a = newValue;
-                    break;
-                default:
-                    Debug.LogError("updateValue unknown " + c);
-                    break;
-            }
-        }
 
-        public void updateValue(char c, bool newValue)
-        {
-            switch (c)
-            {
-                case 'v':
-                    Voltage.b = newValue;
-                    break;
-                case 'c':
-                    Current.b = newValue;
-                    break;
-                case 'r':
-                    Current.b = newValue;
-                    break;
-                default:
-                    Debug.LogError("updateValue unknown " + c);
-                    break;
-            }
-        }
+        public float value { get{return _value;} set{_value = value;}}
+        public bool hidden { get{ return _hidden;} set{_hidden = value;}}
+
+
+
+    };
+
+    [System.Serializable]
+    public enum ComponentType{
+        UNTYPED = 0,
+        CELL = 1,
+        LIGHT = 2,
+        RESISTER = 3,
+        SWITCH = 4
+
     }
+
+
+    public enum ComponentParameter{
+        VOLTAGE,
+        CURRENT,
+        RESISTANCE
+
+    }
+
+    public enum Direction{
+        A_to_B,
+        B_to_A
+    }
+
 
 
 

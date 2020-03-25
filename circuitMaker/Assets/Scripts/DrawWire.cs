@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Utilities;
+using Utilities;
 
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(LineRenderer))]
@@ -10,7 +10,7 @@ public class DrawWire : MonoBehaviour
 {
     private LineRenderer lineRenderer;
     private Wire wire;
-    public GameObject hit;
+    private GameObject hit;
     private BoxCollider2D boxCollider;
     public CircuitComponentBlueprint buildWire;
     private bool drawingLine;
@@ -59,7 +59,7 @@ public class DrawWire : MonoBehaviour
                     else
                     {
                         GameObject newWire = (GameObject)Instantiate(buildWire.prefab, lineRenderer.GetPosition(1), Quaternion.identity, transform.parent);
-                        newWire.name = buildWire.name.ToString();
+                        newWire.name = buildWire.type.ToString();
                         newWire.GetComponent<Wire>().createdFromUnconnectedWire();
                         newWire.GetComponent<Wire>().addConnection(wire);
                         wire.addConnection(newWire.GetComponent<Wire>());
@@ -73,6 +73,7 @@ public class DrawWire : MonoBehaviour
 
             if (Input.GetMouseButtonDown(1))
             {
+                SendMessageUpwards("EndWireDraw");
                 Destroy(gameObject);
             }
         }
