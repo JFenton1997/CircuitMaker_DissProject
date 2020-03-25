@@ -36,9 +36,93 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\Lean\Common\Examples\Scripts\LeanCircuit.cs" />
+     <Compile Include="Assets\Lean\Common\Examples\Scripts\LeanDocumentation.cs" />
+     <Compile Include="Assets\Lean\Common\Examples\Scripts\LeanLinkTo.cs" />
+     <Compile Include="Assets\Lean\Common\Scripts\LeanHelper.cs" />
+     <Compile Include="Assets\Lean\Common\Scripts\LeanInspector.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanButton.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanConstrainToParent.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanDrag.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanGui.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanHitbox.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanHover.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanJoystick.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanMoveToTop.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanOrientation.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanPulse.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanResize.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanSafeArea.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanSelection.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanSelectionHighlight.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanSelectionManager.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanSelectionPriority.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanShake.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanSizer.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanSwipe.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanSwitch.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanToggle.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanTooltip.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanTooltipData.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanWindow.cs" />
+     <Compile Include="Assets\Lean\GUI\Scripts\LeanWindowCloser.cs" />
+     <Compile Include="Assets\Lean\Transition\Examples\Scripts\LeanAnimation.cs" />
+     <Compile Include="Assets\Lean\Transition\Examples\Scripts\LeanAnimationKeyPress.cs" />
+     <Compile Include="Assets\Lean\Transition\Examples\Scripts\LeanAnimationRepeater.cs" />
+     <Compile Include="Assets\Lean\Transition\Examples\Scripts\RepeatFromCode.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\AudioSource\LeanAudioSourceVolume.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\GameObject\LeanGameObjectSetActive.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\LeanDelay.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\LeanEvent.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\LeanGet.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\LeanInsert.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\LeanJoin.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\LeanJoinDelay.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\LeanJoinInsert.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\LeanPlaySound.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\LeanQueue.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\LeanTime.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\LeanTimeScale.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\SpriteRenderer\LeanSpriteRendererColor.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformEulerAngles.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformLocalEulerAngles.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformLocalPosition.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformLocalPositionX.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformLocalPositionY.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformLocalPositionZ.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformLocalRotation.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformLocalScale.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformPosition.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformRotate.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformRotation.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformTranslate.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanCanvasGroupAlpha.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanCanvasGroupBlocksRaycasts.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanCanvasGroupInteractable.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanGraphicColor.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanImageFillAmount.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformAnchorMax.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformAnchorMin.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformAnchoredPosition.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformAnchoredPositionX.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformAnchoredPositionY.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformPivot.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformPivotX.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformPivotY.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformSetAsLastSibling.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformSizeDelta.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanTransformLocalScaleXY.cs" />
+     <Compile Include="Assets\Lean\Transition\Scripts\LeanEase.cs" />
+     <Compile Include="Assets\Lean\Transition\Scripts\LeanMethod.cs" />
+     <Compile Include="Assets\Lean\Transition\Scripts\LeanPlayer.cs" />
+     <Compile Include="Assets\Lean\Transition\Scripts\LeanState.cs" />
+     <Compile Include="Assets\Lean\Transition\Scripts\LeanStateWithTarget.cs" />
+     <Compile Include="Assets\Lean\Transition\Scripts\LeanTiming.cs" />
+     <Compile Include="Assets\Lean\Transition\Scripts\LeanTransition.cs" />
      <Compile Include="Assets\Scripts\BuildManager.cs" />
      <Compile Include="Assets\Scripts\CircuitComponent.cs" />
      <Compile Include="Assets\Scripts\CircuitComponentBlueprint.cs" />
+     <Compile Include="Assets\Scripts\CircuitComponentPanel.cs" />
      <Compile Include="Assets\Scripts\Component.cs" />
      <Compile Include="Assets\Scripts\ComponentSelect.cs" />
      <Compile Include="Assets\Scripts\DrawWire.cs" />
@@ -47,6 +131,11 @@
      <Compile Include="Assets\Scripts\Utilities.cs" />
      <Compile Include="Assets\Scripts\UxManager.cs" />
      <Compile Include="Assets\Scripts\Wire.cs" />
+     <None Include="Assets\Lean\Common\Examples\Fonts\OFL.txt" />
+     <None Include="Assets\Lean\Common\Examples\Shaders\Object.shader" />
+     <None Include="Assets\Lean\Common\Examples\Shaders\Skybox.shader" />
+     <None Include="Assets\Lean\READ ME.txt" />
+     <None Include="Assets\Lean\Common\Examples\Shaders\Alpha.shader" />
     <Reference Include="UnityEngine">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.5f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
@@ -230,9 +319,6 @@
     <Reference Include="UnityEditor">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.5f1/Editor/Data/Managed/UnityEditor.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Advertisements">
-        <HintPath>C:/Users/xxlig/Documents/GitHub/3rdYearDiss/circuitMaker/Library/PackageCache/com.unity.ads@2.0.8/UnityEngine.Advertisements.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.Analytics.Editor">
         <HintPath>C:/Users/xxlig/Documents/GitHub/3rdYearDiss/circuitMaker/Library/PackageCache/com.unity.analytics@3.3.5/Unity.Analytics.Editor.dll</HintPath>
     </Reference>
@@ -241,9 +327,6 @@
     </Reference>
     <Reference Include="Unity.Analytics.StandardEvents">
         <HintPath>C:/Users/xxlig/Documents/GitHub/3rdYearDiss/circuitMaker/Library/PackageCache/com.unity.analytics@3.3.5/AnalyticsStandardEvents/Unity.Analytics.StandardEvents.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.Purchasing">
-        <HintPath>C:/Users/xxlig/Documents/GitHub/3rdYearDiss/circuitMaker/Library/PackageCache/com.unity.purchasing@2.0.6/UnityEngine.Purchasing.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.5f1/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>

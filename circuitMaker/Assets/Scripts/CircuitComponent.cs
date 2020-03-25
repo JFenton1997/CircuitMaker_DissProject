@@ -95,6 +95,13 @@ public class CircuitComponent : MonoBehaviour
                 directionImage.rectTransform.rotation = Quaternion.Euler(0f,0f,0f);
             }
     }
+
+    private void OnMouseDown() {
+        if(this.GetComponent<GridMove>().isMoving == false){
+            this.GetComponentInParent<CircuitComponentPanel>().newComponentSelected(component);
+        }
+        
+    }
 }
 
 
