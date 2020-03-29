@@ -5,26 +5,36 @@ using Utilities;
 
 public class ComponentSelect : MonoBehaviour
 {
-	[SerializeField]
-    public  CircuitComponentBlueprint Cell;
-	[SerializeField]
-	public  CircuitComponentBlueprint Wire;
+
+    public CircuitComponentBlueprint Cell;
+
+    public CircuitComponentBlueprint Wire;
+
+    public CircuitComponentBlueprint Resistor;
 
 
-	BuildManager buildManager;
-
-	void Start ()
-	{
-		buildManager = BuildManager.instance;
-	}
 
 
-	public void SelectCellToBuild ()
-	{
-		buildManager.SelectCoponentToBuild(Cell);
-	}
+    BuildManager buildManager;
 
-	public void SelectWireToBuild (){
-		buildManager.SelectCoponentToBuild(Wire);
-	}
+    void Start()
+    {
+        buildManager = BuildManager.instance;
+    }
+
+
+    public void SelectCellToBuild()
+    {
+        buildManager.SelectCoponentToBuild(Cell);
+    }
+
+    public void SelectWireToBuild()
+    {
+        buildManager.SelectCoponentToBuild(Wire);
+    }
+
+    public void SelectResistorToBuild()
+    {
+        buildManager.SelectCoponentToBuild(Resistor);
+    }
 }

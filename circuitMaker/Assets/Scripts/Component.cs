@@ -15,15 +15,11 @@ public class Component : MonoBehaviour
         Bconnections = new List<Component>();
         Values = new Dictionary<ComponentParameter, Pair>();
         Values.Add(ComponentParameter.VOLTAGE,new Pair(1,false));
-        Values.Add(ComponentParameter.CURRENT,new Pair());
-        Values.Add(ComponentParameter.RESISTANCE,new Pair()); 
-        direction = Direction.A_to_B;
+        Values.Add(ComponentParameter.CURRENT,new Pair(1,false));
+        Values.Add(ComponentParameter.RESISTANCE,new Pair(1,false)); 
         
     }
 
-    public void setType(ComponentType type){
-        this.type = type;
-    }
 
     
 }

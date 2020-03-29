@@ -120,11 +120,12 @@
      <Compile Include="Assets\Lean\Transition\Scripts\LeanTiming.cs" />
      <Compile Include="Assets\Lean\Transition\Scripts\LeanTransition.cs" />
      <Compile Include="Assets\Scripts\BuildManager.cs" />
+     <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\CircuitComponent.cs" />
-     <Compile Include="Assets\Scripts\CircuitComponentBlueprint.cs" />
      <Compile Include="Assets\Scripts\CircuitComponentPanel.cs" />
      <Compile Include="Assets\Scripts\Component.cs" />
      <Compile Include="Assets\Scripts\ComponentSelect.cs" />
+     <Compile Include="Assets\Scripts\DragWindow.cs" />
      <Compile Include="Assets\Scripts\DrawWire.cs" />
      <Compile Include="Assets\Scripts\GridMove.cs" />
      <Compile Include="Assets\Scripts\Node.cs" />

@@ -70,4 +70,5 @@ public class Wire : MonoBehaviour
             n.updateWire(null);
         }
     }
+
 }

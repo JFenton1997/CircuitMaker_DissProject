@@ -9,7 +9,7 @@ namespace Utilities
     [System.Serializable]
     public class Pair<A, B>
     {
-        public Pair(){}
+        public Pair() { }
         public Pair(A a, B b)
         {
             this.a = a;
@@ -26,14 +26,14 @@ namespace Utilities
 
 
 
-        [System.Serializable]
+    [System.Serializable]
     public class Pair
     {
         [SerializeField]
         private float _value;
         [SerializeField]
         private bool _hidden;
-        public Pair(){}
+        public Pair() { }
         public Pair(float value, bool hidden)
         {
             this._value = value;
@@ -41,32 +41,45 @@ namespace Utilities
         }
 
 
-        public float value { get{return _value;} set{_value = value;}}
-        public bool hidden { get{ return _hidden;} set{_hidden = value;}}
+        public float value { get { return _value; } set { _value = value; } }
+        public bool hidden { get { return _hidden; } set { _hidden = value; } }
 
 
 
     };
 
     [System.Serializable]
-    public enum ComponentType{
+    public enum ComponentType
+    {
         UNTYPED = 0,
         CELL = 1,
         LIGHT = 2,
-        RESISTER = 3,
+        RESISTOR = 3,
         SWITCH = 4
 
     }
 
 
-    public enum ComponentParameter{
+    [System.Serializable]
+    public class CircuitComponentBlueprint
+    {
+        public GameObject prefab;
+        public ComponentType type;
+
+    }
+
+
+
+    public enum ComponentParameter
+    {
         VOLTAGE,
         CURRENT,
         RESISTANCE
 
     }
 
-    public enum Direction{
+    public enum Direction
+    {
         A_to_B,
         B_to_A
     }

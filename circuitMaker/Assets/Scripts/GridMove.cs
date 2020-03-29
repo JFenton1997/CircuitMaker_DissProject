@@ -91,7 +91,7 @@ public class GridMove : MonoBehaviour
                     Cursor.visible = true;
                     isMoving = false;
                     this.GetComponent<SpriteRenderer>().color = normColor;
-                    
+
                     if (gameObject.GetComponent<Wire>())
                     {
                         if (n)
@@ -110,25 +110,28 @@ public class GridMove : MonoBehaviour
                         }
                         gameObject.GetComponent<Wire>().GridMoveEnded();
                     }
-                    else{
+                    else
+                    {
                         gameObject.SendMessageUpwards("GridMoveEnded");
                     }
                 }
-                else if (Input.GetMouseButtonDown(1))
-                {
-                    Cursor.visible = true;
-                    Destroy(gameObject);
-                }
-
-
-
+            }
+            else if (Input.GetMouseButtonDown(1))
+            {
+                Cursor.visible = true;
+                SendMessageUpwards("GridMoveEnded");
+                Destroy(gameObject);
             }
 
 
 
         }
 
+
+
     }
+
+
 
     private bool checkToBlock(Collider2D hit)
     {

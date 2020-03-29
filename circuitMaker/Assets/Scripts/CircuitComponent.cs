@@ -11,9 +11,12 @@ using Utilities;
 public class CircuitComponent : MonoBehaviour
 {
 
-    
+
     public Component component;
     public Image directionImage;
+
+    public Color normalColor = Color.black;
+    public Color hiddenColor = Color.gray;
 
     [HideInInspector]
     public string name;
@@ -28,8 +31,8 @@ public class CircuitComponent : MonoBehaviour
     private Text componentNameText;
     private Text componentTypeText;
 
-    
- 
+
+
 
 
     private void Awake()
@@ -50,58 +53,102 @@ public class CircuitComponent : MonoBehaviour
         }
 
     }
-    
-    private void Start() {
+
+    private void Start()
+    {
         //Assigning Text Variables
-         foreach(Text t in ValuesUX.GetComponentsInChildren<Text>()){
-                if(t.transform.parent.name == "Voltage" && t.text == "0"){
-                    voltageText = t;
-                }
-                else if(t.transform.parent.name == "Current" && t.text == "0"){
-                    currentText = t;
-                }
-                else if(t.transform.parent.name == "Resistance" && t.text == "0"){
-                    resistanceText = t;
-                }
-                else if(t.name == "ComponentName"){
-                    componentNameText = t;
-                }
-                else if(t.name == "ComponentType"){
-                    componentTypeText = t;
-                    componentTypeText.text = component.type.ToString();
-
-                }
-
-                
+        foreach (Text t in ValuesUX.GetComponentsInChildren<Text>())
+        {
+            if (t.transform.parent.name == "Voltage" && t.text == "0")
+            {
+                voltageText = t;
+            }
+            else if (t.transform.parent.name == "Current" && t.text == "0")
+            {
+                currentText = t;
+            }
+            else if (t.transform.parent.name == "Resistance" && t.text == "0")
+            {
+                resistanceText = t;
+            }
+            else if (t.name == "ComponentName")
+            {
+                componentNameText = t;
+            }
+            else if (t.name == "ComponentType")
+            {
+                componentTypeText = t;
+                componentTypeText.text = component.type.ToString();
 
             }
-            updateUXValues();
+
+
+
+        }
+        updateUXValues();
 
     }
 
 
-    public void updateUXValues(){
+    public void updateUXValues()
+    {
         voltageText.text = component.Values[ComponentParameter.VOLTAGE].value.ToString();
+        if (component.Values[ComponentParameter.VOLTAGE].hidden)
+        {
+            voltageText.color = hiddenColor;
+        }
+        else
+        {
+            voltageText.color = normalColor;
+        }
+
         currentText.text = component.Values[ComponentParameter.CURRENT].value.ToString();
+        if (component.Values[ComponentParameter.CURRENT].hidden)
+        {
+            currentText.color = hiddenColor;
+        }
+        else
+        {
+            currentText.color = normalColor;
+        }
+
         resistanceText.text = component.Values[ComponentParameter.RESISTANCE].value.ToString();
+        if (component.Values[ComponentParameter.RESISTANCE].hidden)
+        {
+            resistanceText.color = hiddenColor;
+        }
+        else
+        {
+            resistanceText.color = normalColor;
+        }
+
         componentNameText.text = this.name;
         updateDirection();
     }
 
-    private void updateDirection(){
-        if(component.direction == Direction.A_to_B){
-                directionImage.rectTransform.rotation = Quaternion.Euler(0f,0f,180f);
-            }else{
-                directionImage.rectTransform.rotation = Quaternion.Euler(0f,0f,0f);
-            }
+    private void updateDirection()
+    {
+        if (component.direction == Direction.A_to_B)
+        {
+            directionImage.rectTransform.rotation = Quaternion.Euler(0f, 0f, 180f);
+        }
+        else
+        {
+            directionImage.rectTransform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        }
     }
 
-    private void OnMouseDown() {
-        if(this.GetComponent<GridMove>().isMoving == false){
+    private void OnMouseDown()
+    {
+        if (this.GetComponent<GridMove>().isMoving == false)
+        {
             this.GetComponentInParent<CircuitComponentPanel>().newComponentSelected(component);
         }
-        
+
     }
+
+
+
 }
 
 

@@ -1,8 +1,12 @@
 Circuit Side
--add functionality to conponents
 -read and convert circuit to datatype
--camera control
+-camera pan?
 -polish UI
+-add UI animations
+
+UI
+- delete wire tool
+- delete 
 
 AVOW side
 -add entire functionality. should be easier than other
