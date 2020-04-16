@@ -42,7 +42,7 @@ namespace Lean.Transition
 		/// <summary>This allows you to change where in the game loop transitions after this will update.
 		/// NOTE: Once you submit the previous transitions, this will be reset to default.</summary>
 		public static T TimeTransition<T>(this T target, LeanTiming update)
-			where T : Component
+			where T : DiagramComponent
 		{
 			LeanTransition.CurrentTiming = update; return target;
 		}

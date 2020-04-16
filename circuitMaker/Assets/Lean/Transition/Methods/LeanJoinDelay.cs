@@ -23,7 +23,7 @@ namespace Lean.Transition
 	{
 		/// <summary>This allows you to connect the previous and next transitions, and insert a delay. This means the next transition will only begin when the previous one finishes.</summary>
 		public static T JoinDelayTransition<T>(this T target, float delay)
-			where T : Component
+			where T : DiagramComponent
 		{
 			LeanTransition.CurrentQueue = LeanTransition.CurrentHead; Method.LeanDelay.Register(delay); LeanTransition.CurrentQueue = LeanTransition.CurrentHead; return target;
 		}

@@ -23,7 +23,7 @@ namespace Lean.Transition
 	{
 		/// <summary>This allows you to specify which transition must finish before the next transition can begin.</summary>
 		public static T QueueTransition<T>(this T target, LeanState beginAfter)
-			where T : Component
+			where T : DiagramComponent
 		{
 			LeanTransition.CurrentQueue = beginAfter; return target;
 		}

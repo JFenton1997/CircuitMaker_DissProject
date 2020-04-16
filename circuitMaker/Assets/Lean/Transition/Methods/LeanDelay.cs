@@ -46,7 +46,7 @@ namespace Lean.Transition
 	{
 		/// <summary>This will pause the animation for the specified amount of seconds.</summary>
 		public static T DelayTransition<T>(this T target, float duration)
-			where T : Component
+			where T : DiagramComponent
 		{
 			Method.LeanDelay.Register(duration); return target;
 		}

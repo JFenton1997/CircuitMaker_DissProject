@@ -25,14 +25,14 @@ namespace Lean.Transition
 	{
 		/// <summary>This will insert all transitions inside the specified GameObject, as if they were added manually.</summary>
 		public static T JoinInsertTransition<T>(this T target, GameObject root, float speed = 1.0f)
-			where T : Component
+			where T : DiagramComponent
 		{
 			LeanTransition.CurrentQueue = LeanTransition.CurrentHead; LeanTransition.InsertTransitions(root, speed); LeanTransition.CurrentQueue = LeanTransition.CurrentHead; return target;
 		}
 
 		/// <summary>This will insert all transitions inside the specified GameObject, as if they were added manually.</summary>
 		public static T JoinInsertTransition<T>(this T target, Transform root, float speed = 1.0f)
-			where T : Component
+			where T : DiagramComponent
 		{
 			LeanTransition.CurrentQueue = LeanTransition.CurrentHead; LeanTransition.InsertTransitions(root, speed); LeanTransition.CurrentQueue = LeanTransition.CurrentHead; return target;
 		}

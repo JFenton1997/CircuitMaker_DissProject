@@ -84,7 +84,7 @@ namespace Lean.Transition
 	public static partial class LeanExtensions
 	{
 		public static T EventTransition<T>(this T target, System.Action action, float duration = 0.0f)
-			where T : Component
+			where T : DiagramComponent
 		{
 			Method.LeanEvent.Register(action, duration); return target;
 		}

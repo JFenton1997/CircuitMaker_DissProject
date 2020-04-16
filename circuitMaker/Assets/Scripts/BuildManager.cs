@@ -28,7 +28,7 @@ public class BuildManager : MonoBehaviour
             {
                 try
                 {
-                    if (child.GetComponentInChildren<Component>().type == ComponentType.CELL)
+                    if (child.GetComponentInChildren<CircuitComponent>().component.type == ComponentType.CELL)
                     {
                         Debug.Log("cell already exists");
                         return;
@@ -59,18 +59,18 @@ public class BuildManager : MonoBehaviour
     private void CreateComponent()
     {
         GameObject circuitComponent = (GameObject)Instantiate(circuitComponentToBuild.prefab, new Vector2(10000, 10000), Quaternion.identity, transform);
-        if (circuitComponent.GetComponent<Component>())
+        if (circuitComponent.GetComponent<CircuitComponent>())
         {
             circuitComponent.GetComponent<GridMove>().enabled = true;
             circuitComponent.GetComponent<GridMove>().MoveStart();
             circuitComponent.name = (letter.ToString());
-            circuitComponent.GetComponent<Component>().type = circuitComponentToBuild.type;
+            circuitComponent.GetComponent<CircuitComponent>().component.type = circuitComponentToBuild.type;
             circuitComponent.GetComponent<CircuitComponent>().name = letter.ToString();
             letter++;
             if(circuitComponentToBuild.type == ComponentType.CELL){
-                circuitComponent.GetComponent<Component>().direction = Direction.B_to_A;
+               circuitComponent.GetComponent<CircuitComponent>().component.direction = Direction.B_to_A;
             }else{
-                circuitComponent.GetComponent<Component>().direction = Direction.A_to_B;
+                circuitComponent.GetComponent<CircuitComponent>().component.direction = Direction.A_to_B;
             }
 
 

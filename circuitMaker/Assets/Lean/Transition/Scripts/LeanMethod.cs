@@ -234,7 +234,7 @@ namespace Lean.Transition
 						{
 							if (method.Alias == expectedAlias)
 							{
-								if (methodTargetType.IsSubclassOf(typeof(Component)) == true && expectedType.IsSubclassOf(typeof(Component)) == true)
+								if (methodTargetType.IsSubclassOf(typeof(DiagramComponent)) == true && expectedType.IsSubclassOf(typeof(DiagramComponent)) == true)
 								{
 									continue;
 								}

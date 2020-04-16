@@ -1212,7 +1212,6 @@ GameObject:
   - component: {fileID: 7170899373961153826}
   - component: {fileID: 7170899373961153829}
   - component: {fileID: 7170899373961153824}
-  - component: {fileID: 1855778457371169360}
   - component: {fileID: 7170899373961153825}
   - component: {fileID: 8033148054023405490}
   m_Layer: 8
@@ -1315,22 +1314,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 4, y: 4}
   m_EdgeRadius: 0
---- !u!114 &1855778457371169360
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7170899373961153828}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29e31721ae2bdc242a8cc9ee7dfe9917, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 1
-  Aconnections: []
-  Bconnections: []
-  direction: 1
 --- !u!114 &7170899373961153825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1343,9 +1326,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 726d3109d8914e44aab562e48c94adb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  component: {fileID: 1855778457371169360}
+  component:
+    type: 0
+    Aconnections: []
+    Bconnections: []
+    direction: 0
   directionImage: {fileID: 94398234}
+  normalColor: {r: 0, g: 0, b: 0, a: 1}
+  hiddenColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   name: 
+  nodeA: {fileID: 0}
+  nodeB: {fileID: 0}
   ValuesUX: {fileID: 2721097803040309453}
 --- !u!114 &8033148054023405490
 MonoBehaviour:

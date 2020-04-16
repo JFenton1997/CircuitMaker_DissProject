@@ -326,7 +326,7 @@ namespace Lean.Transition
 								if (existingType != targetType)
 								{
 									// If both are components then the clash can be resolved by using GameObject
-									if (targetType.IsSubclassOf(typeof(Component)) == true)
+									if (targetType.IsSubclassOf(typeof(DiagramComponent)) == true)
 									{
 										// If it's already a GameObject, skip
 										if (existingType == typeof(GameObject))
@@ -334,7 +334,7 @@ namespace Lean.Transition
 											continue;
 										}
 										// Change existing type to GameObject?
-										else if (existingType.IsSubclassOf(typeof(Component)) == true)
+										else if (existingType.IsSubclassOf(typeof(DiagramComponent)) == true)
 										{
 											aliasTypePairs[alias] = typeof(GameObject);
 

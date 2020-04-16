@@ -210,7 +210,7 @@ namespace Lean.Transition
 				var methodPrefabs = AssetDatabase.FindAssets("t:GameObject").
 					Select((guid) => AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(guid))).
 					Where((prefab) => prefab.GetComponent<LeanMethod>() != null);
-				var targetComponent = sObject.targetObject as Component;
+				var targetComponent = sObject.targetObject as UnityEngine.Component;
 
 				if (targetComponent != null)
 				{

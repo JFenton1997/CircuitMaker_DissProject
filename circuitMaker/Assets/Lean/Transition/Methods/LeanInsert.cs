@@ -22,14 +22,14 @@ namespace Lean.Transition
 	{
 		/// <summary>This will insert all transitions inside the specified GameObject, as if they were added manually.</summary>
 		public static T InsertTransition<T>(this T target, GameObject root)
-			where T : Component
+			where T : DiagramComponent
 		{
 			LeanTransition.InsertTransitions(root); return target;
 		}
 
 		/// <summary>This will insert all transitions inside the specified GameObject, as if they were added manually.</summary>
 		public static T InsertTransition<T>(this T target, Transform root)
-			where T : Component
+			where T : DiagramComponent
 		{
 			LeanTransition.InsertTransitions(root); return target;
 		}

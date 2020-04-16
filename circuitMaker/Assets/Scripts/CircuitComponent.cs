@@ -12,7 +12,7 @@ public class CircuitComponent : MonoBehaviour
 {
 
 
-    public Component component;
+    public DiagramComponent component;
     public Image directionImage;
 
     public Color normalColor = Color.black;
@@ -21,8 +21,8 @@ public class CircuitComponent : MonoBehaviour
     [HideInInspector]
     public string name;
 
-    private Node nodeA;
-    private Node nodeB;
+    public Node nodeA;
+    public Node nodeB;
 
     public Canvas ValuesUX;
     private Text voltageText;
@@ -41,7 +41,6 @@ public class CircuitComponent : MonoBehaviour
         {
             nodeA = transform.GetChild(0).gameObject.GetComponent<Node>();
             nodeB = transform.GetChild(1).gameObject.GetComponent<Node>();
-            component = transform.GetComponent<Component>();
 
 
 
@@ -56,6 +55,7 @@ public class CircuitComponent : MonoBehaviour
 
     private void Start()
     {
+        DiagramComponent component = new DiagramComponent();
         //Assigning Text Variables
         foreach (Text t in ValuesUX.GetComponentsInChildren<Text>())
         {
@@ -77,8 +77,9 @@ public class CircuitComponent : MonoBehaviour
             }
             else if (t.name == "ComponentType")
             {
+
                 componentTypeText = t;
-                componentTypeText.text = component.type.ToString();
+                
 
             }
 
@@ -123,6 +124,8 @@ public class CircuitComponent : MonoBehaviour
         }
 
         componentNameText.text = this.name;
+        componentTypeText.text = component.type.ToString();
+        component.name = this.name;
         updateDirection();
     }
 
@@ -142,10 +145,11 @@ public class CircuitComponent : MonoBehaviour
     {
         if (this.GetComponent<GridMove>().isMoving == false)
         {
-            this.GetComponentInParent<CircuitComponentPanel>().newComponentSelected(component);
+            transform.GetComponentInParent<CircuitComponentPanel>().newComponentSelected(this);
         }
 
     }
+
 
 
 

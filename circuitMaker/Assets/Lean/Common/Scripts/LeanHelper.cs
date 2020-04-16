@@ -41,7 +41,7 @@ namespace Lean.Common
 #endif
 		/// <summary>This method allows you to create a UI element with the specified component and specified parent, with behaviour consistent with Unity's built-in UI element creation.</summary>
 		public static T CreateElement<T>(Transform parent)
-			where T : Component
+			where T : UnityEngine.Component
 		{
 			var gameObject = new GameObject(typeof(T).Name);
 #if UNITY_EDITOR

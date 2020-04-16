@@ -85,7 +85,7 @@ namespace Lean.Transition
 	public static partial class LeanExtensions
 	{
 		public static T PlaySoundTransition<T>(this T target, AudioClip clip, float duration = 0.0f, float volume = 1.0f)
-			where T : Component
+			where T : DiagramComponent
 		{
 			Method.LeanPlaySound.Register(clip, duration, volume); return target;
 		}

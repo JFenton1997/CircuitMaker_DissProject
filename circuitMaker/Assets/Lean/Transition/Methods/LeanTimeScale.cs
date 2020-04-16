@@ -69,7 +69,7 @@ namespace Lean.Transition
 	public static partial class LeanExtensions
 	{
 		public static T timeScaleTransition<T>(this T target, float timeScale, float duration, LeanEase ease = LeanEase.Smooth)
-			where T : Component
+			where T : DiagramComponent
 		{
 			Method.LeanTimeScale.Register(timeScale, duration, ease); return target;
 		}
