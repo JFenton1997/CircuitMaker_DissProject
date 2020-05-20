@@ -1,17 +1,28 @@
-Circuit Side
--read and convert circuit to datatype
--camera pan?
+Circuit Side - 1/2 day
+-delete wires
+-polish wire placement
 -polish UI
 -add UI animations
+
+
+-generation
+ > change horizonal cell calculation for bottom
 
 UI
 - delete wire tool
 - delete 
 
-AVOW side
--add entire functionality. should be easier than other
+CSV - 3days max
+-datatype store and load
 
-MENU
+AVOW side - 3days max
+-BUGS
+    -click and drag
+        -FLoating un-snappy
+        -Clean Snap Functions
+        
+
+MENU - 3days max
 -add menu to navigate application
     -settings
         -audio

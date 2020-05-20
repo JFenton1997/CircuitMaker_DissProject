@@ -21,7 +21,6 @@ namespace Utilities
         public B b { get; set; }
 
 
-
     };
 
 
@@ -83,6 +82,40 @@ namespace Utilities
         A_to_B,
         B_to_A
     }
+
+    public struct DiagramInstanceData
+    {
+        public Dictionary<int, List<DiagramComponent>> diagramData;
+        public string title;
+        public string author;
+
+        public DiagramInstanceData(string title, string author, Dictionary<int, List<DiagramComponent>> diagramData)
+        {
+            this.title = title;
+            this.author = author;
+            this.diagramData = diagramData;
+
+        }
+    }
+
+    public static class ExtraUtilities{
+
+            public static bool isEqualWithTolarance(float a, float b, float tolarance){
+                if(b + tolarance >= a && b - tolarance <= a){
+                    return true;
+                }
+                else return false;
+            }
+
+    
+
+
+
+    }
+
+
+
+
 
 
 
