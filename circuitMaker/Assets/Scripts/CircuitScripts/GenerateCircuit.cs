@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Utilities;
@@ -30,6 +31,14 @@ public class GenerateCircuit : MonoBehaviour
         this.diagramData = diagramData;
         initialiseMatrix();
         generateValues();
+        foreach (var data in diagramData)
+        {
+            Debug.Log("layer" + data.Key.ToString() + " = " + String.Join("",
+data.Value
+.ConvertAll(i => i.name.ToString())
+.ToArray()));
+        }
+
         foreach (var layerComponents in diagramData)
         {
             foreach (DiagramComponent diagramComponent in layerComponents.Value)
@@ -239,7 +248,7 @@ generatorMatrix[i]
     {
         GameObject temp;
         CircuitComponent circuitComponent;
-        for (int i = generatorMatrix[layer + 1].Count - (index); i > 0; i--)
+        for (int i = generatorMatrix[layer + 1].Count - (index+1); i > 0; i--)
         {
 
             Debug.Log("Empty");

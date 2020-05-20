@@ -1821,7 +1821,7 @@ MonoBehaviour:
   fileExtension: .csv
   filePath: Assets/DiagramFiles/
   testNameWrite: 
-  testNameRead: Test1
+  testNameRead: Gay
   generate: {fileID: 2098797995}
   circuitManager: {fileID: 0}
 --- !u!1 &375865850
@@ -2763,9 +2763,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panSpeed: 30
   panBorderThickness: 10
+  moveUp: 273
+  moveDown: 274
+  moveLeft: 276
+  MoveRight: 275
   scrollSpeed: 3.16
   minY: 5
   maxY: 40
+  panIntensity: 0
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0

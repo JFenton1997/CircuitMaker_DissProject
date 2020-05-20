@@ -96,17 +96,17 @@ public class AvowDragDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
 
             //rule #1
-            if (yToNearest.b < snapOffset && xToNearest.b < snapOffset &&
+            if (Mathf.Abs(yToNearest.b) < snapOffset && Mathf.Abs(xToNearest.b) < snapOffset &&
             ExtraUtilities.isEqualWithTolarance(xToNearest.a.rectTransform.position.y, selfRectTransform.position.y,
             xToNearest.a.diffY) && ExtraUtilities.isEqualWithTolarance(yToNearest.a.rectTransform.position.x, selfRectTransform.position.x,
             xToNearest.a.diffX))
             {
-                Debug.Log("R1  Y: " + yToNearest.a.rectTransform.name + "   X: " + xToNearest.a.rectTransform.name);
+        
                 transform.position = new Vector2(curPosition.x + xToNearest.b, curPosition.y + yToNearest.b);
 
             }
             //rule #2
-            else if (yToNearest.b < snapOffset &&
+            else if (Mathf.Abs(yToNearest.b) < snapOffset &&
             ExtraUtilities.isEqualWithTolarance(yToNearest.a.rectTransform.position.x, selfRectTransform.position.x,
             yToNearest.a.diffX))
             {
@@ -139,7 +139,7 @@ public class AvowDragDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
             }
             // rule #3
-            else if (xToNearest.b < snapOffset &&
+            else if (Mathf.Abs(xToNearest.b) < snapOffset &&
             ExtraUtilities.isEqualWithTolarance(xToNearest.a.rectTransform.position.y, selfRectTransform.position.y,
             xToNearest.a.diffY))
             {
@@ -208,6 +208,7 @@ public class AvowDragDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        Cursor.visible = true;
 
     }
 

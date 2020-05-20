@@ -9,7 +9,7 @@ using System;
 public class CsvManager : MonoBehaviour
 {
     public string fileExtension = ".csv";
-    public string filePath = "/assets/";
+    public string filePath = "Assets/DiagramFiles/";
     public String testNameWrite;
     public string testNameRead;
     public GenerateCircuit generate;
@@ -19,14 +19,14 @@ public class CsvManager : MonoBehaviour
     Dictionary<int, List<DiagramComponent>> diagramData;
     List<DiagramComponent> createdComponents;
 
-    public void testWrite()
+    public bool WriteDigram(Dictionary<int, List<DiagramComponent>> diagramData, String author, String diagramTitle)
     {
-        DiagramInstanceData diagram = new DiagramInstanceData(testNameWrite, "James Fenton", circuitManager.diagramData);
-        writeDataToCsv(diagram);
+        DiagramInstanceData diagram = new DiagramInstanceData(diagramTitle, author,  diagramData);
+        return (writeDataToCsv(diagram));
     }
 
     public void testRead(){
-        generate.GenerateCircuitObject(ReadFile(testNameRead,"James Fenton").diagramData);
+        generate.GenerateCircuitObject(ReadFile(testNameRead,"JamesTest").diagramData);
         
 
     }
@@ -155,6 +155,7 @@ public class CsvManager : MonoBehaviour
             }
 
         }
+        this.diagramData.Remove(diagramData.Count-1);
         return new DiagramInstanceData(title,author,this.diagramData);
     }
 
@@ -193,11 +194,11 @@ public class CsvManager : MonoBehaviour
         DiagramComponent d = createdComponents[createdComponents.ConvertAll(i => i.name).IndexOf(record[0])];
         d.type = (ComponentType)(Int32.Parse(record[1]));
         d.direction = (Direction)(Int32.Parse(record[2]));
-        d.Values[(ComponentParameter)0].value = (Int32.Parse(record[3]));
+        d.Values[(ComponentParameter)0].value = (float.Parse(record[3]));
         d.Values[(ComponentParameter)0].hidden = (bool.Parse(record[4]));
-        d.Values[(ComponentParameter)1].value = (Int32.Parse(record[5]));
+        d.Values[(ComponentParameter)1].value = (float.Parse(record[5]));
         d.Values[(ComponentParameter)1].hidden = (bool.Parse(record[6]));
-        d.Values[(ComponentParameter)2].value = (Int32.Parse(record[7]));
+        d.Values[(ComponentParameter)2].value = (float.Parse(record[7]));
         d.Values[(ComponentParameter)2].hidden = (bool.Parse(record[8]));
         int pointer = 9;
         while (record[pointer] != "\0")

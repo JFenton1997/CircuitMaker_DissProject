@@ -7,9 +7,16 @@ public class CameraController : MonoBehaviour
     public float panBorderThickness = 10f;
     private Camera camera;
 
+    public KeyCode moveUp,moveDown, moveLeft,MoveRight;
+
     public float scrollSpeed = 5f;
     public float minY = 10f;
     public float maxY = 80f;
+
+    private Vector3 mouseLocation;
+
+     [Range(0.1f, 1f)]
+    public float panIntensity;
 
     // Update is called once per frame
 
@@ -18,24 +25,52 @@ public class CameraController : MonoBehaviour
 		camera = transform.GetComponent<Camera>();
 
     }
+
+     void GetInputForAxis(string Axis, Vector3 dir, float response)
+    {
+        
+        float move = 0;
+        float speed = Input.GetAxis(Axis);
+        move += speed * response;
+ 
+        if (move != 0)
+        {
+            transform.Translate(dir * move);
+        }
+    }
     void Update()
     {
+        Cursor.lockState = CursorLockMode.None;
+         if(Input.GetMouseButton(3))
+        {
+            Cursor.visible = false;
+            mouseLocation = Input.mousePosition;
+            Cursor.lockState = CursorLockMode.Confined;
+            GetInputForAxis("Mouse X", Vector3.right, panIntensity);
+            GetInputForAxis("Mouse Y", Vector3.up, panIntensity);
+        }
+
+        if(Input.GetMouseButtonUp(3)){
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
 
 
 
-        if (Input.GetKey("w") )//|| Input.mousePosition.y >= Screen.height - panBorderThickness)
+
+        if (Input.GetKey(moveUp) )//|| Input.mousePosition.y >= Screen.height - panBorderThickness)
         {
             transform.Translate(Vector3.up * panSpeed * Time.deltaTime, Space.World);
         }
-        if (Input.GetKey("s"))// || Input.mousePosition.y <= panBorderThickness)
+        if (Input.GetKey(moveDown) )//|| Input.mousePosition.y <= panBorderThickness)
         {
             transform.Translate(Vector3.down * panSpeed * Time.deltaTime, Space.World);
         }
-        if (Input.GetKey("d"))// || Input.mousePosition.x >= Screen.width - panBorderThickness)
+        if (Input.GetKey(MoveRight))// || Input.mousePosition.x >= Screen.width - panBorderThickness)
         {
             transform.Translate(Vector3.right * panSpeed * Time.deltaTime, Space.World);
         }
-        if (Input.GetKey("a"))// || Input.mousePosition.x <= panBorderThickness)
+        if (Input.GetKey(moveLeft))//|| Input.mousePosition.x <= panBorderThickness)
         {
             transform.Translate(Vector3.left * panSpeed * Time.deltaTime, Space.World);
         }

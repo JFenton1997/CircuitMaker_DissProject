@@ -1,36 +1,27 @@
-Circuit Side - 1/2 day
--delete wires
--polish wire placement
--polish UI
--add UI animations
+Things to do
+
+GENRAL
+- link controles to both
+- link Globals to Both
 
 
--generation
- > change horizonal cell calculation for bottom
+CSV
+- include proper question generation
+- run correctly.
 
-UI
-- delete wire tool
-- delete 
 
-CSV - 3days max
--datatype store and load
+AVOW TEACH
+- Make Generator
+- Calc Cell Values
+- error Handeling 
+- colouring of connections
 
-AVOW side - 3days max
--BUGS
-    -click and drag
-        -FLoating un-snappy
-        -Clean Snap Functions
-        
+Circuit TEACH
+- redo UI + clean Dynamic Text error
+- Inport Tooltips#
 
-MENU - 3days max
--add menu to navigate application
-    -settings
-        -audio
-        -how to
-    -teacher
-        -make circuit and save
-    student
-        -recreate circuit
+Do Student Sides for both
+MENU
+POLISH
 
-Recreated
-    -creates circuits from datatype
+FINISH by 26th - 28th LATEST of may

@@ -296,5 +296,23 @@ public class AvowConponent : MonoBehaviour
 
     }
 
+    public void removeAvowConnection(AvowConponent avowConponent){
+        TopConnections.Remove(avowConponent);
+        BotConnections.Remove(avowConponent);
+        RightConnections.Remove(avowConponent);
+        LeftConnections.Remove(avowConponent);
+    }
+
+    private void OnDestroy() {
+        this.GetComponent<AvowDragDrop>().enabled = false;
+        try{
+            GetComponentInParent<AvowManager>().removeAvow(this);
+        }
+        catch(System.Exception ex){
+            Debug.LogWarning(ex.Message);
+
+        }
+    }
+
 
 }
