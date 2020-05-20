@@ -1769,6 +1769,7 @@ GameObject:
   m_Component:
   - component: {fileID: 368615417}
   - component: {fileID: 368615418}
+  - component: {fileID: 368615419}
   m_Layer: 0
   m_Name: ProgramMaster
   m_TagString: Untagged
@@ -1805,6 +1806,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvas: {fileID: 783383217}
+--- !u!114 &368615419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 368615416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27399dda5d64e6745a39a38cd172fb4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fileExtension: .csv
+  filePath: Assets/DiagramFiles/
+  testNameWrite: 
+  testNameRead: Test1
+  generate: {fileID: 2098797995}
+  circuitManager: {fileID: 0}
 --- !u!1 &375865850
 GameObject:
   m_ObjectHideFlags: 0
@@ -2279,8 +2298,8 @@ MonoBehaviour:
   onClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2098797995}
-        m_MethodName: runGeneration
+      - m_Target: {fileID: 368615419}
+        m_MethodName: testRead
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5919,9 +5938,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8be4e6512ea11b47b47cb0630bbe6a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dragRectTransform: {fileID: 326223009}
-  window: {fileID: 827021339}
-  offset: 2.85
 --- !u!114 &843023420
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8430,9 +8446,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8be4e6512ea11b47b47cb0630bbe6a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dragRectTransform: {fileID: 586315402}
-  window: {fileID: 22465536}
-  offset: 2.85
 --- !u!114 &1313863012
 MonoBehaviour:
   m_ObjectHideFlags: 0
