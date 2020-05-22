@@ -116,7 +116,7 @@ public class AvowDragDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
                     //Debug.Log("R3 X: " + xToNearest.a.rectTransform.name);
                     if (yToNearest.b > 0)
                     {
-                        Debug.Log("bugD");
+                        
                         transform.position = new Vector2(
                             YAvow.nextFreeSlotInSpaceInDirection('D') + selfRectTransform.sizeDelta.x / 2, curPosition.y + yToNearest.b);
                         direction = 'D';
@@ -124,7 +124,7 @@ public class AvowDragDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
                     else
                     {
-                        Debug.Log("bugU");
+                        
                         transform.position = new Vector2(
 
                             YAvow.nextFreeSlotInSpaceInDirection('U') + selfRectTransform.sizeDelta.x / 2, curPosition.y + yToNearest.b);
@@ -333,11 +333,24 @@ public class AvowDragDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
     public void OnPointerEnter(PointerEventData eventData)
     {
         this.GetComponent<AvowConponent>().ColorToHover();
+        
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         this.GetComponent<AvowConponent>().ColorToMain();
+         foreach(AvowConponent avow in this.GetComponent<AvowConponent>().TopConnections){
+            avow.ColorToMain();
+        }
+        foreach(AvowConponent avow in this.GetComponent<AvowConponent>().BotConnections){
+            avow.ColorToMain();
+        }
+        foreach(AvowConponent avow in this.GetComponent<AvowConponent>().RightConnections){
+            avow.ColorToMain();
+        }
+        foreach(AvowConponent avow in this.GetComponent<AvowConponent>().LeftConnections){
+            avow.ColorToMain();
+        }
     }
 
 

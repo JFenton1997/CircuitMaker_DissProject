@@ -9,6 +9,7 @@ public static class GlobalValues
 
     public static float AvowScaler;
     public static bool ToolTipsEnabled;
+    public static string workingDirectory;
 
 
     

@@ -1,5 +1,13 @@
 Things to do
 
+FOR 21/5/20
+- AVOW GEN DONE
+- QUESTION AND CSV DONE
+- FIX CIRCUIT GUI
+-POLISH FOR STUDENT SIDE.
+
+
+ALL
 GENRAL
 - link controles to both
 - link Globals to Both
@@ -23,5 +31,10 @@ Circuit TEACH
 Do Student Sides for both
 MENU
 POLISH
+
+
+KNOWN BUGS:
+-Complicated Circuits dont generate correctly.
+-Snapping Still little buggy but functional.
 
 FINISH by 26th - 28th LATEST of may

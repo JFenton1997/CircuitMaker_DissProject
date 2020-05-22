@@ -90,12 +90,13 @@ public class CircuitManager : MonoBehaviour
 
         }
         diagramData.Remove(layerValue);
-        foreach (var data in diagramData)
+                foreach (var data in diagramData)
         {
             Debug.Log("layer" + data.Key.ToString() + " = " + String.Join("",
 data.Value
 .ConvertAll(i => i.name.ToString())
 .ToArray()));
+
 
 
         }

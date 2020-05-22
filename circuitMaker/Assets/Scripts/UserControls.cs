@@ -10,6 +10,7 @@ public class UserControls : MonoBehaviour
         GlobalValues.AvowSnapping = false;
         GlobalValues.AvowSnappingOffset = 0.5f;
         GlobalValues.ToolTipsEnabled = true;
+        GlobalValues.workingDirectory = "Assets/DiagramFiles/"; 
     }
     public KeyCode toggleSnap = KeyCode.LeftShift;
     public KeyCode plusOffset = KeyCode.N;

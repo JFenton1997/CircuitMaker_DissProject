@@ -8,9 +8,10 @@ using Utilities;
 public class AvowManager : MonoBehaviour
 {
 
-    private List<AvowConponent> allAvow;
+    public List<AvowConponent> allAvow;
     public GameObject avowPrefab;
     public char currentName;
+    public int scale = 1;
 
     public CsvManager csv;
 
@@ -109,17 +110,25 @@ public class AvowManager : MonoBehaviour
             avow.component.Values[ComponentParameter.RESISTANCE].value = avow.voltage / avow.current;
             avow.component.Aconnections = avow.TopConnections.ConvertAll(x => x.component);
             avow.component.Bconnections = avow.BotConnections.ConvertAll(x => x.component);
-            avow.component.name = avow.name;
+            avow.component.name = avow.gameObject.name;
         }
     }
 
     public void GenerateDiagramData()
     {
+        if (allAvow.Count == 0)
+        {
+            Debug.LogError("NOTHING TO SAVE ");
+            return;
+        }
+        // update Diagram Conponent of the Avows
         updateAllValue();
-        List<Pair<AvowConponent, string>> ErrorAvow = new List<Pair<AvowConponent, string>>();
-        Dictionary<int, List<DiagramComponent>> diagramData = new Dictionary<int, List<DiagramComponent>>();
-        List<DiagramComponent> listOfConponents = new List<DiagramComponent>();
-        List<DiagramComponent> visitedConponents = new List<DiagramComponent>();
+        //initialise Lists values
+        List<Pair<AvowConponent, string>> ErrorAvow = new List<Pair<AvowConponent, string>>(); //errors
+        Dictionary<int, List<DiagramComponent>> diagramData = new Dictionary<int, List<DiagramComponent>>(); //diagram datatype
+        List<DiagramComponent> listOfConponents = new List<DiagramComponent>(); // used to insert data into diagram data
+        List<DiagramComponent> visitedConponents = new List<DiagramComponent>(); // keep track of prev
+        //adding CELL into layer 0
         int layerNumber = 0;
         listOfConponents.Add(new DiagramComponent());
         listOfConponents[0].name = "CELL";
@@ -128,36 +137,44 @@ public class AvowManager : MonoBehaviour
         diagramData.Add(layerNumber, listOfConponents);
         layerNumber++;
         listOfConponents = new List<DiagramComponent>();
+        //getting layer 1 = all AVOW with no top connections
         listOfConponents = allAvow.ConvertAll(x => x.component).FindAll(x => x.Aconnections.Count == 0);
         diagramData.Add(layerNumber, listOfConponents);
         visitedConponents.AddRange(listOfConponents);
+        //keep looping until next layer has nothing i.e. end of diagram
         while (diagramData[layerNumber].Count != 0)
         {
             listOfConponents = new List<DiagramComponent>();
+            //for each Avow on layer 
             foreach (DiagramComponent diagramComponent in diagramData[layerNumber].ToArray())
             {
+                //for each bot connection
                 foreach (DiagramComponent downConnected in diagramComponent.Bconnections.ToArray())
                 {
+                    //if visited before, remove visisted from prev layers
                     if (visitedConponents.Contains(downConnected))
                     {
+                        Debug.Log("VISITED BEFORE: " + downConnected.name);
                         foreach (var keyValuePair in diagramData)
                         {
                             keyValuePair.Value.Remove(downConnected);
                         }
                     }
+
+                    // if not currenlty visisted this layer, add to next layer
+                    if (!listOfConponents.Contains(downConnected)) listOfConponents.Add(downConnected);
+                    //add conponent into visisted
                     visitedConponents.Add(downConnected);
-                    if(!listOfConponents.Contains(downConnected))listOfConponents.Add(downConnected);
 
                 }
 
             }
+            //insert into dictionary
             layerNumber++;
             diagramData.Add(layerNumber, listOfConponents);
-            Debug.Log("Layer " + layerNumber + " size: " + diagramData[layerNumber].Count);
-
-
 
         }
+        //debug info for generated data
         foreach (var data in diagramData)
         {
             Debug.Log("layer" + data.Key.ToString() + " = " + String.Join("",
@@ -166,14 +183,21 @@ data.Value
 .ToArray()));
 
         }
+        // remove last layer, due to it being empty
+        Debug.Log(layerNumber + "   " + diagramData.Count);
         diagramData.Remove(layerNumber);
+
+        //Final Checks
+        //if  2 AVOWs exist with no connections, or 1 Avow with a large diagramData (more than just 1 element), then a avow is unconnected
         List<AvowConponent> unconnected = allAvow.FindAll(x => x.TopConnections.Count == 0 && x.BotConnections.Count == 0 &&
         x.LeftConnections.Count == 0 && x.RightConnections.Count == 0);
-        if (unconnected.Count > 0 || (unconnected.Count == 1 && diagramData[1].Count > 1))
+        if (unconnected.Count > 1 || (unconnected.Count == 1 && diagramData[1].Count > 1))
         {
+            //error avow
             foreach (AvowConponent avow in unconnected)
             {
-                avow.ColorToParam(Color.red);
+                ErrorAvow.Add(new Pair<AvowConponent, string>(avow, "Avow is seen as Unconnected, please delete or make sure the avow is connected"));
+
             }
 
 
@@ -192,7 +216,25 @@ data.Value
                 diagramData[0][0].Aconnections.Add(d);
                 d.Aconnections.Add(diagramData[0][0]);
             }
-            Debug.Log(csv.WriteDigram(diagramData, "JamesTest", "GAY"));
+
+            //calculate Cell Values
+            float voltage = 0;
+            float current = 0;
+            foreach (DiagramComponent d in diagramData[1])
+            {
+                current += d.Values[ComponentParameter.CURRENT].value;
+            }
+            foreach (var d in diagramData)
+            {
+                voltage += d.Value[0].Values[ComponentParameter.VOLTAGE].value;
+
+            }
+            diagramData[0][0].Values[ComponentParameter.VOLTAGE].value = voltage;
+            diagramData[0][0].Values[ComponentParameter.CURRENT].value = current;
+            diagramData[0][0].Values[ComponentParameter.RESISTANCE].value = 0f;
+
+            // submit avow diagram to save window
+            transform.Find("/UI/SaveDiagram").GetComponent<SaveFileWindow>().intialiseSaveWindow(diagramData);
 
         }
 

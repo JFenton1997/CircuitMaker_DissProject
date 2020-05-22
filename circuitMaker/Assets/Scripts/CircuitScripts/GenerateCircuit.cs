@@ -248,7 +248,7 @@ generatorMatrix[i]
     {
         GameObject temp;
         CircuitComponent circuitComponent;
-        for (int i = generatorMatrix[layer + 1].Count - (index+1); i > 0; i--)
+        for (int i = generatorMatrix[layer + 1].Count - index; i > 0; i--)
         {
 
             Debug.Log("Empty");

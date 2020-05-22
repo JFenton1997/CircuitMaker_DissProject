@@ -8,36 +8,43 @@ using System;
 
 public class CsvManager : MonoBehaviour
 {
-    public string fileExtension = ".csv";
+    private string fileExtension = ".csv";
     public string filePath = "Assets/DiagramFiles/";
     public String testNameWrite;
     public string testNameRead;
     public GenerateCircuit generate;
-    
+
     public CircuitManager circuitManager;
     List<string> toWrite;
     Dictionary<int, List<DiagramComponent>> diagramData;
     List<DiagramComponent> createdComponents;
 
-    public bool WriteDigram(Dictionary<int, List<DiagramComponent>> diagramData, String author, String diagramTitle)
+    public bool WriteDigram(Dictionary<int, List<DiagramComponent>> diagramData, String author, String diagramTitle, String diagramQuestion, Pair<bool, bool> diagramEnabled)
     {
-        DiagramInstanceData diagram = new DiagramInstanceData(diagramTitle, author,  diagramData);
+        DiagramInstanceData diagram = new DiagramInstanceData(diagramTitle, author, diagramQuestion, diagramEnabled, diagramData);
         return (writeDataToCsv(diagram));
     }
 
-    public void testRead(){
-        generate.GenerateCircuitObject(ReadFile(testNameRead,"JamesTest").diagramData);
-        
+    public void testRead()
+    {
+        generate.GenerateCircuitObject(ReadFile(testNameRead, "JamesTest").diagramData);
 
+
+    }
+
+    public Dictionary<int, List<DiagramComponent>> avowTestRead()
+    {
+        return ReadFile(testNameRead, "JamesTest").diagramData;
     }
 
 
     // Update is called once per frame
     public bool writeDataToCsv(DiagramInstanceData diagram)
     {
+        filePath = GlobalValues.workingDirectory;
         toWrite = new List<string>();
         this.diagramData = diagram.diagramData;
-        writeTitleBar(diagram.title, diagram.author);
+        writeTitleBar(diagram.title, diagram.author, diagram.diagramQuestion, diagram.diagramEnabled);
         writeComponentBar();
         foreach (var d in diagramData)
         {
@@ -52,9 +59,9 @@ public class CsvManager : MonoBehaviour
 
 
 
-    private void writeTitleBar(string title, string author)
+    private void writeTitleBar(string title, string author, string diagramQuestion, Pair<bool, bool> diagramEnabled)
     {
-        string recordData = title + "," + author + "," + System.DateTime.Now + ",\0";
+        string recordData = title + "," + author + "," + diagramQuestion + "," + diagramEnabled.a + "," + diagramEnabled.b + "," + System.DateTime.Now + ",\0";
         toWrite.Add(recordData);
     }
     public void writeComponentBar()
@@ -120,8 +127,11 @@ public class CsvManager : MonoBehaviour
 
     public DiagramInstanceData ReadFile(string filename)
     {
-        string author="";
-        string title="";
+        filePath = GlobalValues.workingDirectory;
+        string author = "";
+        string title = "";
+        string question = "";
+        Pair<bool,bool> diagramEnabled = new Pair<bool, bool>();
         createdComponents = new List<DiagramComponent>();
         diagramData = new Dictionary<int, List<DiagramComponent>>();
 
@@ -134,9 +144,12 @@ public class CsvManager : MonoBehaviour
                 var record = line.Split(',');
                 if (lineNumber == 0)
                 {
-                    Pair<string, string> info = getTitleBar(record);
-                    author = info.b;
-                    title = info.a;
+                    string[] info = getTitleBar(record);
+                    author = info[0];
+                    title = info[1];
+                    question = info[2];
+                    diagramEnabled.a = (bool.Parse(info[3]));
+                    diagramEnabled.b = (bool.Parse(info[4]));
                 }
                 else if (lineNumber == 1)
                 {
@@ -155,14 +168,14 @@ public class CsvManager : MonoBehaviour
             }
 
         }
-        this.diagramData.Remove(diagramData.Count-1);
-        return new DiagramInstanceData(title,author,this.diagramData);
+        this.diagramData.Remove(diagramData.Count - 1);
+        return new DiagramInstanceData(title, author, question,diagramEnabled, this.diagramData);
     }
 
 
-    private Pair<String, String> getTitleBar(string[] record)
+    private String[] getTitleBar(string[] record)
     {
-        return new Pair<String, String>(record[0], record[1]);
+        return new string[5] { record[0], record[1], record[2],record[3],record[4] };
 
     }
 
@@ -203,7 +216,7 @@ public class CsvManager : MonoBehaviour
         int pointer = 9;
         while (record[pointer] != "\0")
         {
-            Debug.Log(createdComponents.ConvertAll(i => i.name).IndexOf(record[pointer])+ " "+ record[pointer]);
+            Debug.Log(createdComponents.ConvertAll(i => i.name).IndexOf(record[pointer]) + " " + record[pointer]);
             d.Aconnections.Add(createdComponents[createdComponents.ConvertAll(i => i.name).IndexOf(record[pointer])]);
             pointer++;
             if (pointer > 1000)

@@ -7,10 +7,11 @@ using UnityEngine.Events;
 public class AvowConponent : MonoBehaviour
 {
     public DiagramComponent component;
-    public Color fillColour, connectedColor, hoverColor = Color.gray, selectedColor = Color.magenta;
+    public Color fillColour, connectedColor = Color.green, hoverColor = Color.gray, selectedColor = Color.magenta, errorColor = Color.red, pastColor;
     public RectTransform AvowFillColorTrans;
     public BoxCollider2D boxCollider2D;
     private Image AvowFillColorImg;
+    private AvowManager avowManager;
 
 
 [SerializeField]
@@ -45,6 +46,7 @@ public class AvowConponent : MonoBehaviour
         BotConnections = new List<AvowConponent>();
         LeftConnections = new List<AvowConponent>();
         RightConnections = new List<AvowConponent>();
+        avowManager = transform.GetComponentInParent<AvowManager>();
 
 
     }
@@ -55,7 +57,7 @@ public class AvowConponent : MonoBehaviour
         updateFill();
         this.GetComponent<BoxCollider2D>().size = fillSize;
         Collider2D[] hit = new Collider2D[10];
-        Color CurrentColor = AvowFillColorImg.color;
+        Color pastColor = AvowFillColorImg.color;
         if(boxCollider2D.OverlapCollider(new ContactFilter2D(),  hit) >0){
 
            AvowFillColorImg.color = Color.red;
@@ -65,7 +67,7 @@ public class AvowConponent : MonoBehaviour
                 ColorToMain();
             }
             else{
-                AvowFillColorImg.color = CurrentColor;
+                AvowFillColorImg.color = pastColor;
 
             }
             
@@ -90,14 +92,15 @@ public class AvowConponent : MonoBehaviour
 
     }
 
-    private void updateSize(float voltage, float current)
+    public void updateSize(float voltage, float current)
     {
-        rectTransform.sizeDelta = new Vector2(current, voltage);
+        if(current >0 && voltage > 0){
+        rectTransform.sizeDelta = new Vector2(current * avowManager.scale, voltage * avowManager.scale);
+        }
     }
 
     public void ColorToConnected()
     {
-
         AvowFillColorImg.color = connectedColor;
     }
 
@@ -109,6 +112,19 @@ public class AvowConponent : MonoBehaviour
 
     public void ColorToHover(){
         AvowFillColorImg.color = hoverColor;
+        foreach(AvowConponent avow in TopConnections){
+            avow.ColorToConnected();
+        }
+        foreach(AvowConponent avow in BotConnections){
+            avow.ColorToConnected();
+        }
+        foreach(AvowConponent avow in RightConnections){
+            avow.ColorToConnected();
+        }
+        foreach(AvowConponent avow in LeftConnections){
+            avow.ColorToConnected();
+        }
+
 
     }
 
