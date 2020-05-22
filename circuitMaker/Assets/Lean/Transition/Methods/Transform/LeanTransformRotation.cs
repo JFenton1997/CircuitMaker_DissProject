@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified Transform.rotation to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanTransformRotation")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform.rotation" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform/Transform.rotation" + LeanTransition.MethodsMenuSuffix + "(LeanTransformRotation)")]
 	public class LeanTransformRotation : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -32,22 +32,22 @@ namespace Lean.Transition.Method
 		public class State : LeanStateWithTarget<Transform>
 		{
 			[Tooltip("The rotation we will transition to.")]
-			public Quaternion Rotation;
+			public Quaternion Rotation = Quaternion.identity;
 
 			[Tooltip("The ease method that will be used for the transition.")]
 			public LeanEase Ease = LeanEase.Smooth;
 
 			[System.NonSerialized] private Quaternion oldRotation;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.rotation != Rotation;
+					return Target != null && Target.rotation != Rotation ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				Rotation = Target.rotation;
 			}

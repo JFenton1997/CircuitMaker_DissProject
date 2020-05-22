@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Lean.Transition.Method
 {
-	/// <summary>This component allows you to transition the specified GameObject.SetActive to the target value.</summary>
+	/// <summary>This component will call <b>GameObject.SetActive</b> with the specified <b>Active</b> state when this transition completes.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanGameObjectSetActive")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "GameObject.SetActive" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "GameObject/GameObject.SetActive" + LeanTransition.MethodsMenuSuffix + "(LeanGameObjectSetActive)")]
 	public class LeanGameObjectSetActive : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -33,21 +33,17 @@ namespace Lean.Transition.Method
 			[Tooltip("The state we will transition to.")]
 			public bool Active;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.activeSelf != Active;
+					return Target != null && Target.activeSelf != Active ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				Active = Target.activeSelf;
-			}
-
-			public override void BeginWithTarget()
-			{
 			}
 
 			public override void UpdateWithTarget(float progress)

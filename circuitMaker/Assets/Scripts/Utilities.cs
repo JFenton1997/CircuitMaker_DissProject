@@ -6,6 +6,33 @@ using UnityEngine;
 
 namespace Utilities
 {
+
+
+    [System.Serializable]
+    public class DiagramComponent
+    {
+        public string name;
+        public ComponentType type;
+        public List<DiagramComponent> Aconnections, Bconnections;
+        public Dictionary<ComponentParameter, Pair> Values;
+        public Direction direction;
+
+        public DiagramComponent()
+        {
+            Aconnections = new List<DiagramComponent>();
+            Bconnections = new List<DiagramComponent>();
+            Values = new Dictionary<ComponentParameter, Pair>();
+            Values.Add(ComponentParameter.VOLTAGE, new Pair(1, false));
+            Values.Add(ComponentParameter.CURRENT, new Pair(1, false));
+            Values.Add(ComponentParameter.RESISTANCE, new Pair(1, false));
+
+
+        }
+
+
+
+    }
+
     [System.Serializable]
     public class Pair<A, B>
     {
@@ -29,18 +56,18 @@ namespace Utilities
     public class Pair
     {
         [SerializeField]
-        private float _value;
+        private double _value;
         [SerializeField]
         private bool _hidden;
         public Pair() { }
-        public Pair(float value, bool hidden)
+        public Pair(double value, bool hidden)
         {
             this._value = value;
             this._hidden = hidden;
         }
 
 
-        public float value { get { return _value; } set { _value = value; } }
+        public double value { get { return _value; } set { _value = value; } }
         public bool hidden { get { return _hidden; } set { _hidden = value; } }
 
 
@@ -89,32 +116,35 @@ namespace Utilities
         public string title;
         public string author;
         public string diagramQuestion;
-        public Pair<bool,bool> diagramEnabled;
+        public Pair<bool, bool> diagramEnabled;
 
-        public DiagramInstanceData(string title, string author, string diagramQuestion, Pair<bool,bool> diagramEnabled ,Dictionary<int, List<DiagramComponent>> diagramData)
+        public DiagramInstanceData(string title, string author, string diagramQuestion, Pair<bool, bool> diagramEnabled, Dictionary<int, List<DiagramComponent>> diagramData)
         {
             this.title = title;
             this.author = author;
             this.diagramQuestion = diagramQuestion;
             this.diagramData = diagramData;
             this.diagramEnabled = diagramEnabled;
-            
 
-            
+
+
 
         }
     }
 
-    public static class ExtraUtilities{
+    public static class ExtraUtilities
+    {
 
-            public static bool isEqualWithTolarance(float a, float b, float tolarance){
-                if(b + tolarance >= a && b - tolarance <= a){
-                    return true;
-                }
-                else return false;
+        public static bool isEqualWithTolarance(float a, float b, float tolarance)
+        {
+            if (b + tolarance >= a && b - tolarance <= a)
+            {
+                return true;
             }
+            else return false;
+        }
 
-    
+
 
 
 

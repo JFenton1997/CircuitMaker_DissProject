@@ -1155,9 +1155,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Alias: 
   Data:
-    Duration: 1
+    Duration: 0.5
     Target: {fileID: 247408278}
-    Rotation: {x: 0, y: 0, z: 0, w: 0}
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
     Ease: 100
 --- !u!114 &1259795365
 MonoBehaviour:
@@ -1184,9 +1184,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Alias: 
   Data:
-    Duration: 1
+    Duration: 0.5
     Target: {fileID: 247408278}
-    Rotation: {x: 90, y: 0, z: 0, w: 0}
+    Rotation: {x: 0.70710677, y: 0, z: 0, w: 0.70710677}
     Ease: 100
 --- !u!4 &1259795367
 Transform:
@@ -1310,6 +1310,11 @@ MonoBehaviour:
     aliases: []
     targets: []
   RequiredKey: 32
+  OnAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!4 &1930232879
 Transform:
   m_ObjectHideFlags: 0

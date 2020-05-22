@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 	/// <summary>This allows you to change where in the game loop transitions after this will update.
 	/// NOTE: Once you submit the previous transitions, this will be reset to default.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanJoinDelay")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "JoinDelay" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "JoinDelay" + LeanTransition.MethodsMenuSuffix + "(LeanJoinDelay)")]
 	public class LeanJoinDelay : LeanMethod
 	{
 		public override void Register()
@@ -23,7 +23,7 @@ namespace Lean.Transition
 	{
 		/// <summary>This allows you to connect the previous and next transitions, and insert a delay. This means the next transition will only begin when the previous one finishes.</summary>
 		public static T JoinDelayTransition<T>(this T target, float delay)
-			where T : DiagramComponent
+			where T : Component
 		{
 			LeanTransition.CurrentQueue = LeanTransition.CurrentHead; Method.LeanDelay.Register(delay); LeanTransition.CurrentQueue = LeanTransition.CurrentHead; return target;
 		}

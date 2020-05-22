@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Lean.Transition.Method
 {
-	/// <summary>This component allows you to transition the specified SpriteRenderer.color to the target value.</summary>
+	/// <summary>This component allows you to transition the specified <b>SpriteRenderer.color</b> to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanSpriteRendererColor")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "SpriteRenderer.color" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "SpriteRenderer/SpriteRenderer.color" + LeanTransition.MethodsMenuSuffix + "(LeanSpriteRendererColor)")]
 	public class LeanSpriteRendererColor : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -39,15 +39,15 @@ namespace Lean.Transition.Method
 
 			[System.NonSerialized] private Color oldColor;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.color != Color;
+					return Target != null && Target.color != Color ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				Color = Target.color;
 			}

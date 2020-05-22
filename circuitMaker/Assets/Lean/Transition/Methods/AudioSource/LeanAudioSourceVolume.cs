@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified AudioSource.volume to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanCanvasGroupAlpha")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "AudioSource.volume" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "AudioSource/AudioSource.volume" + LeanTransition.MethodsMenuSuffix + "(LeanAudioSourceVolume)")]
 	public class LeanAudioSourceVolume : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -40,15 +40,15 @@ namespace Lean.Transition.Method
 
 			[System.NonSerialized] private float oldVolume;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.volume != Volume;
+					return Target != null && Target.volume != Volume ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				Volume = Target.volume;
 			}

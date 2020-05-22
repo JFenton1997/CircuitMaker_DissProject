@@ -21,7 +21,7 @@ namespace Lean.Transition.Method
 	/// <summary>This allows you to change where in the game loop transitions after this will update.
 	/// NOTE: Once you submit the previous transitions, this will be reset to default.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanJoin")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Join" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Join" + LeanTransition.MethodsMenuSuffix + "(LeanJoin)")]
 	public class LeanJoin : LeanMethod
 	{
 		public override void Register()
@@ -39,7 +39,7 @@ namespace Lean.Transition
 	{
 		/// <summary>This allows you to connect the previous and next transitions. This means the next transition will only begin when the previous one finishes.</summary>
 		public static T JoinTransition<T>(this T target)
-			where T : Transform
+			where T : Component
 		{
 			LeanTransition.CurrentQueue = LeanTransition.CurrentHead; return target;
 		}

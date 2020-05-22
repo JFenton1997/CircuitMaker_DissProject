@@ -17,9 +17,9 @@ namespace Lean.Transition
 
 		public const string MethodsMenuPrefix = "Lean/Transition/Methods/";
 
-		public const string MethodsMenuSuffix = " Transition";
+		public const string MethodsMenuSuffix = " Transition ";
 
-		public const string HelpUrlPrefix = "http://carloswilkes.github.io/Documentation/LeanTransition#";
+		public const string HelpUrlPrefix = "http://carloswilkes.com/Documentation/LeanTransition#";
 
 		/// <summary>This allows you to set where in the game loop animations are updated when timing = LeanTime.Default.</summary>
 		public LeanTiming DefaultTiming { set { defaultTiming = value; } get { return defaultTiming; } } [SerializeField] [UnityEngine.Serialization.FormerlySerializedAs("Timing")] private LeanTiming defaultTiming = LeanTiming.UnscaledUpdate;
@@ -48,6 +48,8 @@ namespace Lean.Transition
 		private static LeanState currentHead;
 
 		private static LeanState currentQueue;
+
+		private static LeanState defaultQueue;
 
 		private static LeanTiming currentTiming;
 
@@ -186,6 +188,8 @@ namespace Lean.Transition
 		/// <summary>This will reset the <b>CurrentTiming</b>, <b>CurrentQueue</b>, and <b>CurrentSpeed</b> values.</summary>
 		public static void ResetState()
 		{
+			defaultQueue = null;
+
 			ResetTiming();
 
 			ResetQueue();
@@ -235,7 +239,7 @@ namespace Lean.Transition
 		}
 
 		/// <summary>This will begin all transitions on the specified GameObject, and all its children.</summary>
-		public static void InsertTransitions(GameObject root, float speed = 1.0f)
+		public static void InsertTransitions(GameObject root, float speed = 1.0f, LeanState parentHead = null)
 		{
 			if (root != null)
 			{
@@ -244,7 +248,7 @@ namespace Lean.Transition
 		}
 
 		/// <summary>This will begin all transitions on the specified Transform, and all its children.</summary>
-		public static void InsertTransitions(Transform root, float speed = 1.0f)
+		public static void InsertTransitions(Transform root, float speed = 1.0f, LeanState parentHead = null)
 		{
 			if (root != null)
 			{
@@ -254,6 +258,14 @@ namespace Lean.Transition
 
 				currentSpeed *= speed;
 
+				if (parentHead != null)
+				{
+					currentHead  = parentHead;
+					currentQueue = parentHead;
+				}
+
+				defaultQueue = parentHead;
+
 				for (var i = min; i < max; i++)
 				{
 					baseMethodStack[i].Register();
@@ -261,13 +273,11 @@ namespace Lean.Transition
 
 				baseMethodStack.RemoveRange(min, max - min);
 
-				var head = currentHead;
+				var childParentHead = currentHead;
 
 				for (var i = 0; i < root.childCount; i++)
 				{
-					currentQueue = head;
-
-					InsertTransitions(root.GetChild(i));
+					InsertTransitions(root.GetChild(i), 1.0f, childParentHead);
 				}
 
 				currentSpeed = spd;
@@ -326,7 +336,7 @@ namespace Lean.Transition
 								if (existingType != targetType)
 								{
 									// If both are components then the clash can be resolved by using GameObject
-									if (targetType.IsSubclassOf(typeof(DiagramComponent)) == true)
+									if (targetType.IsSubclassOf(typeof(Component)) == true)
 									{
 										// If it's already a GameObject, skip
 										if (existingType == typeof(GameObject))
@@ -334,7 +344,7 @@ namespace Lean.Transition
 											continue;
 										}
 										// Change existing type to GameObject?
-										else if (existingType.IsSubclassOf(typeof(DiagramComponent)) == true)
+										else if (existingType.IsSubclassOf(typeof(Component)) == true)
 										{
 											aliasTypePairs[alias] = typeof(GameObject);
 
@@ -397,7 +407,7 @@ namespace Lean.Transition
 			{
 				state.BeginAfter(currentQueue);
 
-				currentQueue = null;
+				currentQueue = defaultQueue;
 			}
 
 			// Make this the new head
@@ -529,11 +539,29 @@ namespace Lean.Transition
 
 		private void UpdateAll(List<LeanState> states, float delta)
 		{
-			currentHead = null;
+			ResetState();
 
 			for (var i = states.Count - 1; i >= 0; i--)
 			{
 				var state = states[i];
+
+				// If we have a negative duration, skip ahead of time?
+				if (state.Prev.Count > 0 && state.Duration < 0.0f)
+				{
+					var skip = -state.Duration;
+
+					for (var j = state.Prev.Count - 1; j >= 0; j--)
+					{
+						var prev = state.Prev[j];
+
+						if (prev.Remaining <= skip)
+						{
+							prev.Next.Remove(state);
+
+							state.Prev.RemoveAt(j);
+						}
+					}
+				}
 
 				// Only update if the previous transitions have finished
 				if (state.Prev.Count == 0)

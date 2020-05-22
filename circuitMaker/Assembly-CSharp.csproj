@@ -36,6 +36,7 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\ExitScript.cs" />
      <Compile Include="Assets\Lean\Common\Examples\Scripts\LeanCircuit.cs" />
      <Compile Include="Assets\Lean\Common\Examples\Scripts\LeanDocumentation.cs" />
      <Compile Include="Assets\Lean\Common\Examples\Scripts\LeanLinkTo.cs" />
@@ -68,6 +69,7 @@
      <Compile Include="Assets\Lean\GUI\Scripts\LeanWindowCloser.cs" />
      <Compile Include="Assets\Lean\Transition\Examples\Scripts\LeanAnimation.cs" />
      <Compile Include="Assets\Lean\Transition\Examples\Scripts\LeanAnimationKeyPress.cs" />
+     <Compile Include="Assets\Lean\Transition\Examples\Scripts\LeanAnimationOnce.cs" />
      <Compile Include="Assets\Lean\Transition\Examples\Scripts\LeanAnimationRepeater.cs" />
      <Compile Include="Assets\Lean\Transition\Examples\Scripts\RepeatFromCode.cs" />
      <Compile Include="Assets\Lean\Transition\Methods\AudioSource\LeanAudioSourceVolume.cs" />
@@ -83,6 +85,9 @@
      <Compile Include="Assets\Lean\Transition\Methods\LeanQueue.cs" />
      <Compile Include="Assets\Lean\Transition\Methods\LeanTime.cs" />
      <Compile Include="Assets\Lean\Transition\Methods\LeanTimeScale.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Material\LeanMaterialColor.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Material\LeanMaterialFloat.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Material\LeanMaterialVector.cs" />
      <Compile Include="Assets\Lean\Transition\Methods\SpriteRenderer\LeanSpriteRendererColor.cs" />
      <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformEulerAngles.cs" />
      <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformLocalEulerAngles.cs" />
@@ -93,6 +98,9 @@
      <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformLocalRotation.cs" />
      <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformLocalScale.cs" />
      <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformPosition.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformPositionX.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformPositionY.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformPositionZ.cs" />
      <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformRotate.cs" />
      <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformRotation.cs" />
      <Compile Include="Assets\Lean\Transition\Methods\Transform\LeanTransformTranslate.cs" />
@@ -106,6 +114,8 @@
      <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformAnchoredPosition.cs" />
      <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformAnchoredPositionX.cs" />
      <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformAnchoredPositionY.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformOffsetMax.cs" />
+     <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformOffsetMin.cs" />
      <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformPivot.cs" />
      <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformPivotX.cs" />
      <Compile Include="Assets\Lean\Transition\Methods\UI\LeanRectTransformPivotY.cs" />
@@ -126,7 +136,6 @@
      <Compile Include="Assets\Scripts\AvowScripts\AvowManager.cs" />
      <Compile Include="Assets\Scripts\AvowScripts\AvowValuesPanel.cs" />
      <Compile Include="Assets\Scripts\BuildManager.cs" />
-     <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\CircuitScripts\CircuitComponent.cs" />
      <Compile Include="Assets\Scripts\CircuitScripts\CircuitComponentPanel.cs" />
      <Compile Include="Assets\Scripts\CircuitScripts\CircuitManager.cs" />
@@ -135,6 +144,7 @@
      <Compile Include="Assets\Scripts\CircuitScripts\GridMove.cs" />
      <Compile Include="Assets\Scripts\CircuitScripts\Wire.cs" />
      <Compile Include="Assets\Scripts\ComponentSelect.cs" />
+     <Compile Include="Assets\Scripts\Controllers\CameraController.cs" />
      <Compile Include="Assets\Scripts\CsvManager.cs" />
      <Compile Include="Assets\Scripts\DiagramComponent.cs" />
      <Compile Include="Assets\Scripts\DragWindow.cs" />

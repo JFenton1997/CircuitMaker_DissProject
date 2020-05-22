@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified RectTransform.pivot to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanRectTransformPivot")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "RectTransform.pivot" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "RectTransform/RectTransform.pivot" + LeanTransition.MethodsMenuSuffix + "(LeanRectTransformPivot)")]
 	public class LeanRectTransformPivot : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -39,15 +39,15 @@ namespace Lean.Transition.Method
 
 			[System.NonSerialized] private Vector2 oldPivot;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.pivot != Pivot;
+					return Target != null && Target.pivot != Pivot ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				Pivot = Target.pivot;
 			}

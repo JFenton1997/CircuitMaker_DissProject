@@ -6,7 +6,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified Graphic.color to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanGraphicColor")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Graphic.color" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Graphic/Graphic.color" + LeanTransition.MethodsMenuSuffix + "(LeanGraphicColor)")]
 	public class LeanGraphicColor : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -40,15 +40,15 @@ namespace Lean.Transition.Method
 
 			[System.NonSerialized] private Color oldColor;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.color != Color;
+					return Target != null && Target.color != Color ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				Color = Target.color;
 			}

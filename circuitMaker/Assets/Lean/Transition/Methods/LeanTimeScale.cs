@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition <b>Time.timeScale</b> to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanTimeScale")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "TimeScale" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Time.timeScale" + LeanTransition.MethodsMenuSuffix + "(LeanTimeScale)")]
 	public class LeanTimeScale : LeanMethodWithState
 	{
 		public override void Register()
@@ -34,15 +34,15 @@ namespace Lean.Transition.Method
 
 			[System.NonSerialized] private float oldTimeScale;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Time.timeScale != TimeScale;
+					return Time.timeScale != TimeScale ? 1 : 0;
 				}
 			}
 
-			public override void AutoFill()
+			public override void Fill()
 			{
 				TimeScale = Time.timeScale;
 			}
@@ -69,7 +69,7 @@ namespace Lean.Transition
 	public static partial class LeanExtensions
 	{
 		public static T timeScaleTransition<T>(this T target, float timeScale, float duration, LeanEase ease = LeanEase.Smooth)
-			where T : DiagramComponent
+			where T : Component
 		{
 			Method.LeanTimeScale.Register(timeScale, duration, ease); return target;
 		}

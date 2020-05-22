@@ -11,6 +11,7 @@ ALL
 GENRAL
 - link controles to both
 - link Globals to Both
+- change conponent params to doubles
 
 
 CSV

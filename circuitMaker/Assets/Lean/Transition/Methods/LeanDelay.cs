@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to delay for a specified duration.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanDelay")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Delay" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Delay" + LeanTransition.MethodsMenuSuffix + "(LeanDelay)")]
 	public class LeanDelay : LeanMethodWithState
 	{
 		public override void Register()
@@ -46,7 +46,7 @@ namespace Lean.Transition
 	{
 		/// <summary>This will pause the animation for the specified amount of seconds.</summary>
 		public static T DelayTransition<T>(this T target, float duration)
-			where T : DiagramComponent
+			where T : Component
 		{
 			Method.LeanDelay.Register(duration); return target;
 		}

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Lean.Transition.Method
 {
-	/// <summary>This component allows you to transition the specified RectTransform.SetAsLastSibling to the target value.</summary>
+	/// <summary>This component calls the <b>RectTransform.SetAsLastSibling</b> method when this transition completes.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanRectTransformSetAsLastSibling")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "RectTransform.SetAsLastSibling" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "RectTransform/RectTransform.SetAsLastSibling" + LeanTransition.MethodsMenuSuffix + "(LeanRectTransformSetAsLastSibling)")]
 	public class LeanRectTransformSetAsLastSibling : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -28,17 +28,12 @@ namespace Lean.Transition.Method
 		[System.Serializable]
 		public class State : LeanStateWithTarget<RectTransform>
 		{
-			public override bool CanAutoFill
-			{
-				get
-				{
-					return false;
-				}
-			}
-
 			public override void UpdateWithTarget(float progress)
 			{
-				Target.SetAsLastSibling();
+				if (progress == 1.0f)
+				{
+					Target.SetAsLastSibling();
+				}
 			}
 
 			public static Stack<State> Pool = new Stack<State>(); public override void Despawn() { Pool.Push(this); }

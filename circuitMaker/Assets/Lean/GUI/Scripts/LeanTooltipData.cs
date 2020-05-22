@@ -10,7 +10,7 @@ namespace Lean.Gui
 	/// <summary>This component allows you to associate text with this GameObject, allowing it to be displayed from a tooltip.</summary>
 	[HelpURL(LeanGui.HelpUrlPrefix + "LeanTooltipData")]
 	[AddComponentMenu(LeanGui.ComponentMenuPrefix + "Tooltip Data")]
-	public class LeanTooltipData : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+	public class LeanTooltipData : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 	{
 		/// <summary>If you want this tooltip to hide when a selectable (e.g. Button) is disabled or non-interactable, then specify it here.</summary>
 		public UnityEngine.UI.Selectable Selectable { set { selectable = value; } get { return selectable; } } [SerializeField] private UnityEngine.UI.Selectable selectable;
@@ -20,29 +20,46 @@ namespace Lean.Gui
 
 		protected virtual void Update()
 		{
-			if (LeanTooltip.CurrentData == this)
+			if (LeanTooltip.HoverData == this)
 			{
 				if (selectable != null)
 				{
-					LeanTooltip.CurrentShow = selectable.enabled == true && selectable.interactable == true;
+					LeanTooltip.HoverShow = selectable.enabled == true && selectable.interactable == true;
 				}
 			}
 		}
 
 		public void OnPointerEnter(PointerEventData eventData)
 		{
-			LeanTooltip.CurrentPointer = eventData;
-			LeanTooltip.CurrentData    = this;
-			LeanTooltip.CurrentShow    = true;
+			LeanTooltip.HoverPointer = eventData;
+			LeanTooltip.HoverData    = this;
+			LeanTooltip.HoverShow    = true;
 		}
 
 		public void OnPointerExit(PointerEventData eventData)
 		{
-			if (LeanTooltip.CurrentData == this)
+			if (LeanTooltip.HoverData == this)
 			{
-				LeanTooltip.CurrentPointer = null;
-				LeanTooltip.CurrentData    = null;
-				LeanTooltip.CurrentShow    = false;
+				LeanTooltip.HoverPointer = null;
+				LeanTooltip.HoverData    = null;
+				LeanTooltip.HoverShow    = false;
+			}
+		}
+
+		public void OnPointerDown(PointerEventData eventData)
+		{
+			LeanTooltip.PressPointer = eventData;
+			LeanTooltip.PressData    = this;
+			LeanTooltip.PressShow    = true;
+		}
+
+		public void OnPointerUp(PointerEventData eventData)
+		{
+			if (LeanTooltip.PressData == this)
+			{
+				LeanTooltip.PressPointer = null;
+				LeanTooltip.PressData    = null;
+				LeanTooltip.PressShow    = false;
 			}
 		}
 	}

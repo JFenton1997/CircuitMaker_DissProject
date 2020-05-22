@@ -18,11 +18,13 @@ namespace Lean.Gui
 	{
 		[System.Serializable] public class UnityEventString : UnityEvent<string> {}
 
-		public static PointerEventData CurrentPointer;
+		public static PointerEventData HoverPointer;
+		public static LeanTooltipData  HoverData;
+		public static bool             HoverShow;
 
-		public static LeanTooltipData CurrentData;
-
-		public static bool CurrentShow;
+		public static PointerEventData PressPointer;
+		public static LeanTooltipData  PressData;
+		public static bool             PressShow;
 
 		public enum BoundaryType
 		{
@@ -31,8 +33,21 @@ namespace Lean.Gui
 			Position
 		}
 
+		public enum ActivationType
+		{
+			HoverOrPress,
+			Hover,
+			Press
+		}
+
 		/// <summary>This allows you to control how the tooltip will behave when it goes outside the screen bounds.</summary>
 		public BoundaryType Boundary { set { boundary = value; } get { return boundary; } } [SerializeField] private BoundaryType boundary;
+
+		/// <summary>This allows you to control when the tooltip will appear.
+		/// HoverOrPress = When the mouse is hovering, or when the mouse/finger is pressing.
+		/// Hover = Only when the mouse is hovering.
+		/// Press = Only when the mouse/finger is pressing.</summary>
+		public ActivationType Activation { set { activation = value; } get { return activation; } } [SerializeField] private ActivationType activation;
 
 		/// <summary>This allows you to delay how quickly the tooltip will appear or switch.</summary>
 		public float ShowDelay { set { showDelay = value; } get { return showDelay; } } [SerializeField] private float showDelay;
@@ -79,7 +94,41 @@ namespace Lean.Gui
 				cachedRectTransformSet = true;
 			}
 
-			var finalData = CurrentShow == true ? CurrentData : null;
+			var finalData  = default(LeanTooltipData);
+			var finalPoint = default(Vector2);
+
+			switch (activation)
+			{
+				case ActivationType.HoverOrPress:
+				{
+					if (HoverShow == true)
+					{
+						finalData  = HoverData;
+						finalPoint = HoverPointer.position;
+					}
+				}
+				break;
+
+				case ActivationType.Hover:
+				{
+					if (HoverShow == true && PressShow == false)
+					{
+						finalData  = HoverData;
+						finalPoint = HoverPointer.position;
+					}
+				}
+				break;
+
+				case ActivationType.Press:
+				{
+					if (PressShow == true && HoverShow == true && HoverData == PressData)
+					{
+						finalData  = PressData;
+						finalPoint = PressPointer.position;
+					}
+				}
+				break;
+			}
 
 			if (tooltip != finalData)
 			{
@@ -101,10 +150,7 @@ namespace Lean.Gui
 						Show();
 					}
 
-					if (CurrentPointer != null)
-					{
-						cachedRectTransform.position = CurrentPointer.position;
-					}
+					cachedRectTransform.position = finalPoint;
 				}
 			}
 
@@ -177,6 +223,7 @@ namespace Lean.Gui
 		protected override void DrawInspector()
 		{
 			Draw("boundary", "This allows you to control how the tooltip will behave when it goes outside the screen bounds.");
+			Draw("activation", "This allows you to control when the tooltip will appear.\nHoverOrPress = When the mouse is hovering, or when the mouse/finger is pressing.\nHover = Only when the mouse is hovering.\nPress = Only when the mouse/finger is pressing.");
 			Draw("showDelay", "This allows you to delay how quickly the tooltip will appear or switch.");
 
 			EditorGUILayout.Separator();

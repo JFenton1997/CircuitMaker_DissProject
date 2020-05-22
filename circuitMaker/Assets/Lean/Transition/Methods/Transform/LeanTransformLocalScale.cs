@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified Transform.localScale to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanTransformLocalScale")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform.localScale" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform/Transform.localScale" + LeanTransition.MethodsMenuSuffix + "(LeanTransformLocalScale)")]
 	public class LeanTransformLocalScale : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -39,15 +39,15 @@ namespace Lean.Transition.Method
 
 			[System.NonSerialized] private Vector3 oldScale;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.localScale != Scale;
+					return Target != null && Target.localScale != Scale ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				Scale = Target.localScale;
 			}

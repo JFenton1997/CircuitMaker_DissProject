@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified Transform.localRotation to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanTransformLocalRotation")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform.localRotation" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform/Transform.localRotation" + LeanTransition.MethodsMenuSuffix + "(LeanTransformLocalRotation)")]
 	public class LeanTransformLocalRotation : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -32,14 +32,14 @@ namespace Lean.Transition.Method
 		public class State : LeanStateWithTarget<Transform>
 		{
 			[Tooltip("The rotation we will transition to.")]
-			public Quaternion Rotation;
+			public Quaternion Rotation = Quaternion.identity;
 
 			[Tooltip("The ease method that will be used for the transition.")]
 			public LeanEase Ease = LeanEase.Smooth;
 
 			[System.NonSerialized] private Quaternion oldRotation;
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				Rotation = Target.localRotation;
 			}

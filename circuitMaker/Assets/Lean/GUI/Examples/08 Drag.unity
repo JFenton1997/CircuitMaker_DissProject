@@ -1593,12 +1593,14 @@ MonoBehaviour:
   verticalMagnet: -1
   beginTransitions:
     speed: 0
-    roots: []
+    roots:
+    - {fileID: 0}
     aliases: []
     targets: []
   endTransitions:
     speed: 0
-    roots: []
+    roots:
+    - {fileID: 0}
     aliases: []
     targets: []
   onBegin:

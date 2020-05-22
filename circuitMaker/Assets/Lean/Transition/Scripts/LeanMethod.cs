@@ -158,111 +158,106 @@ namespace Lean.Transition
 			a.GetComponents(tempMethods); return tempMethods.IndexOf(a);
 		}
 
-		private void DrawTargetAlias()
+		private void DrawTargetAlias(SerializedProperty sTarget, SerializedProperty sAlias, System.Reflection.FieldInfo data)
 		{
-			var sTarget = serializedObject.FindProperty("Data.Target");
-			var sAlias  = serializedObject.FindProperty("Alias");
-			var data    = Target.GetType().GetField("Data");
+			EditorGUILayout.Separator();
 
-			if (sTarget != null && sAlias != null)
+			var rect  = Reserve();
+			var rectF = rect; rectF.xMin += EditorGUIUtility.labelWidth - 50; rectF.width = 48;
+			var rectM = rect; rectM.xMin += EditorGUIUtility.labelWidth;
+			var rectL = rectM; rectL.xMax -= rectL.width / 2;
+			var rectR = rectM; rectR.xMin += rectR.width / 2;
+
+			if (data != null)
 			{
-				EditorGUILayout.Separator();
+				var state = data.GetValue(Target) as LeanState;
 
-				var rect  = Reserve();
-				var rectF = rect; rectF.xMin += EditorGUIUtility.labelWidth - 50; rectF.width = 48;
-				var rectM = rect; rectM.xMin += EditorGUIUtility.labelWidth;
-				var rectL = rectM; rectL.xMax -= rectL.width / 2;
-				var rectR = rectM; rectR.xMin += rectR.width / 2;
-
-				if (data != null)
+				if (state != null && state.CanFill > -1)
 				{
-					var state = data.GetValue(Target) as LeanState;
+					var rectC = rectM; rectC.width = 28; rectC.x -= 30;
 
-					if (state != null && state.CanAutoFill == true)
-					{
-						var rectC = rectM; rectC.width = 48; rectC.x -= 50;
-
-						if (GUI.Button(rectC, "auto fill", EditorStyles.miniButton) == true)
+					EditorGUI.BeginDisabledGroup(state.CanFill == 0);
+						if (GUI.Button(rectC, new GUIContent("fill", "Copy the current value from the Target into this component?"), EditorStyles.miniButton) == true)
 						{
-							state.AutoFill();
+							state.Fill();
 						}
-					}
+					EditorGUI.EndDisabledGroup();
 				}
+			}
 
-				var label = new GUIContent("Target", "This is the target of the transition. For most transition methods this will be the component that will be modified.");
+			var label = new GUIContent("Target", "This is the target of the transition. For most transition methods this will be the component that will be modified.");
 
-				if (string.IsNullOrEmpty(sAlias.stringValue) == false)
-				{
-					expandAlias = true;
-				}
+			if (string.IsNullOrEmpty(sAlias.stringValue) == false)
+			{
+				expandAlias = true;
+			}
 
-				if (string.IsNullOrEmpty(sAlias.stringValue) == true)
-				{
-					DrawExpand(ref expandAlias, rect);
-				}
+			if (string.IsNullOrEmpty(sAlias.stringValue) == true)
+			{
+				DrawExpand(ref expandAlias, rect);
+			}
 
+			if (expandAlias == true)
+			{
+				label.text += " : Alias";
+			}
+
+			EditorGUI.LabelField(rect, label);
+
+			BeginError(sTarget.objectReferenceValue == null && string.IsNullOrEmpty(sAlias.stringValue) == true);
 				if (expandAlias == true)
 				{
-					label.text += " : Alias";
+					EditorGUI.PropertyField(rectL, sTarget, GUIContent.none);
+					EditorGUI.PropertyField(rectR, sAlias, GUIContent.none);
 				}
-
-				EditorGUI.LabelField(rect, label);
-
-				BeginError(sTarget.objectReferenceValue == null && string.IsNullOrEmpty(sAlias.stringValue) == true);
-					if (expandAlias == true)
-					{
-						EditorGUI.PropertyField(rectL, sTarget, GUIContent.none);
-						EditorGUI.PropertyField(rectR, sAlias, GUIContent.none);
-					}
-					else
-					{
-						EditorGUI.PropertyField(rectM, sTarget, GUIContent.none);
-					}
-				EndError();
-
-				if (string.IsNullOrEmpty(sAlias.stringValue) == false)
+				else
 				{
-					var methodST      = (LeanMethodWithStateAndTarget)Target;
-					var expectedType  = methodST.GetTargetType();
-					var expectedAlias = sAlias.stringValue;
+					EditorGUI.PropertyField(rectM, sTarget, GUIContent.none);
+				}
+			EndError();
 
-					foreach (var method in Target.GetComponents<LeanMethodWithStateAndTarget>())
+			if (string.IsNullOrEmpty(sAlias.stringValue) == false)
+			{
+				var methodST      = (LeanMethodWithStateAndTarget)Target;
+				var expectedType  = methodST.GetTargetType();
+				var expectedAlias = sAlias.stringValue;
+
+				foreach (var method in Target.GetComponents<LeanMethodWithStateAndTarget>())
+				{
+					var methodTargetType = method.GetTargetType();
+
+					if (methodTargetType != expectedType)
 					{
-						var methodTargetType = method.GetTargetType();
-
-						if (methodTargetType != expectedType)
+						if (method.Alias == expectedAlias)
 						{
-							if (method.Alias == expectedAlias)
+							if (methodTargetType.IsSubclassOf(typeof(Component)) == true && expectedType.IsSubclassOf(typeof(Component)) == true)
 							{
-								if (methodTargetType.IsSubclassOf(typeof(DiagramComponent)) == true && expectedType.IsSubclassOf(typeof(DiagramComponent)) == true)
-								{
-									continue;
-								}
-
-								EditorGUILayout.HelpBox("This alias is used by multiple transitions. This only works if they all transition the same type (e.g. Transform.localPosition & Transform.localScale both transition Transform).", MessageType.Error);
-
-								break;
+								continue;
 							}
+
+							EditorGUILayout.HelpBox("This alias is used by multiple transitions. This only works if they all transition the same type (e.g. Transform.localPosition & Transform.localScale both transition Transform).", MessageType.Error);
+
+							break;
 						}
 					}
 				}
 			}
-			else
+		}
+
+		private void DrawAutoFill(System.Reflection.FieldInfo data)
+		{
+			var state = data.GetValue(Target) as LeanState;
+
+			if (state != null && state.CanFill > -1)
 			{
-				if (data != null)
-				{
-					var state = data.GetValue(Target) as LeanState;
+				var rect = Reserve();
 
-					if (state != null && state.CanAutoFill == true)
+				EditorGUI.BeginDisabledGroup(state.CanFill == 0);
+					if (GUI.Button(rect, new GUIContent("auto fill", "Copy the current value from the scene into this component?"), EditorStyles.miniButton) == true)
 					{
-						var rect = Reserve();
-
-						if (GUI.Button(rect, "auto fill", EditorStyles.miniButton) == true)
-						{
-							state.AutoFill();
-						}
+						state.Fill();
 					}
-				}
+				EditorGUI.EndDisabledGroup();
 			}
 		}
 
@@ -272,9 +267,16 @@ namespace Lean.Transition
 
 			if (dataProperty != null)
 			{
+				var sTarget = serializedObject.FindProperty("Data.Target");
+				var sAlias  = serializedObject.FindProperty("Alias");
+				var data    = Target.GetType().GetField("Data");
+
 				Draw("Data.Duration", "The transition will complete after this many seconds.");
 
-				DrawTargetAlias();
+				if (sTarget != null && sAlias != null)
+				{
+					DrawTargetAlias(sTarget, sAlias, data);
+				}
 
 				dataProperty.NextVisible(true);
 
@@ -282,13 +284,35 @@ namespace Lean.Transition
 				{
 					if (dataProperty.name != "Duration" && dataProperty.name != "Target" && dataProperty.name != "TargetAlias")
 					{
-						EditorGUILayout.PropertyField(dataProperty);
+						if (dataProperty.propertyType == SerializedPropertyType.Quaternion)
+						{
+							EditorGUI.BeginChangeCheck();
+							EditorGUI.showMixedValue = dataProperty.hasMultipleDifferentValues;
+
+							var eulerAngles = EditorGUILayout.Vector3Field(new GUIContent(dataProperty.displayName, dataProperty.tooltip), dataProperty.quaternionValue.eulerAngles);
+
+							EditorGUI.showMixedValue = false;
+
+							if (EditorGUI.EndChangeCheck() == true)
+							{
+								dataProperty.quaternionValue = Quaternion.Euler(eulerAngles);
+							}
+						}
+						else
+						{
+							EditorGUILayout.PropertyField(dataProperty);
+						}
 					}
 
 					if (dataProperty.NextVisible(false) == false)
 					{
 						break;
 					}
+				}
+
+				if (sTarget == null && data != null)
+				{
+					DrawAutoFill(data);
 				}
 			}
 			else

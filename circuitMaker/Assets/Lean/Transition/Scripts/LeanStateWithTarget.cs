@@ -14,23 +14,23 @@ namespace Lean.Transition
 			return Target;
 		}
 
-		public override bool CanAutoFill
+		public override int CanFill
 		{
 			get
 			{
-				return Target != null;
+				return Target != null ? 1 : 0;
 			}
 		}
 
-		public override void AutoFill()
+		public override void Fill()
 		{
 			if (Target != null)
 			{
-				AutoFillWithTarget();
+				FillWithTarget();
 			}
 		}
 
-		public virtual void AutoFillWithTarget()
+		public virtual void FillWithTarget()
 		{
 		}
 

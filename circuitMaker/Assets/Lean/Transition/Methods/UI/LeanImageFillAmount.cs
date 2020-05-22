@@ -6,7 +6,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified Image.fillAmount to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanImageFillAmount")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Image.fillAmount" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Image/Image.fillAmount" + LeanTransition.MethodsMenuSuffix + "(LeanImageFillAmount)")]
 	public class LeanImageFillAmount : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -40,15 +40,15 @@ namespace Lean.Transition.Method
 
 			[System.NonSerialized] private float oldFillAmount;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.fillAmount != FillAmount;
+					return Target != null && Target.fillAmount != FillAmount ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				FillAmount = Target.fillAmount;
 			}

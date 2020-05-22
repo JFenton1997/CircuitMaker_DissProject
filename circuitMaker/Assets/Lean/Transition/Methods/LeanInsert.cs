@@ -4,7 +4,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This will submit all transitions you added before this one. Any transitions you perform after this will begin immediately.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanInsert")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Insert" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Insert" + LeanTransition.MethodsMenuSuffix + "(LeanInsert)")]
 	public class LeanInsert : LeanMethod
 	{
 		public Transform Target;
@@ -22,14 +22,14 @@ namespace Lean.Transition
 	{
 		/// <summary>This will insert all transitions inside the specified GameObject, as if they were added manually.</summary>
 		public static T InsertTransition<T>(this T target, GameObject root)
-			where T : DiagramComponent
+			where T : Component
 		{
 			LeanTransition.InsertTransitions(root); return target;
 		}
 
 		/// <summary>This will insert all transitions inside the specified GameObject, as if they were added manually.</summary>
 		public static T InsertTransition<T>(this T target, Transform root)
-			where T : DiagramComponent
+			where T : Component
 		{
 			LeanTransition.InsertTransitions(root); return target;
 		}

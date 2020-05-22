@@ -6,7 +6,7 @@ namespace Lean.Transition
 	{
 		/// <summary>This will give you the previously registered transition state.</summary>
 		public static LeanState GetTransition<T>(this T target)
-			where T : DiagramComponent
+			where T : Component
 		{
 			return LeanTransition.CurrentHead;
 		}

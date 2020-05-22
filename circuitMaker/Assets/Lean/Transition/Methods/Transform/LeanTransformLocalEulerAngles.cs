@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified Transform.localEulerAngles to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanTransformLocalEulerAngles")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform.localEulerAngles" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform/Transform.localEulerAngles" + LeanTransition.MethodsMenuSuffix + "(LeanTransformLocalEulerAngles)")]
 	public class LeanTransformLocalEulerAngles : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -39,15 +39,15 @@ namespace Lean.Transition.Method
 
 			[System.NonSerialized] private Vector3 oldRotation;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.localEulerAngles != Rotation;
+					return Target != null && Target.localEulerAngles != Rotation ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				Rotation = Target.localEulerAngles;
 			}

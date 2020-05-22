@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified RectTransform.sizeDelta to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanRectTransformSizeDelta")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "RectTransform.sizeDelta" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "RectTransform/RectTransform.sizeDelta" + LeanTransition.MethodsMenuSuffix + "(LeanRectTransformSizeDelta)")]
 	public class LeanRectTransformSizeDelta : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -39,15 +39,15 @@ namespace Lean.Transition.Method
 
 			[System.NonSerialized] private Vector2 oldSizeDelta;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.sizeDelta != SizeDelta;
+					return Target != null && Target.sizeDelta != SizeDelta ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				SizeDelta = Target.sizeDelta;
 			}

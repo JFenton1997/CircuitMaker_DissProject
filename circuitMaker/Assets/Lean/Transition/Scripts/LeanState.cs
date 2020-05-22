@@ -32,6 +32,21 @@ namespace Lean.Transition
 		[System.NonSerialized]
 		public bool Skip;
 
+		/// <summary>This tells you how many seconds remain until this state completes.</summary>
+		public float Remaining
+		{
+			get
+			{
+				// Not started yet?
+				if (Age < 0.0f)
+				{
+					return float.PositiveInfinity;
+				}
+
+				return Duration - Age;
+			}
+		}
+
 		/// <summary>If you want this transition to begin after another completes, then call this method.</summary>
 		public void BeginAfter(LeanState previousState)
 		{
@@ -52,15 +67,15 @@ namespace Lean.Transition
 			}
 		}
 
-		public virtual bool CanAutoFill
+		public virtual int CanFill
 		{
 			get
 			{
-				return false;
+				return -1;
 			}
 		}
 
-		public virtual void AutoFill()
+		public virtual void Fill()
 		{
 		}
 

@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified RectTransform.anchorMax to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanRectTransformAnchorMax")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "RectTransform.anchorMax" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "RectTransform/RectTransform.anchorMax" + LeanTransition.MethodsMenuSuffix + "(LeanRectTransformAnchorMax)")]
 	public class LeanRectTransformAnchorMax : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -39,15 +39,15 @@ namespace Lean.Transition.Method
 
 			[System.NonSerialized] private Vector2 oldAnchorMax;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.anchorMax != AnchorMax;
+					return Target != null && Target.anchorMax != AnchorMax ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				AnchorMax = Target.anchorMax;
 			}

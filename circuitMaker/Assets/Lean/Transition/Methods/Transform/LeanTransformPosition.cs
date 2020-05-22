@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified Transform.position to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanTransformPosition")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform.position" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform/Transform.position" + LeanTransition.MethodsMenuSuffix + "(LeanTransformPosition)")]
 	public class LeanTransformPosition : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -39,15 +39,15 @@ namespace Lean.Transition.Method
 
 			[System.NonSerialized] private Vector3 oldPosition;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.position != Position;
+					return Target != null && Target.position != Position ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				Position = Target.position;
 			}

@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to play a sound after the specified duration.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanPlaySound")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Play Sound" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Play Sound" + LeanTransition.MethodsMenuSuffix + "(LeanPlaySound)")]
 	public class LeanPlaySound : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -32,24 +32,6 @@ namespace Lean.Transition.Method
 		{
 			[Range(0.0f, 1.0f)]
 			public float Volume = 1.0f;
-
-			public override bool CanAutoFill
-			{
-				get
-				{
-					return false;
-				}
-			}
-
-			public override void AutoFillWithTarget()
-			{
-				// No object to fill with data
-			}
-
-			public override void BeginWithTarget()
-			{
-				// No state to begin from
-			}
 
 			public override void UpdateWithTarget(float progress)
 			{
@@ -85,7 +67,7 @@ namespace Lean.Transition
 	public static partial class LeanExtensions
 	{
 		public static T PlaySoundTransition<T>(this T target, AudioClip clip, float duration = 0.0f, float volume = 1.0f)
-			where T : DiagramComponent
+			where T : Component
 		{
 			Method.LeanPlaySound.Register(clip, duration, volume); return target;
 		}

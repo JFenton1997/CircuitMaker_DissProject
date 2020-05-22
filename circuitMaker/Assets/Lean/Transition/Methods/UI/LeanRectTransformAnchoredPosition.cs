@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified RectTransform.anchoredPosition to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanRectTransformAnchoredPosition")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "RectTransform.anchoredPosition" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "RectTransform/RectTransform.anchoredPosition" + LeanTransition.MethodsMenuSuffix + "(LeanRectTransformAnchoredPosition)")]
 	public class LeanRectTransformAnchoredPosition : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -39,15 +39,15 @@ namespace Lean.Transition.Method
 
 			[System.NonSerialized] private Vector2 oldPosition;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.anchoredPosition != Position;
+					return Target != null && Target.anchoredPosition != Position ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				Position = Target.anchoredPosition;
 			}

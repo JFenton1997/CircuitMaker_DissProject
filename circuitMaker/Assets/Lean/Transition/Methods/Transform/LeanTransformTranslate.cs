@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified Transform.Translate to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanTransformTranslate")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform.Translate" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform/Transform.Translate" + LeanTransition.MethodsMenuSuffix + "(LeanTransformTranslate)")]
 	public class LeanTransformTranslate : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -71,14 +71,6 @@ namespace Lean.Transition.Method
 				get
 				{
 					return ConflictType.None;
-				}
-			}
-
-			public override bool CanAutoFill
-			{
-				get
-				{
-					return false;
 				}
 			}
 

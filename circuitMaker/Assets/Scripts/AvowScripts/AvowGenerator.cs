@@ -12,10 +12,9 @@ public class AvowGenerator : AvowManager
         GenerateAvowDiagram(csv.avowTestRead(), 1);
     }
 
-    public void GenerateAvowDiagram(Dictionary<int, List<DiagramComponent>> diagramData, int scale)
+    public void GenerateAvowDiagram(Dictionary<int, List<DiagramComponent>> diagramData, float scale)
     {
         Debug.Log("GEN");
-        this.scale = scale;
         Stack<DiagramComponent> conponentsToProcess = new Stack<DiagramComponent>();
         List<AvowConponent> builtAvows = new List<AvowConponent>();
 
@@ -130,10 +129,10 @@ public class AvowGenerator : AvowManager
         return avow;
     }
 
-    private AvowConponent BuildAvow(AvowConponent Original, char direction, DiagramComponent newConponent, int scale)
+    private AvowConponent BuildAvow(AvowConponent Original, char direction, DiagramComponent newConponent, float scale)
     {
         Vector2 buildLocation = Vector2.zero;
-        Vector2 newAvowSize = new Vector2(newConponent.Values[ComponentParameter.CURRENT].value * scale, newConponent.Values[ComponentParameter.VOLTAGE].value * scale);
+        Vector2 newAvowSize = new Vector2((float)newConponent.Values[ComponentParameter.CURRENT].value * scale, (float)newConponent.Values[ComponentParameter.VOLTAGE].value * scale);
         switch (direction)
         {
             case 'U':

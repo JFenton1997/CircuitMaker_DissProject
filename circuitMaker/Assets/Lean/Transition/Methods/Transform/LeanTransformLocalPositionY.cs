@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified Transform.localPosition.y to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanTransformLocalPositionY")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform.localPosition.y" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform/Transform.localPosition.y" + LeanTransition.MethodsMenuSuffix + "(LeanTransformLocalPositionY)")]
 	public class LeanTransformLocalPositionY : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -39,15 +39,15 @@ namespace Lean.Transition.Method
 
 			[System.NonSerialized] private float oldPosition;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.localPosition.y != Position;
+					return Target != null && Target.localPosition.y != Position ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				Position = Target.localPosition.y;
 			}

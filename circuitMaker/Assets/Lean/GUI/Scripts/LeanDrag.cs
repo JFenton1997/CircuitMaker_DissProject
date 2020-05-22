@@ -217,7 +217,7 @@ namespace Lean.Gui
 
 			ClampPosition(ref anchoredPosition);
 
-			MagnetPosition(ref anchoredPosition);
+			MagnetPosition(target, ref anchoredPosition);
 
 			target.anchoredPosition = anchoredPosition;
 		}
@@ -248,7 +248,7 @@ namespace Lean.Gui
 			}
 		}
 
-		private void MagnetPosition(ref Vector2 anchoredPosition)
+		private void MagnetPosition(RectTransform target, ref Vector2 anchoredPosition)
 		{
 #if UNITY_EDITOR
 			if (Application.isPlaying == false)

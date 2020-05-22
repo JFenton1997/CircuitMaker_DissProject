@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Lean.Transition.Method
 {
-	/// <summary>This component allows you to transition the specified Transform.eulerAngles to the target value.</summary>
+	/// <summary>This component allows you to transition the specified <b>Transform.eulerAngles</b> to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanTransformEulerAngles")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform.eulerAngles" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform/Transform.eulerAngles" + LeanTransition.MethodsMenuSuffix + "(LeanTransformEulerAngles)")]
 	public class LeanTransformEulerAngles : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -39,15 +39,15 @@ namespace Lean.Transition.Method
 
 			[System.NonSerialized] private Vector3 oldRotation;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.eulerAngles != Rotation;
+					return Target != null && Target.eulerAngles != Rotation ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				Rotation = Target.eulerAngles;
 			}

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using Utilities;
 public class AvowConponent : MonoBehaviour
 {
     public DiagramComponent component;
@@ -20,7 +21,7 @@ public class AvowConponent : MonoBehaviour
     Image image;
      public RectTransform rectTransform;
 
-    public float voltage = 1, current = 1;
+    public double voltage = 1, current = 1;
     Vector2 fillSize;
 
 
@@ -92,10 +93,10 @@ public class AvowConponent : MonoBehaviour
 
     }
 
-    public void updateSize(float voltage, float current)
+    public void updateSize(double voltage, double current)
     {
         if(current >0 && voltage > 0){
-        rectTransform.sizeDelta = new Vector2(current * avowManager.scale, voltage * avowManager.scale);
+        rectTransform.sizeDelta = new Vector2((float)current, (float)voltage);
         }
     }
 

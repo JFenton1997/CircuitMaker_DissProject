@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified CanvasGroup.blocksRaycasts to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanCanvasGroupBlocksRaycasts")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "CanvasGroup.blocksRaycasts" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "CanvasGroup/CanvasGroup.blocksRaycasts" + LeanTransition.MethodsMenuSuffix + "(LeanCanvasGroupBlocksRaycasts)")]
 	public class LeanCanvasGroupBlocksRaycasts : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -33,15 +33,15 @@ namespace Lean.Transition.Method
 			[Tooltip("The blocksRaycasts we will transition to.")]
 			public bool BlocksRaycasts = true;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.blocksRaycasts != BlocksRaycasts;
+					return Target != null && Target.blocksRaycasts != BlocksRaycasts ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				BlocksRaycasts = Target.blocksRaycasts;
 			}

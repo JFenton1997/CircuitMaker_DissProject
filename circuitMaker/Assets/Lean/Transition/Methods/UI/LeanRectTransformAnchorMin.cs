@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified RectTransform.anchorMin to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanRectTransformAnchorMin")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "RectTransform.anchorMin" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "RectTransform/RectTransform.anchorMin" + LeanTransition.MethodsMenuSuffix + "(LeanRectTransformAnchorMin)")]
 	public class LeanRectTransformAnchorMin : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -39,15 +39,15 @@ namespace Lean.Transition.Method
 
 			[System.NonSerialized] private Vector2 oldAnchorMin;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.anchorMin != AnchorMin;
+					return Target != null && Target.anchorMin != AnchorMin ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				AnchorMin = Target.anchorMin;
 			}

@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified CanvasGroup.alpha to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanCanvasGroupAlpha")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "CanvasGroup.alpha" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "CanvasGroup/CanvasGroup.alpha" + LeanTransition.MethodsMenuSuffix + "(LeanCanvasGroupAlpha)")]
 	public class LeanCanvasGroupAlpha : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -40,15 +40,15 @@ namespace Lean.Transition.Method
 
 			[System.NonSerialized] private float oldAlpha;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.alpha != Alpha;
+					return Target != null && Target.alpha != Alpha ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				Alpha = Target.alpha;
 			}

@@ -8,8 +8,11 @@ public class RepeatFromCode : MonoBehaviour
 		InvokeRepeating("UpAndDown", 0.0f, 2.0f); // Call every 2 seconds
 	}
 
-    void UpAndDown() => transform.localPositionTransition(Vector3.up, 1f).JoinTransition().localPositionTransition(Vector3.up, 1f);
-            // localPositionTransition(Vector3.up, 1). // Move up over 1 second
-            // JoinTransition().						 // Connect together
-            // localPositionTransition(Vector3.down, 1); // Move down over 1 second
+	void UpAndDown()
+	{
+		transform.
+			localPositionTransition(Vector3.up, 1). // Move up over 1 second
+			JoinTransition(). // Connect together
+			localPositionTransition(Vector3.down, 1); // Move down over 1 second
+	}
 }

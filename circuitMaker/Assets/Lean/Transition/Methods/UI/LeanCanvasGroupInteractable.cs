@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to transition the specified CanvasGroup.interactable to the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanCanvasGroupInteractable")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "CanvasGroup.interactable" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "CanvasGroup/CanvasGroup.interactable" + LeanTransition.MethodsMenuSuffix + "(LeanCanvasGroupInteractable)")]
 	public class LeanCanvasGroupInteractable : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -33,21 +33,17 @@ namespace Lean.Transition.Method
 			[Tooltip("The interactable we will transition to.")]
 			public bool Interactable = true;
 
-			public override bool CanAutoFill
+			public override int CanFill
 			{
 				get
 				{
-					return Target != null && Target.interactable != Interactable;
+					return Target != null && Target.interactable != Interactable ? 1 : 0;
 				}
 			}
 
-			public override void AutoFillWithTarget()
+			public override void FillWithTarget()
 			{
 				Interactable = Target.interactable;
-			}
-
-			public override void BeginWithTarget()
-			{
 			}
 
 			public override void UpdateWithTarget(float progress)

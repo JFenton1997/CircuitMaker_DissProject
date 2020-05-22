@@ -7,7 +7,6 @@ public static class GlobalValues
     public static bool AvowSnapping;
     public static float AvowSnappingOffset;
 
-    public static float AvowScaler;
     public static bool ToolTipsEnabled;
     public static string workingDirectory;
 

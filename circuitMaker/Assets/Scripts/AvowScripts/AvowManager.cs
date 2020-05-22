@@ -11,7 +11,7 @@ public class AvowManager : MonoBehaviour
     public List<AvowConponent> allAvow;
     public GameObject avowPrefab;
     public char currentName;
-    public int scale = 1;
+    public float scale = 1;
 
     public CsvManager csv;
 
@@ -21,7 +21,6 @@ public class AvowManager : MonoBehaviour
     {
         allAvow = new List<AvowConponent>();
         currentName = 'A';
-        GlobalValues.AvowScaler = 1f;
 
     }
 
@@ -105,9 +104,11 @@ public class AvowManager : MonoBehaviour
         foreach (AvowConponent avow in allAvow)
         {
             avow.component.direction = Direction.A_to_B;
-            avow.component.Values[ComponentParameter.VOLTAGE].value = avow.voltage;
-            avow.component.Values[ComponentParameter.CURRENT].value = avow.current;
-            avow.component.Values[ComponentParameter.RESISTANCE].value = avow.voltage / avow.current;
+            avow.component.Values[ComponentParameter.VOLTAGE].value = avow.voltage * scale;
+            avow.component.Values[ComponentParameter.CURRENT].value = avow.current * scale;
+            avow.component.Values[ComponentParameter.RESISTANCE].value =
+                avow.component.Values[ComponentParameter.VOLTAGE].value
+                / avow.component.Values[ComponentParameter.CURRENT].value;
             avow.component.Aconnections = avow.TopConnections.ConvertAll(x => x.component);
             avow.component.Bconnections = avow.BotConnections.ConvertAll(x => x.component);
             avow.component.name = avow.gameObject.name;
@@ -218,16 +219,24 @@ data.Value
             }
 
             //calculate Cell Values
-            float voltage = 0;
-            float current = 0;
+            double voltage = 0;
+            double current = 0;
             foreach (DiagramComponent d in diagramData[1])
             {
                 current += d.Values[ComponentParameter.CURRENT].value;
             }
+            bool endOfDiagram = false; ;
             foreach (var d in diagramData)
             {
-                voltage += d.Value[0].Values[ComponentParameter.VOLTAGE].value;
-
+                if (d.Key > 0 && !endOfDiagram)
+                {
+                    if (d.Value[0].Bconnections.Count == 1 && d.Value[0].Bconnections[0].type == ComponentType.CELL)
+                    {
+                        endOfDiagram = true;
+                    }
+                    Debug.Log("cell check,  Found: " + d.Value[0].name + "   volt: " + d.Value[0].Values[ComponentParameter.VOLTAGE].value);
+                    voltage += d.Value[0].Values[ComponentParameter.VOLTAGE].value;
+                }
             }
             diagramData[0][0].Values[ComponentParameter.VOLTAGE].value = voltage;
             diagramData[0][0].Values[ComponentParameter.CURRENT].value = current;
@@ -242,6 +251,41 @@ data.Value
 
     }
 
+    public void updateScale(Dropdown dropdown)
+    {
+        switch (dropdown.value)
+        {
+            case 0:
+                scale = 0.001f;
+                break;
+            case 1:
+                scale = 0.01f;
+                break;
+            case 2:
+                scale = 0.01f;
+                break;
+            case 3:
+                scale = 1f;
+                break;
+            case 4:
+                scale = 10f;
+                break;
+            case 5:
+                scale = 100f;
+                break;
+            case 6:
+                scale = 1000f;
+                break;
+            default:
+                Debug.Log("invalid scale value");
+                break;
+
+        }
+    }
 
 
 }
+
+
+
+

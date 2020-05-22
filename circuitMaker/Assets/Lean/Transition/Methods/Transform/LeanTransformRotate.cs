@@ -5,7 +5,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to rotate the specified Transform by the target value.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanTransformRotate")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform.Rotate" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Transform/Transform.Rotate" + LeanTransition.MethodsMenuSuffix + "(LeanTransformRotate)")]
 	public class LeanTransformRotate : LeanMethodWithStateAndTarget
 	{
 		public override System.Type GetTargetType()
@@ -48,14 +48,6 @@ namespace Lean.Transition.Method
 				get
 				{
 					return ConflictType.None;
-				}
-			}
-
-			public override bool CanAutoFill
-			{
-				get
-				{
-					return false;
 				}
 			}
 

@@ -6,7 +6,7 @@ namespace Lean.Transition.Method
 {
 	/// <summary>This component allows you to invoke a custom action after the specified duration.</summary>
 	[HelpURL(LeanTransition.HelpUrlPrefix + "LeanEvent")]
-	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Event" + LeanTransition.MethodsMenuSuffix)]
+	[AddComponentMenu(LeanTransition.MethodsMenuPrefix + "Event" + LeanTransition.MethodsMenuSuffix + "(LeanEvent)")]
 	public class LeanEvent : LeanMethodWithState
 	{
 		public override void Register()
@@ -84,7 +84,7 @@ namespace Lean.Transition
 	public static partial class LeanExtensions
 	{
 		public static T EventTransition<T>(this T target, System.Action action, float duration = 0.0f)
-			where T : DiagramComponent
+			where T : Component
 		{
 			Method.LeanEvent.Register(action, duration); return target;
 		}

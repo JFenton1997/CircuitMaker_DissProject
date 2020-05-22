@@ -45,6 +45,16 @@ public class UserControls : MonoBehaviour
             GlobalValues.ToolTipsEnabled = !GlobalValues.ToolTipsEnabled;
         }
 
+        if(Input.GetKeyDown(KeyCode.Escape)){
+           ExitScript exit =  transform.Find("/UI/Exit").GetComponent<ExitScript>();
+           if(exit.isShowing){
+               exit.hideExitPanel();
+           }
+           else{
+               exit.displayExitPanel();
+           }
+        }
+
         
     }
 }
