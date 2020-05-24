@@ -91,7 +91,7 @@ data.Value
 
             if (layerComponents.Key - 1 > 0 && layerComponents.Key < generatorMatrix.Count && diagramData.ContainsKey(layerComponents.Key + 1))
             {
-                foreach (DiagramComponent toLayerComp in generatorMatrix[layerComponents.Key - 1].ConvertAll(i => i.component).ToArray())
+                foreach (DiagramComponent toLayerComp in generatorMatrix[layerComponents.Key - 1].ConvertAll(i => i.conponent).ToArray())
                 {
                     if (toLayerComp.name == "toLayer")
                     {
@@ -102,7 +102,7 @@ data.Value
                             tempD.Aconnections = toLayerComp.Aconnections;
                             tempD.Bconnections = toLayerComp.Bconnections;
                             tempD.name = "toLayer";
-                            spaceCheck(layerComponents.Key, generatorMatrix[layerComponents.Key + 1].ConvertAll(x => x.component).IndexOf(toLayerComp));
+                            spaceCheck(layerComponents.Key, generatorMatrix[layerComponents.Key + 1].ConvertAll(x => x.conponent).IndexOf(toLayerComp));
                             createComponent(layerComponents.Key + 1, tempD);
                         }
 
@@ -156,7 +156,7 @@ generatorMatrix[i]
     private void addComponentEnds(CircuitComponent c)
     {
 
-        if (c.name == "toCell" && c.component.type == ComponentType.UNTYPED)
+        if (c.name == "toCell" && c.conponent.type == ComponentType.UNTYPED)
         {
             Vector2 wireAEnd = new Vector2(c.transform.position.x, c.transform.position.y + 2);
             Vector2 wireBEnd = new Vector2(c.transform.position.x, cellBottom);
@@ -164,7 +164,7 @@ generatorMatrix[i]
             wireA.GetComponent<Wire>().createdFromCicuitGen(wireAEnd, wireBEnd);
             return;
         }
-        else if (c.name == "toLayer" && c.component.type == ComponentType.UNTYPED)
+        else if (c.name == "toLayer" && c.conponent.type == ComponentType.UNTYPED)
         {
             Vector2 wireAEnd = new Vector2(c.transform.position.x, c.transform.position.y + 2);
             Vector2 wireBEnd = new Vector2(c.transform.position.x, c.transform.position.y - 2);
@@ -172,13 +172,15 @@ generatorMatrix[i]
             wireA.GetComponent<Wire>().createdFromCicuitGen(wireAEnd, wireBEnd);
             return;
         }
-        else if (c.name == "empty" || c.name == "" && c.component.type == ComponentType.UNTYPED)
+        else if (c.name == "empty" || c.name == "" && c.conponent.type == ComponentType.UNTYPED)
         {
             return;
 
         }
         else
         {
+            Debug.Log(c);
+            Debug.Log(c.nodeA + " "+ c.nodeB);
             Vector2 wireAEnd = new Vector2(c.nodeA.transform.position.x, c.nodeA.transform.position.y + 1);
             Vector2 wireBEnd = new Vector2(c.nodeB.transform.position.x, c.nodeB.transform.position.y - 1);
             GameObject wireA = (GameObject)Instantiate(wirePrefab, c.nodeA.transform.position, Quaternion.identity, transform);
@@ -213,8 +215,9 @@ generatorMatrix[i]
         Vector2 wireBBEnd = new Vector2(wireBAEnd.x + ((largestRow + 1) * HorizontalComponentGap), wireBAEnd.y);
         cellBottom = wireBBEnd.y;
 
-
+        Debug.Log(wirePrefab);
         GameObject wireAA = (GameObject)Instantiate(wirePrefab, cell.nodeA.transform.position, Quaternion.identity, transform);
+        Debug.Log(wireAA);
         wireAA.GetComponent<Wire>().createdFromCicuitGen(cell.nodeA.transform.position, wireAAEnd);
         GameObject wireAB = (GameObject)Instantiate(wirePrefab, wireAAEnd, Quaternion.identity, transform);
         wireAB.GetComponent<Wire>().createdFromCicuitGen(wireAAEnd, wireABEnd);
@@ -238,7 +241,7 @@ generatorMatrix[i]
             circuitComponent = temp.GetComponent<CircuitComponent>();
             circuitComponent.gameObject.name = "empty" + layer;
             circuitComponent.name = "empty";
-            circuitComponent.component.name = circuitComponent.name;
+            circuitComponent.conponent.name = circuitComponent.name;
             generatorMatrix[layer].Add(circuitComponent);
         }
     }
@@ -256,7 +259,7 @@ generatorMatrix[i]
             circuitComponent = temp.GetComponent<CircuitComponent>();
             circuitComponent.gameObject.name = "empty" + layer;
             circuitComponent.name = "empty";
-            circuitComponent.component.name = circuitComponent.name;
+            circuitComponent.conponent.name = circuitComponent.name;
             generatorMatrix[layer].Add(circuitComponent);
         }
     }
@@ -267,7 +270,7 @@ generatorMatrix[i]
     {
         GameObject temp;
         CircuitComponent circuitComponent;
-        if (createdComponents.ConvertAll(i => i.component).Contains(d) && d.type != ComponentType.CELL)
+        if (createdComponents.ConvertAll(i => i.conponent).Contains(d) && d.type != ComponentType.CELL)
         {
             return;
         }
@@ -282,7 +285,7 @@ generatorMatrix[i]
             circuitComponent = temp.GetComponent<CircuitComponent>();
             circuitComponent.gameObject.name = "toCell" + layerValue;
             circuitComponent.name = "toCell";
-            circuitComponent.component.name = circuitComponent.name;
+            circuitComponent.conponent.name = circuitComponent.name;
             generatorMatrix[layerValue - 1].Add(circuitComponent);
             return;
         }
@@ -290,10 +293,10 @@ generatorMatrix[i]
         {
             temp = (GameObject)Instantiate(toNextLayerLocation, generateLocation(layerValue), Quaternion.identity, transform);
             circuitComponent = temp.GetComponent<CircuitComponent>();
-            circuitComponent.component = d;
+            circuitComponent.conponent = d;
             circuitComponent.gameObject.name = "toLayer" + layerValue;
             circuitComponent.name = "toLayer";
-            circuitComponent.component.name = circuitComponent.name;
+            circuitComponent.conponent.name = circuitComponent.name;
             generatorMatrix[layerValue - 1].Add(circuitComponent);
             return;
         }
@@ -314,7 +317,7 @@ generatorMatrix[i]
         }
 
         circuitComponent = temp.GetComponent<CircuitComponent>();
-        circuitComponent.component = d;
+        circuitComponent.conponent = d;
         circuitComponent.gameObject.name = d.name;
         circuitComponent.name = d.name;
         createdComponents.Add(circuitComponent);
@@ -371,12 +374,12 @@ generatorMatrix[i]
         Pair<CircuitComponent, int> lowestDiff = new Pair<CircuitComponent, int>(a, aIndex);
         Pair<CircuitComponent, int> HighestDiff = new Pair<CircuitComponent, int>(a, aIndex);
         int itemIndex;
-        foreach (DiagramComponent diagramComponent in getConnectionsOfDirection(a.component, true))
+        foreach (DiagramComponent diagramComponent in getConnectionsOfDirection(a.conponent, true))
         {
 
             if (diagramComponent.type != ComponentType.CELL)
             {
-                itemIndex = generatorMatrix[layerValue + 1].ConvertAll(i => i.component).IndexOf(diagramComponent);
+                itemIndex = generatorMatrix[layerValue + 1].ConvertAll(i => i.conponent).IndexOf(diagramComponent);
                 if (itemIndex >= 0)
                 {
                     if (itemIndex < lowestDiff.b)

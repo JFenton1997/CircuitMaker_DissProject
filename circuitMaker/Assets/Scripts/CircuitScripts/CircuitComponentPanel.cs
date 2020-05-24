@@ -50,7 +50,7 @@ public class CircuitComponentPanel : MonoBehaviour
     {
         if (currentlySelectedComponent == null)
         {
-            DiagramComponent component = circuitComponent.component;
+            DiagramComponent component = circuitComponent.conponent;
             SendMessageUpwards("GridMoveStart");
             window.enabled = true;
             Debug.Log("selected new compnent");
@@ -144,7 +144,6 @@ public class CircuitComponentPanel : MonoBehaviour
         {
             currentlySelectedComponent.direction = Direction.A_to_B;
         }
-        currentlySelectedCircuitComponent.updateUXValues();
         updateDisplayValues();
     }
 

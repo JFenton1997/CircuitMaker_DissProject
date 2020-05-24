@@ -101,6 +101,8 @@ MonoBehaviour:
   connectedColor: {r: 0.33456254, g: 1, b: 0, a: 0.46666667}
   hoverColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   selectedColor: {r: 1, g: 0.758536, b: 0.13679248, a: 1}
+  errorColor: {r: 1, g: 0, b: 0, a: 1}
+  pastColor: {r: 0, g: 0, b: 0, a: 0}
   AvowFillColorTrans: {fileID: 0}
   boxCollider2D: {fileID: 0}
   TopConnections: []
@@ -174,7 +176,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5596628811997710401}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28eac01e48673024a94524867d84c945, type: 3}
+  m_Script: {fileID: 11500000, guid: 869fa189f9543b44b9c7a5db30e56975, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   UseObjectName: 1

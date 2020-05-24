@@ -1,17 +1,18 @@
 Things to do
+AVOW fix
+Error handling
+mainMenu setup
+tooltips
 
-FOR 21/5/20
-- AVOW GEN DONE
-- QUESTION AND CSV DONE
-- FIX CIRCUIT GUI
--POLISH FOR STUDENT SIDE.
 
+
+fix issue with avow gen, as show in email
 
 ALL
 GENRAL
-- link controles to both
+- link controles to both 
 - link Globals to Both
-- change conponent params to doubles
+- tool tips
 
 
 CSV
@@ -20,14 +21,12 @@ CSV
 
 
 AVOW TEACH
-- Make Generator
-- Calc Cell Values
+
 - error Handeling 
-- colouring of connections
 
 Circuit TEACH
-- redo UI + clean Dynamic Text error
-- Inport Tooltips#
+-error handling 
+- Import Tooltips#
 
 Do Student Sides for both
 MENU

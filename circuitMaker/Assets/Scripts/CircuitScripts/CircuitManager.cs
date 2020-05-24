@@ -9,22 +9,78 @@ public class CircuitManager : MonoBehaviour
     [SerializeField]
     public Dictionary<int, List<DiagramComponent>> diagramData;
     private DiagramComponent cellComponent = null;
+    public GameObject circuitComponentPrefab, circuitWirePrefab;
+    public List<CircuitComponent> allConponents;
+
+
+
+    private char ConpName = 'A';
+
+    private void Start()
+    {
+        allConponents = new List<CircuitComponent>();
+    }
+
+    public void buildCircuitConponent()
+    {
+        GameObject circuitComponentOBJ = (GameObject)Instantiate(circuitComponentPrefab, Vector3.zero, Quaternion.identity, transform);
+        CircuitComponent newConponent = circuitComponentOBJ.GetComponent<CircuitComponent>();
+
+        newConponent.name = "CELL";
+        circuitComponentOBJ.name =  "CELL";
+        newConponent.name =  "CELL";
+        allConponents.Add(newConponent);
+    if(allConponents.FindAll(x=>x.conponent.type == ComponentType.CELL).Count >1){
+        newConponent.conponent.type = ComponentType.RESISTOR;
+        newConponent.conponent.Values[ComponentParameter.RESISTANCE].value = 1f;
+        newConponent.conponent.direction = Direction.A_to_B;
+        circuitComponentOBJ.name = ConpName.ToString();
+        newConponent.name = ConpName.ToString();
+        ConpName++;
+    }
+
+        newConponent.clickAndDrag.enabled = true;
+        newConponent.clickAndDrag.MoveStart();
+
+
+    }
+
+
+
+    public void buildCircuitWire()
+    {
+        GameObject circuitComponentOBJ = (GameObject)Instantiate(circuitWirePrefab, Vector3.zero, Quaternion.identity, transform);
+        Wire newConponent = circuitComponentOBJ.GetComponent<Wire>();
+        newConponent.gameObject.name = "wire";
+        newConponent.createdFromButton();
+
+
+    }
+
+
+
 
     public void GenerateDiagramData()
     {
+        updateAllWireConnections();
         SetCircuitConnections();
+        if(allConponents.FindAll(x=> x.conponent.type == ComponentType.CELL).Count != 1){
+            Debug.LogError("ONLY 1 CELL");
+            return;
+
+        }
 
         diagramData = new Dictionary<int, List<DiagramComponent>>();
         foreach (CircuitComponent d in transform.GetComponentsInChildren<CircuitComponent>())
         {
-            DiagramComponent c = d.component;
+            DiagramComponent c = d.conponent;
             c.Aconnections.Sort((x1, x2) => getCircuitComponent(x1).transform.position.x.CompareTo(getCircuitComponent(x2).transform.position.x));
             c.Bconnections.Sort((x1, x2) => getCircuitComponent(x1).transform.position.x.CompareTo(getCircuitComponent(x2).transform.position.x));
 
         }
         foreach (CircuitComponent circuitComponent in transform.GetComponentsInChildren<CircuitComponent>())
         {
-            DiagramComponent c = circuitComponent.component;
+            DiagramComponent c = circuitComponent.conponent;
 
             if (c.type == ComponentType.CELL)
             {
@@ -90,12 +146,17 @@ public class CircuitManager : MonoBehaviour
 
         }
         diagramData.Remove(layerValue);
-                foreach (var data in diagramData)
+        transform.Find("/UI/SaveDiagram").GetComponent<SaveFileWindow>().intialiseSaveWindow(diagramData);
+
+
+        foreach (var data in diagramData)
         {
             Debug.Log("layer" + data.Key.ToString() + " = " + String.Join("",
 data.Value
 .ConvertAll(i => i.name.ToString())
 .ToArray()));
+
+
 
 
 
@@ -123,7 +184,7 @@ data.Value
     {
         foreach (CircuitComponent circuitComponent in transform.GetComponentsInChildren<CircuitComponent>())
         {
-            if (circuitComponent.component == d)
+            if (circuitComponent.conponent == d)
             {
                 return circuitComponent;
             }
@@ -177,7 +238,7 @@ data.Value
     private bool isNodeOutput(Node n)
     {
         CircuitComponent c = n.GetComponentInParent<CircuitComponent>();
-        DiagramComponent d = c.component;
+        DiagramComponent d = c.conponent;
         if (d.direction == Direction.A_to_B)
         {
             if (n.name == "nodeA")
@@ -203,6 +264,14 @@ data.Value
         }
     }
 
+    private void updateAllWireConnections(){
+        List<Wire> allWire = new List<Wire>(transform.GetComponentsInChildren<Wire>());
+        foreach(Wire w in allWire){
+            w.updateWireConnections();
+        }
+    }
+
+
 
     private void SetCircuitConnections()
     {
@@ -210,7 +279,7 @@ data.Value
         {
             foreach (Node n in new Node[2] { circuitComponent.nodeA, circuitComponent.nodeB })
             {
-                foreach (Collider2D collider in Physics2D.OverlapBoxAll(n.transform.position, new Vector2(0.1f, 0.1f), 0f))
+                foreach (Collider2D collider in Physics2D.OverlapCircleAll(n.transform.position, (n.GetComponent<RectTransform>().sizeDelta.x/4 )*n.GetComponent<RectTransform>().localScale.x ))
                 {
                     if (collider.TryGetComponent<Wire>(out Wire w))
                     {
@@ -221,7 +290,7 @@ data.Value
             }
 
             SetComponentConnections(circuitComponent);
-            DiagramComponent component = circuitComponent.component;
+            DiagramComponent component = circuitComponent.conponent;
             Debug.Log(component.name + "     " + component.type.ToString());
             Debug.Log("Aconnections = " + String.Join("",
             component.Aconnections
@@ -239,7 +308,8 @@ data.Value
 
     private void SetComponentConnections(CircuitComponent circuitComponent)
     {
-        DiagramComponent component = circuitComponent.component;
+        DiagramComponent component = circuitComponent.conponent;
+        Debug.Log(circuitComponent.gameObject);
         component.Aconnections = GetConnectedComponents(circuitComponent.nodeA, isNodeOutput(circuitComponent.nodeA));
         component.Bconnections = GetConnectedComponents(circuitComponent.nodeB, isNodeOutput(circuitComponent.nodeB));
 
@@ -252,16 +322,20 @@ data.Value
         List<Wire> wiresToTest = new List<Wire>();
         List<Wire> vistedWires = new List<Wire>();
         wiresToTest.Add(node.ConnectedWire);
+        Debug.Log(node.name + "  "+ node.transform.parent.name + "  "+ isOutput);
         while (wiresToTest.Count > 0)
         {
+
             Wire w = wiresToTest[0];
             foreach (Node n in w.connectedNode)
             {
-                if (!connectedComponents.Contains(n.GetComponentInParent<CircuitComponent>().component))
+                if (!connectedComponents.Contains(n.GetComponentInParent<CircuitComponent>().conponent) && n != node)
+                {
                     if (isCorrectNode(n, isOutput))
                     {
-                        connectedComponents.Add(n.GetComponentInParent<CircuitComponent>().component);
+                        connectedComponents.Add(n.GetComponentInParent<CircuitComponent>().conponent);
                     }
+                }
             }
 
             foreach (Wire u in w.connectedWires)
@@ -274,8 +348,6 @@ data.Value
             }
             wiresToTest.Remove(w);
         }
-
-        connectedComponents.Remove(node.GetComponentInParent<CircuitComponent>().component);
 
 
         return connectedComponents;
@@ -292,7 +364,7 @@ data.Value
         //for each component
         foreach (CircuitComponent circuitComponent in transform.GetComponentsInChildren<CircuitComponent>())
         {
-            DiagramComponent c = circuitComponent.component;
+            DiagramComponent c = circuitComponent.conponent;
             if (c.type != ComponentType.CELL)
             {
                 //for each output connected

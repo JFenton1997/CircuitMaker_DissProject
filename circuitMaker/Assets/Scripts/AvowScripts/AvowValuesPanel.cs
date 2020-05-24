@@ -85,6 +85,7 @@ public class AvowValuesPanel : MonoBehaviour
         if(selectedText.text !=""){
             currentAvow.name = selectedText.text;
             currentAvow.gameObject.name = selectedText.text;
+            currentAvow.component.name = selectedText.text;
         }
 
         currentAvow.component.type =(ComponentType)AvowConponentType.value +2;

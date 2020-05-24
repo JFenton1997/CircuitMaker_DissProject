@@ -48,7 +48,10 @@ namespace Utilities
         public B b { get; set; }
 
 
+
     };
+
+
 
 
 
@@ -132,6 +135,50 @@ namespace Utilities
         }
     }
 
+    public struct DiagramError
+    {
+        public string errorName;
+        public string errorDiscription;
+        public DiagramComponent conponent;
+
+
+
+        public DiagramError(string name, string desc)
+        {
+            errorName = name;
+            errorDiscription = desc;
+            conponent = null;
+
+        }
+
+        public DiagramError(string name, string desc, DiagramComponent conponent, object allConponents)
+        {
+            errorName = name;
+            errorDiscription = desc;
+            this.conponent = conponent;
+            setErrorColor(allConponents);
+
+        }
+
+        public void setErrorColor(object allConponents)
+        {
+            DiagramComponent conponent = this.conponent;
+            if (allConponents is List<CircuitComponent>)
+            {
+                List<CircuitComponent> allConponentsCircuit = (List<CircuitComponent>)allConponents;
+                allConponentsCircuit.Find(x => x.conponent == conponent).ColorErrorColor();
+            }
+            else if (allConponents is List<AvowConponent>)
+            {
+                List<AvowConponent> allConponentsCircuit = (List<AvowConponent>)allConponents;
+                allConponentsCircuit.Find(x => x.component == conponent).ColorToParam(Color.red);
+
+            }
+
+
+        }
+    }
+
     public static class ExtraUtilities
     {
 
@@ -149,12 +196,15 @@ namespace Utilities
 
 
     }
-
-
-
-
-
-
-
-
 }
+
+
+
+
+
+
+
+
+
+
+

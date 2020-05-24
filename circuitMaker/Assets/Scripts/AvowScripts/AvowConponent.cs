@@ -14,16 +14,17 @@ public class AvowConponent : MonoBehaviour
     private Image AvowFillColorImg;
     private AvowManager avowManager;
 
+    public bool isBlocked;
 
-[SerializeField]
+
+    [SerializeField]
     public List<AvowConponent> TopConnections, BotConnections, LeftConnections, RightConnections;
 
     Image image;
-     public RectTransform rectTransform;
+    public RectTransform rectTransform;
 
     public double voltage = 1, current = 1;
     Vector2 fillSize;
-
 
 
     [HideInInspector]
@@ -37,7 +38,7 @@ public class AvowConponent : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-       
+
         boxCollider2D = this.GetComponent<BoxCollider2D>();
         rectTransform = this.GetComponent<RectTransform>();
         image = this.GetComponent<Image>();
@@ -48,6 +49,7 @@ public class AvowConponent : MonoBehaviour
         LeftConnections = new List<AvowConponent>();
         RightConnections = new List<AvowConponent>();
         avowManager = transform.GetComponentInParent<AvowManager>();
+        pastColor = fillColour;
 
 
     }
@@ -58,23 +60,29 @@ public class AvowConponent : MonoBehaviour
         updateFill();
         this.GetComponent<BoxCollider2D>().size = fillSize;
         Collider2D[] hit = new Collider2D[10];
-        Color pastColor = AvowFillColorImg.color;
-        if(boxCollider2D.OverlapCollider(new ContactFilter2D(),  hit) >0){
 
-           AvowFillColorImg.color = Color.red;
+        if (boxCollider2D.OverlapCollider(new ContactFilter2D(), hit) > 0)
+        {
+            pastColor = AvowFillColorImg.color;
+            AvowFillColorImg.color = Color.red;
+            isBlocked = true;
         }
-        else{
-            if(AvowFillColorImg.color == Color.red){
-                ColorToMain();
-            }
-            else{
+        else
+        {
+            if (AvowFillColorImg.color == Color.red && isBlocked == true)
+            {
                 AvowFillColorImg.color = pastColor;
+                isBlocked = false;
+            }
+            else
+            {
+                pastColor = AvowFillColorImg.color;
 
             }
-            
+
         }
- 
-        
+
+
 
     }
 
@@ -84,8 +92,8 @@ public class AvowConponent : MonoBehaviour
     {
         //temp
         updateSize(voltage, current);
-        fillSize = new Vector2(rectTransform.rect.width - (0.05f *  (Camera.main.orthographicSize/ 10)), rectTransform.rect.height
-         - (0.05f *  (Camera.main.orthographicSize/10)));
+        fillSize = new Vector2(rectTransform.rect.width - (0.05f * (Camera.main.orthographicSize / 10)), rectTransform.rect.height
+         - (0.05f * (Camera.main.orthographicSize / 10)));
 
         AvowFillColorTrans.sizeDelta = fillSize;
 
@@ -95,8 +103,9 @@ public class AvowConponent : MonoBehaviour
 
     public void updateSize(double voltage, double current)
     {
-        if(current >0 && voltage > 0){
-        rectTransform.sizeDelta = new Vector2((float)current, (float)voltage);
+        if (current > 0 && voltage > 0)
+        {
+            rectTransform.sizeDelta = new Vector2((float)current, (float)voltage);
         }
     }
 
@@ -111,30 +120,37 @@ public class AvowConponent : MonoBehaviour
 
     }
 
-    public void ColorToHover(){
+    public void ColorToHover()
+    {
         AvowFillColorImg.color = hoverColor;
-        foreach(AvowConponent avow in TopConnections){
+        foreach (AvowConponent avow in TopConnections)
+        {
             avow.ColorToConnected();
         }
-        foreach(AvowConponent avow in BotConnections){
+        foreach (AvowConponent avow in BotConnections)
+        {
             avow.ColorToConnected();
         }
-        foreach(AvowConponent avow in RightConnections){
+        foreach (AvowConponent avow in RightConnections)
+        {
             avow.ColorToConnected();
         }
-        foreach(AvowConponent avow in LeftConnections){
+        foreach (AvowConponent avow in LeftConnections)
+        {
             avow.ColorToConnected();
         }
 
 
     }
 
-        public void ColorToSelected(){
+    public void ColorToSelected()
+    {
         AvowFillColorImg.color = selectedColor;
 
     }
 
-        public void ColorToParam(Color color){
+    public void ColorToParam(Color color)
+    {
         AvowFillColorImg.color = color;
     }
 
@@ -266,7 +282,7 @@ public class AvowConponent : MonoBehaviour
         Collider2D[] hitsR = Physics2D.OverlapAreaAll(new Vector2(corners[2].x, corners[2].y), new Vector2(corners[3].x + 0.1f, corners[3].y));
         if (hitsR.Length > 0)
         {
-                                       
+
             Array.Sort(hitsR, (x1, x2) => x2.transform.position.y.CompareTo(x1.transform.position.y));
             foreach (Collider2D hit in hitsR)
             {
@@ -303,29 +319,36 @@ public class AvowConponent : MonoBehaviour
         }
     }
 
-    private void OnMouseDown() {
-        try{
-                    GameObject.Find("ValuesPanel").GetComponent<AvowValuesPanel>().newSelected(this);
+    private void OnMouseDown()
+    {
+        try
+        {
+            GameObject.Find("ValuesPanel").GetComponent<AvowValuesPanel>().newSelected(this);
         }
-        catch(System.Exception ex){
-            Debug.LogError("MISSING OR CANT FIND VALUES PANEL\n"+ ex.ToString());
+        catch (System.Exception ex)
+        {
+            Debug.LogError("MISSING OR CANT FIND VALUES PANEL\n" + ex.ToString());
         }
 
     }
 
-    public void removeAvowConnection(AvowConponent avowConponent){
+    public void removeAvowConnection(AvowConponent avowConponent)
+    {
         TopConnections.Remove(avowConponent);
         BotConnections.Remove(avowConponent);
         RightConnections.Remove(avowConponent);
         LeftConnections.Remove(avowConponent);
     }
 
-    private void OnDestroy() {
+    private void OnDestroy()
+    {
         this.GetComponent<AvowDragDrop>().enabled = false;
-        try{
+        try
+        {
             GetComponentInParent<AvowManager>().removeAvow(this);
         }
-        catch(System.Exception ex){
+        catch (System.Exception ex)
+        {
             Debug.LogWarning(ex.Message);
 
         }

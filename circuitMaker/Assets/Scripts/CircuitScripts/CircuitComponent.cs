@@ -1,33 +1,34 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 
 
 using Utilities;
 
 
-public class CircuitComponent : MonoBehaviour
+public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
 {
 
 
-    public DiagramComponent component;
-    public Image directionImage;
+    public DiagramComponent conponent;
 
-    public Color normalColor = Color.black;
-    public Color hiddenColor = Color.gray;
+
 
     [HideInInspector]
     public string name;
-
+[HideInInspector]
     public Node nodeA;
+    [HideInInspector]
     public Node nodeB;
 
-    public Canvas ValuesUX;
-    private Text voltageText;
-    private Text currentText;
-    private Text resistanceText;
-    private Text componentNameText;
-    private Text componentTypeText;
+
+    public Sprite spriteCell, spriteResistor, spriteLight;
+    private Image conponentImage, highlight;
+    private DisplayConponentValues UIdisplay;
+[HideInInspector]    public CircuitClickAndDrag clickAndDrag;
+
+    private bool prevDisplayValue;
 
 
 
@@ -35,10 +36,18 @@ public class CircuitComponent : MonoBehaviour
 
     private void Awake()
     {
+        prevDisplayValue = false;
+        conponentImage = GetComponent<Image>();
+        // conponent.type = ComponentType.CELL;
+        clickAndDrag = GetComponent<CircuitClickAndDrag>();
+
         try
         {
-            nodeA = transform.GetChild(0).gameObject.GetComponent<Node>();
-            nodeB = transform.GetChild(1).gameObject.GetComponent<Node>();
+            nodeA = transform.Find("nodeA").gameObject.GetComponent<Node>();
+            nodeB = transform.Find("nodeB").gameObject.GetComponent<Node>();
+            UIdisplay = transform.Find("Values").GetComponent<DisplayConponentValues>();
+            highlight = transform.Find("Highlight").GetComponent<Image>();
+            highlight.enabled = false;
 
 
 
@@ -46,111 +55,126 @@ public class CircuitComponent : MonoBehaviour
         }
         catch
         {
-            Debug.Log(this.name + " failed to find nodes");
+            Debug.LogError(this.name + " failed to find nodes");
         }
 
     }
 
     private void Start()
     {
+
+
         DiagramComponent component = new DiagramComponent();
         //Assigning Text Variables
 
-        try{
-        foreach (Text t in ValuesUX.GetComponentsInChildren<Text>())
-        {
-            if (t.transform.parent.name == "Voltage" && t.text == "0")
-            {
-                voltageText = t;
-            }
-            else if (t.transform.parent.name == "Current" && t.text == "0")
-            {
-                currentText = t;
-            }
-            else if (t.transform.parent.name == "Resistance" && t.text == "0")
-            {
-                resistanceText = t;
-            }
-            else if (t.name == "ComponentName")
-            {
-                componentNameText = t;
-            }
-            else if (t.name == "ComponentType")
-            {
-
-                componentTypeText = t;
-                
-
-            }
 
 
-
-        }
-        updateUXValues();
-        } catch{
-            Debug.Log("emptyChild");
-        }
 
     }
 
 
-    public void updateUXValues()
+
+
+    private void Update()
     {
-        voltageText.text = component.Values[ComponentParameter.VOLTAGE].value.ToString();
-        if (component.Values[ComponentParameter.VOLTAGE].hidden)
+        
+
+        switch (conponent.type)
         {
-            voltageText.color = hiddenColor;
-        }
-        else
-        {
-            voltageText.color = normalColor;
+            case ComponentType.CELL:
+                conponentImage.sprite = spriteCell;
+                break;
+            case ComponentType.RESISTOR:
+                conponentImage.sprite = spriteResistor;
+                break;
+            case ComponentType.LIGHT:
+                conponentImage.sprite = spriteLight;
+                break;
+            default:
+                conponentImage.sprite = null;
+                //Debug.LogError("UNKOWN CONPONENT TYPE");
+                break;
+
+
+
+
         }
 
-        currentText.text = component.Values[ComponentParameter.CURRENT].value.ToString();
-        if (component.Values[ComponentParameter.CURRENT].hidden)
-        {
-            currentText.color = hiddenColor;
+        if(GlobalValues.circuitDisplayAll == true){
+            if(conponent.type!= ComponentType.UNTYPED)
+            UIdisplay.display();
+            prevDisplayValue = true;
+
         }
-        else
-        {
-            currentText.color = normalColor;
+        if(GlobalValues.circuitDisplayAll  == false && prevDisplayValue == true){
+            if(conponent.type!= ComponentType.UNTYPED)
+            UIdisplay.hide();
+            prevDisplayValue = false;
+
         }
 
-        resistanceText.text = component.Values[ComponentParameter.RESISTANCE].value.ToString();
-        if (component.Values[ComponentParameter.RESISTANCE].hidden)
+        conponent.name = this.gameObject.name;
+        if (conponent.type == ComponentType.CELL)
         {
-            resistanceText.color = hiddenColor;
-        }
-        else
-        {
-            resistanceText.color = normalColor;
+            conponent.direction = Direction.B_to_A;
         }
 
-        componentNameText.text = this.name;
-        componentTypeText.text = component.type.ToString();
-        component.name = this.name;
-        updateDirection();
     }
 
-    private void updateDirection()
-    {
-        if (component.direction == Direction.A_to_B)
-        {
-            directionImage.rectTransform.rotation = Quaternion.Euler(0f, 0f, 180f);
-        }
-        else
-        {
-            directionImage.rectTransform.rotation = Quaternion.Euler(0f, 0f, 0f);
-        }
+    public void removeWireConnections(){
+        if(nodeA.ConnectedWire)
+        Destroy(nodeA.ConnectedWire.gameObject);
+        if(nodeB.ConnectedWire)
+        Destroy(nodeB.ConnectedWire.gameObject);
     }
 
-    private void OnMouseDown()
-    {
-        if (this.GetComponent<GridMove>().isMoving == false)
-        {
-            transform.GetComponentInParent<CircuitComponentPanel>().newComponentSelected(this);
-        }
 
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        transform.Find("/UI/bot/ValuesPanel").GetComponent<CircuitValuesPanel>().newSelected(GetComponent<CircuitComponent>());
+    }
+
+
+
+    // public void OnPointerUp(PointerEventData eventData)
+    // {
+    //     Cursor.visible = true;
+
+    // }
+
+
+
+    public void OnPointerEnter(PointerEventData eventData) { 
+
+        UIdisplay.display();
+    }
+
+    public void ShowHighlight(){
+        highlight.enabled = true;
+    }
+
+    public void ColorErrorColor(){
+
+
+
+    }
+
+    public void hideHighlight(){
+        highlight.enabled = false;
+    }
+
+    private void OnDestroy() {
+        transform.parent.GetComponent<CircuitManager>().allConponents.Remove(this);
+    }
+
+    
+
+
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        UIdisplay.hide();
     }
 
 

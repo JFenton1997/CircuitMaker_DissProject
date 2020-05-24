@@ -1,34 +1,43 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Wire : MonoBehaviour
 {
-    public List<Wire> connectedWires;
-    public List<Node> connectedNode;
+    [SerializeField]
+    public HashSet<Wire> connectedWires;
+    public List<Wire> wires;
+
+    [SerializeField]
+    public HashSet<Node> connectedNode;
+
     private DrawWire drawWire;
     private SpriteRenderer spriteRenderer;
-    private GridMove gridMove;
+    private CircuitClickAndDrag circuitClickAndDrag;
     private LineRenderer lineRenderer;
     private BoxCollider2D boxCollider;
+    bool EndWireDrawBool;
 
 
 
     private void Awake()
     {
-        connectedWires = new List<Wire>();
-        connectedNode = new List<Node>();
+        gameObject.name = "wire";
+        EndWireDrawBool = false;
+        wires = new List<Wire>();
+        connectedWires = new HashSet<Wire>();
+        connectedNode = new HashSet<Node>();
         drawWire = this.GetComponent<DrawWire>();
-        gridMove = this.GetComponent<GridMove>();
+        circuitClickAndDrag = this.GetComponent<CircuitClickAndDrag>();
         spriteRenderer = this.GetComponent<SpriteRenderer>();
     }
 
     public void createdFromButton()
     {
-        Debug.Log("triggered");
         spriteRenderer.enabled = true;
-        gridMove.enabled = true;
-        gridMove.MoveStart();
+        circuitClickAndDrag.enabled = true;
+        circuitClickAndDrag.MoveStart();
 
     }
 
@@ -36,6 +45,7 @@ public class Wire : MonoBehaviour
     {
         spriteRenderer.enabled = false;
         drawWire.enabled = true;
+        gameObject.name = "wire";
         drawWire.StartDrawingLine();
 
     }
@@ -57,7 +67,7 @@ public class Wire : MonoBehaviour
             boxCollider.size = new Vector2(0.1f, Mathf.Abs(deltaY));
 
         }
-        
+
     }
 
 
@@ -67,21 +77,24 @@ public class Wire : MonoBehaviour
         this.GetComponent<SpriteRenderer>().enabled = false;
         boxCollider = gameObject.GetComponent<BoxCollider2D>();
         lineRenderer = gameObject.GetComponent<LineRenderer>();
-        Vector3 [] linePositions = { new Vector3(a.x,a.y,0), new Vector3(b.x,b.y,0)}; 
+        Vector3[] linePositions = { new Vector3(a.x, a.y, 0), new Vector3(b.x, b.y, 0) };
         lineRenderer.SetPositions(linePositions);
-        lineRenderer.enabled= true;
+        lineRenderer.enabled = true;
         updateBoxCollider();
-        Collider2D[] aHits =Physics2D.OverlapBoxAll(a,new Vector2(0.1f,0.1f),0f);
-        Collider2D[] bHits =Physics2D.OverlapBoxAll(b,new Vector2(0.1f,0.1f),0f);
-        Collider2D[] allHits= new Collider2D[aHits.Length+bHits.Length];
-        aHits.CopyTo(allHits,0);
-        bHits.CopyTo(allHits,aHits.Length);
-        foreach(Collider2D collider in allHits){
-            if(collider.transform.TryGetComponent<Node>(out Node foundNode)){
+        Collider2D[] aHits = Physics2D.OverlapBoxAll(a, new Vector2(0.1f, 0.1f), 0f);
+        Collider2D[] bHits = Physics2D.OverlapBoxAll(b, new Vector2(0.1f, 0.1f), 0f);
+        Collider2D[] allHits = new Collider2D[aHits.Length + bHits.Length];
+        aHits.CopyTo(allHits, 0);
+        bHits.CopyTo(allHits, aHits.Length);
+        foreach (Collider2D collider in allHits)
+        {
+            if (collider.transform.TryGetComponent<Node>(out Node foundNode))
+            {
                 foundNode.ConnectedWire = this;
                 addConnection(foundNode);
             }
-            else if (collider.transform.TryGetComponent<Wire>(out Wire foundWire)){
+            else if (collider.transform.TryGetComponent<Wire>(out Wire foundWire))
+            {
                 foundWire.addConnection(this);
                 addConnection(foundWire);
             }
@@ -90,10 +103,27 @@ public class Wire : MonoBehaviour
     }
 
 
-    public void undo()
-    {
-
+    public void updateWireConnections(){
+        Vector2 a = GetComponent<LineRenderer>().GetPosition(0);
+        Vector2 b = GetComponent<LineRenderer>().GetPosition(1);
+        Collider2D[] allHits = Physics2D.OverlapBoxAll(new Vector2((a.x+b.x)/2 ,(a.y+b.y)/2),GetComponent<BoxCollider2D>().size,0f );
+        foreach (Collider2D collider in allHits)
+        {
+            // if (collider.transform.TryGetComponent<Node>(out Node foundNode))
+            // {
+            //     foundNode.ConnectedWire = this;
+            //     addConnection(foundNode);
+            // }
+            if (collider.transform.TryGetComponent<Wire>(out Wire foundWire))
+            {
+                foundWire.addConnection(this);
+                addConnection(foundWire);
+            }
+        }
     }
+
+
+
     public void addConnection(Node n)
     {
         connectedNode.Add(n);
@@ -101,7 +131,7 @@ public class Wire : MonoBehaviour
 
     public void addConnection(Wire w)
     {
-        if(!connectedWires.Contains(w) && w != this) connectedWires.Add(w);
+        if (!connectedWires.Contains(w) && w != this) connectedWires.Add(w);
     }
 
     public void removeConnection(Wire w)
@@ -115,13 +145,14 @@ public class Wire : MonoBehaviour
     }
     public void GridMoveEnded()
     {
-        gridMove.enabled = false;
+        circuitClickAndDrag.enabled = false;
         createdFromUnconnectedWire();
     }
 
     public void EndWireDraw()
     {
         drawWire.enabled = false;
+        EndWireDrawBool = true;
     }
 
     private void OnDestroy()
@@ -135,5 +166,43 @@ public class Wire : MonoBehaviour
             n.updateWire(null);
         }
     }
+
+    [System.Obsolete]
+    private void OnMouseEnter()
+    {
+
+
+        GetComponent<LineRenderer>().SetColors(Color.gray, Color.gray);
+        foreach(Wire w in connectedWires){
+            if(!wires.Contains(w))
+            wires.Add(w);
+        }
+    }
+
+    private void OnMouseOver()
+    {
+
+
+
+        if (Input.GetMouseButton(1))
+        {
+            GameObject.Destroy(gameObject);
+        }
+
+    }
+
+
+
+    [System.Obsolete]
+    private void OnMouseExit()
+
+
+    {
+        GetComponent<LineRenderer>().SetColors(Color.black, Color.black);
+
+    }
+
+
+
 
 }

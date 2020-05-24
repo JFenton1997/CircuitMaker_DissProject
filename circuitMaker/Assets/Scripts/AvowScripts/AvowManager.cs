@@ -15,6 +15,8 @@ public class AvowManager : MonoBehaviour
 
     public CsvManager csv;
 
+    private HashSet<DiagramError> foundErrors;
+
 
     // Start is called before the first frame update
     private void Awake()
@@ -117,15 +119,18 @@ public class AvowManager : MonoBehaviour
 
     public void GenerateDiagramData()
     {
+        foundErrors = new HashSet<DiagramError>();
+
         if (allAvow.Count == 0)
         {
-            Debug.LogError("NOTHING TO SAVE ");
-            return;
+            foundErrors.Add(new DiagramError("NO CONPONENTS FOUND", "theres no conponents to use to create a diagram"));
+            transform.Find("/UI/ErrorsPanel").GetComponent<ErrorPanel>().displayErrors(foundErrors);
+            
+            
         }
         // update Diagram Conponent of the Avows
         updateAllValue();
         //initialise Lists values
-        List<Pair<AvowConponent, string>> ErrorAvow = new List<Pair<AvowConponent, string>>(); //errors
         Dictionary<int, List<DiagramComponent>> diagramData = new Dictionary<int, List<DiagramComponent>>(); //diagram datatype
         List<DiagramComponent> listOfConponents = new List<DiagramComponent>(); // used to insert data into diagram data
         List<DiagramComponent> visitedConponents = new List<DiagramComponent>(); // keep track of prev
@@ -197,55 +202,71 @@ data.Value
             //error avow
             foreach (AvowConponent avow in unconnected)
             {
-                ErrorAvow.Add(new Pair<AvowConponent, string>(avow, "Avow is seen as Unconnected, please delete or make sure the avow is connected"));
+                foundErrors.Add(new DiagramError("UNCONNECTED", "The Avow " + avow.gameObject.name + " is seen as unconnected, please either delete the avow or make sure it is connected", avow.component,allAvow));
 
             }
 
 
         }
-        else
+
+        foreach(AvowConponent avow in allAvow.FindAll(x => x.isBlocked == true)){
+              foundErrors.Add(new DiagramError("BLOCKED", "The Avow " + avow.gameObject.name + " is seen as Blocked, please either delete the avow or Move it",avow.component,allAvow));
+
+        }
+        //ERRORS DISPLAY IF ANY
+
+        if(foundErrors.Count != 0){
+            Debug.Log(transform.Find("/UI/ErrorsPanel").name);
+            transform.Find("/UI/ErrorsPanel").GetComponent<ErrorPanel>().displayErrors(foundErrors);
+            return;
+        }
+
+
+
+
+
+        //adding cell connectionions
+        foreach (DiagramComponent d in allAvow.ConvertAll(x => x.component)
+            .FindAll(x => x.Bconnections.Count == 0))
         {
-            foreach (DiagramComponent d in allAvow.ConvertAll(x => x.component)
-                .FindAll(x => x.Bconnections.Count == 0))
-            {
-                diagramData[0][0].Bconnections.Add(d);
-                d.Bconnections.Add(diagramData[0][0]);
-            }
-            foreach (DiagramComponent d in allAvow.ConvertAll(x => x.component)
-                .FindAll(x => x.Aconnections.Count == 0))
-            {
-                diagramData[0][0].Aconnections.Add(d);
-                d.Aconnections.Add(diagramData[0][0]);
-            }
-
-            //calculate Cell Values
-            double voltage = 0;
-            double current = 0;
-            foreach (DiagramComponent d in diagramData[1])
-            {
-                current += d.Values[ComponentParameter.CURRENT].value;
-            }
-            bool endOfDiagram = false; ;
-            foreach (var d in diagramData)
-            {
-                if (d.Key > 0 && !endOfDiagram)
-                {
-                    if (d.Value[0].Bconnections.Count == 1 && d.Value[0].Bconnections[0].type == ComponentType.CELL)
-                    {
-                        endOfDiagram = true;
-                    }
-                    Debug.Log("cell check,  Found: " + d.Value[0].name + "   volt: " + d.Value[0].Values[ComponentParameter.VOLTAGE].value);
-                    voltage += d.Value[0].Values[ComponentParameter.VOLTAGE].value;
-                }
-            }
-            diagramData[0][0].Values[ComponentParameter.VOLTAGE].value = voltage;
-            diagramData[0][0].Values[ComponentParameter.CURRENT].value = current;
-            diagramData[0][0].Values[ComponentParameter.RESISTANCE].value = 0f;
-
-            // submit avow diagram to save window
-            transform.Find("/UI/SaveDiagram").GetComponent<SaveFileWindow>().intialiseSaveWindow(diagramData);
-
+            diagramData[0][0].Bconnections.Add(d);
+            d.Bconnections.Add(diagramData[0][0]);
         }
+        foreach (DiagramComponent d in allAvow.ConvertAll(x => x.component)
+            .FindAll(x => x.Aconnections.Count == 0))
+        {
+            diagramData[0][0].Aconnections.Add(d);
+            d.Aconnections.Add(diagramData[0][0]);
+        }
+
+        //calculate Cell Values
+        double voltage = 0;
+        double current = 0;
+        foreach (DiagramComponent d in diagramData[1])
+        {
+            current += d.Values[ComponentParameter.CURRENT].value;
+        }
+        bool endOfDiagram = false; ;
+        foreach (var d in diagramData)
+        {
+            if (d.Key > 0 && !endOfDiagram)
+            {
+                if (d.Value[0].Bconnections.Count == 1 && d.Value[0].Bconnections[0].type == ComponentType.CELL)
+                {
+                    endOfDiagram = true;
+                }
+                Debug.Log("cell check,  Found: " + d.Value[0].name + "   volt: " + d.Value[0].Values[ComponentParameter.VOLTAGE].value);
+                voltage += d.Value[0].Values[ComponentParameter.VOLTAGE].value;
+            }
+        }
+        diagramData[0][0].Values[ComponentParameter.VOLTAGE].value = voltage;
+        diagramData[0][0].Values[ComponentParameter.CURRENT].value = current;
+        diagramData[0][0].Values[ComponentParameter.RESISTANCE].value = 0f;
+
+        // submit avow diagram to save window
+        transform.Find("/UI/SaveDiagram").GetComponent<SaveFileWindow>().intialiseSaveWindow(diagramData);
+
+
 
 
 

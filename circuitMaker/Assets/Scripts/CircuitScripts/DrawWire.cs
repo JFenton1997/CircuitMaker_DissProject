@@ -17,7 +17,6 @@ public class DrawWire : MonoBehaviour
     // Start is called before the first frame update
     public void StartDrawingLine()
     {
-        SendMessageUpwards("StartWireDraw");
         wire = this.GetComponent<Wire>();
         boxCollider = GetComponent<BoxCollider2D>();
         drawingLine = true;
@@ -43,7 +42,6 @@ public class DrawWire : MonoBehaviour
                     drawingLine = false;
                     if (raycast)
                     {
-                        Debug.Log(hit);
                         if (hit.GetComponent<Wire>())
                         {
                             wire.addConnection(hit.GetComponent<Wire>());
@@ -51,10 +49,9 @@ public class DrawWire : MonoBehaviour
                         }
                         if (hit.GetComponent<Node>())
                         {
-                            wire.addConnection(hit.GetComponent<Node>());
-                            hit.GetComponent<Node>().updateWire(wire);
+                           wire.addConnection(hit.GetComponent<Node>());
+                           hit.GetComponent<Node>().updateWire(wire);
                         }
-                        SendMessageUpwards("EndWireDraw");
                     }
                     else
                     {
@@ -109,8 +106,18 @@ public class DrawWire : MonoBehaviour
     {
         Vector2 checkStart = lineRenderer.GetPosition(0);
         Vector2 checkEnd = lineRenderer.GetPosition(1);
-        RaycastHit2D hitInfo = Physics2D.Raycast(checkStart, checkEnd - checkStart, Vector3.Magnitude(checkEnd - checkStart));
-        return hitInfo;
+        List <RaycastHit2D> hit = new List<RaycastHit2D> (Physics2D.RaycastAll(checkStart, checkEnd - checkStart, Vector3.Magnitude(checkEnd - checkStart)));
+        if(hit.Find(x => x.transform.tag == "Node" )){
+            return hit.Find(x => x.transform.tag == "Node" );
+        }
+        else if (hit.Count == 0){
+            return new RaycastHit2D();
+        }
+
+        else{
+            return hit[0];
+
+        }
     }
 
     [System.Obsolete]
@@ -160,5 +167,8 @@ public class DrawWire : MonoBehaviour
 
 
     }
+
+
+    
 }
 

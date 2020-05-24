@@ -6,22 +6,24 @@ using Utilities;
 
 public class AvowGenerator : AvowManager
 {
+    public Vector2 startLocation;
 
     public void testGenerate()
     {
         GenerateAvowDiagram(csv.avowTestRead(), 1);
     }
 
+//create a Avow diagram
     public void GenerateAvowDiagram(Dictionary<int, List<DiagramComponent>> diagramData, float scale)
     {
-        Debug.Log("GEN");
+        //using a depth first methode using a stack
         Stack<DiagramComponent> conponentsToProcess = new Stack<DiagramComponent>();
         List<AvowConponent> builtAvows = new List<AvowConponent>();
 
 
         int prevAvowInRow = 0;
         DiagramComponent firstAvow = diagramData[1][0];
-        builtAvows.Add(BuildAvow(firstAvow, Vector2.zero));
+        builtAvows.Add(BuildAvow(firstAvow, startLocation));
         foreach (DiagramComponent layerConponent in diagramData[1])
         {
             Debug.Log(builtAvows.Count + " , " + prevAvowInRow);
@@ -57,10 +59,18 @@ public class AvowGenerator : AvowManager
         while (conponentsToProcess.Count > 0)
         {
             DiagramComponent currentAvow = conponentsToProcess.Pop();
+            // if not built and not cell
             if (!builtAvows.ConvertAll(x => x.component).Contains(currentAvow) && currentAvow.type != ComponentType.CELL)
             {
-                AvowConponent inputOfCurrentAvow = builtAvows.Find(x => outConponents(x.component).Contains(currentAvow));
+                builtAvows.Sort((x1, x2) => x1.transform.position.x.CompareTo(x2.transform.position.x));
+                
+                AvowConponent inputOfCurrentAvow = builtAvows.Find(x => outConponents(x.component).Contains(currentAvow))
+                    ;
                 AvowConponent builtAvow = BuildAvow(inputOfCurrentAvow, 'D', currentAvow, scale);
+                if( currentAvow.name == "H"){
+                   Debug.Log(inputOfCurrentAvow); 
+                    
+                }
                 builtAvows.Add(builtAvow);
                 foreach(AvowConponent a in builtAvows.FindAll(x => outConponents(x.component).Contains(currentAvow))){
                     a.BotConnections.Add(builtAvow);

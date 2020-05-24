@@ -36,7 +36,6 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\ExitScript.cs" />
      <Compile Include="Assets\Lean\Common\Examples\Scripts\LeanCircuit.cs" />
      <Compile Include="Assets\Lean\Common\Examples\Scripts\LeanDocumentation.cs" />
      <Compile Include="Assets\Lean\Common\Examples\Scripts\LeanLinkTo.cs" />
@@ -129,32 +128,31 @@
      <Compile Include="Assets\Lean\Transition\Scripts\LeanStateWithTarget.cs" />
      <Compile Include="Assets\Lean\Transition\Scripts\LeanTiming.cs" />
      <Compile Include="Assets\Lean\Transition\Scripts\LeanTransition.cs" />
-     <Compile Include="Assets\SaveFileWindow.cs" />
      <Compile Include="Assets\Scripts\AvowScripts\AvowConponent.cs" />
      <Compile Include="Assets\Scripts\AvowScripts\AvowDragDrop.cs" />
      <Compile Include="Assets\Scripts\AvowScripts\AvowGenerator.cs" />
      <Compile Include="Assets\Scripts\AvowScripts\AvowManager.cs" />
      <Compile Include="Assets\Scripts\AvowScripts\AvowValuesPanel.cs" />
-     <Compile Include="Assets\Scripts\BuildManager.cs" />
+     <Compile Include="Assets\Scripts\CircuitScripts\CircuitClickAndDrag.cs" />
      <Compile Include="Assets\Scripts\CircuitScripts\CircuitComponent.cs" />
      <Compile Include="Assets\Scripts\CircuitScripts\CircuitComponentPanel.cs" />
      <Compile Include="Assets\Scripts\CircuitScripts\CircuitManager.cs" />
+     <Compile Include="Assets\Scripts\CircuitScripts\CircuitValuesPanel.cs" />
+     <Compile Include="Assets\Scripts\CircuitScripts\DisplayConponentValues.cs" />
      <Compile Include="Assets\Scripts\CircuitScripts\DrawWire.cs" />
      <Compile Include="Assets\Scripts\CircuitScripts\GenerateCircuit.cs" />
-     <Compile Include="Assets\Scripts\CircuitScripts\GridMove.cs" />
+     <Compile Include="Assets\Scripts\CircuitScripts\Node.cs" />
      <Compile Include="Assets\Scripts\CircuitScripts\Wire.cs" />
-     <Compile Include="Assets\Scripts\ComponentSelect.cs" />
      <Compile Include="Assets\Scripts\Controllers\CameraController.cs" />
-     <Compile Include="Assets\Scripts\CsvManager.cs" />
-     <Compile Include="Assets\Scripts\DiagramComponent.cs" />
-     <Compile Include="Assets\Scripts\DragWindow.cs" />
-     <Compile Include="Assets\Scripts\GlobalValues.cs" />
-     <Compile Include="Assets\Scripts\Node.cs" />
-     <Compile Include="Assets\Scripts\ToolTipDisplay.cs" />
-     <Compile Include="Assets\Scripts\Tooltip.cs" />
-     <Compile Include="Assets\Scripts\UserControls.cs" />
+     <Compile Include="Assets\Scripts\Controllers\CsvManager.cs" />
+     <Compile Include="Assets\Scripts\Controllers\GlobalValues.cs" />
+     <Compile Include="Assets\Scripts\Controllers\UserControls.cs" />
+     <Compile Include="Assets\Scripts\UI\ErrorPanel.cs" />
+     <Compile Include="Assets\Scripts\UI\ExitScript.cs" />
+     <Compile Include="Assets\Scripts\UI\SaveFileWindow.cs" />
+     <Compile Include="Assets\Scripts\UI\ToolTipDisplay.cs" />
+     <Compile Include="Assets\Scripts\UI\Tooltip.cs" />
      <Compile Include="Assets\Scripts\Utilities.cs" />
-     <Compile Include="Assets\Scripts\UxManager.cs" />
      <None Include="Assets\Lean\Common\Examples\Fonts\OFL.txt" />
      <None Include="Assets\Lean\Common\Examples\Shaders\Object.shader" />
      <None Include="Assets\Lean\Common\Examples\Shaders\Skybox.shader" />
