@@ -154,7 +154,6 @@
      <Compile Include="Assets\Scripts\AvowScripts\AvowValuesPanel.cs" />
      <Compile Include="Assets\Scripts\CircuitScripts\CircuitClickAndDrag.cs" />
      <Compile Include="Assets\Scripts\CircuitScripts\CircuitComponent.cs" />
-     <Compile Include="Assets\Scripts\CircuitScripts\CircuitComponentPanel.cs" />
      <Compile Include="Assets\Scripts\CircuitScripts\CircuitManager.cs" />
      <Compile Include="Assets\Scripts\CircuitScripts\CircuitValuesPanel.cs" />
      <Compile Include="Assets\Scripts\CircuitScripts\DisplayConponentValues.cs" />

@@ -107,5 +107,11 @@ public class AvowValuesPanel : MonoBehaviour
         }
     }
 
+    public void Close(){
+        if(currentAvow){
+            currentAvow = null;
+        }
+    }
+
 
 }

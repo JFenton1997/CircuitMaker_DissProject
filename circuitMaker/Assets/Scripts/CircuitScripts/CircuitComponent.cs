@@ -135,7 +135,7 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        transform.Find("/UI/bot/ValuesPanel").GetComponent<CircuitValuesPanel>().newSelected(GetComponent<CircuitComponent>());
+        transform.Find("/UI/ValuesPanelCircuit").GetComponent<CircuitValuesPanel>().newSelected(GetComponent<CircuitComponent>());
     }
 
 
@@ -159,8 +159,8 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
         highlight.enabled = true;
     }
 
-    public void toErrorColor(){highlight.enabled=true; highlight.color = errorHighlightColor;}
-    public void toNormColor(){highlight.enabled=false; highlight.color = normalHighlightColor;}
+    public void toErrorColor(){if(conponent.type!= ComponentType.UNTYPED)highlight.enabled=true; highlight.color = errorHighlightColor;}
+    public void toNormColor(){if(conponent.type!= ComponentType.UNTYPED) highlight.enabled=false; highlight.color = normalHighlightColor;}
 
 
 

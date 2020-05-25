@@ -58,6 +58,16 @@ public class CircuitValuesPanel : MonoBehaviour
         }
         else
         {
+             if (direction.State == 0)
+            {
+                upArrow.color = offColor;
+                downArrow.color = onColor;
+            }
+            else
+            {
+                upArrow.color = onColor;
+                downArrow.color = offColor;
+            }
 
             // currentCircuit.ColorToSelected();
         }
@@ -72,19 +82,7 @@ public class CircuitValuesPanel : MonoBehaviour
         }
 
 
-        if (currentCircuit)
-        {
-            if (direction.State == 0)
-            {
-                upArrow.color = offColor;
-                downArrow.color = onColor;
-            }
-            else
-            {
-                upArrow.color = onColor;
-                downArrow.color = offColor;
-            }
-        }
+      
 
     }
 

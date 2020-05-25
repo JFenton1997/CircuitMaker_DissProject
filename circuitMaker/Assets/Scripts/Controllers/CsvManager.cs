@@ -19,7 +19,7 @@ public class CsvManager : MonoBehaviour
     Dictionary<int, List<DiagramComponent>> diagramData;
     List<DiagramComponent> createdComponents;
 
-    public bool WriteDigram(Dictionary<int, List<DiagramComponent>> diagramData, String author, String diagramTitle, String diagramQuestion, Pair<bool, bool> diagramEnabled)
+    public bool WriteDigram(Dictionary<int, List<DiagramComponent>> diagramData, String author, String diagramTitle, String diagramQuestion, bool[] diagramEnabled)
     {
         DiagramInstanceData diagram = new DiagramInstanceData(diagramTitle, author, diagramQuestion, diagramEnabled, diagramData);
         return (writeDataToCsv(diagram));
@@ -59,9 +59,10 @@ public class CsvManager : MonoBehaviour
 
 
 
-    private void writeTitleBar(string title, string author, string diagramQuestion, Pair<bool, bool> diagramEnabled)
+    private void writeTitleBar(string title, string author, string diagramQuestion, bool[] diagramEnabled)
     {
-        string recordData = title + "," + author + "," + diagramQuestion + "," + diagramEnabled.a + "," + diagramEnabled.b + "," + System.DateTime.Now + ",\0";
+        string recordData = title + "," + author + "," + diagramQuestion + "," + diagramEnabled[0] + "," + diagramEnabled[1] + ","
+        + diagramEnabled[2] + "," + diagramEnabled[3] + "," + System.DateTime.Now + ",\0";
         toWrite.Add(recordData);
     }
     public void writeComponentBar()
@@ -131,7 +132,7 @@ public class CsvManager : MonoBehaviour
         string author = "";
         string title = "";
         string question = "";
-        Pair<bool,bool> diagramEnabled = new Pair<bool, bool>();
+        bool[] diagramEnabled = new bool[4];
         createdComponents = new List<DiagramComponent>();
         diagramData = new Dictionary<int, List<DiagramComponent>>();
 
@@ -148,8 +149,10 @@ public class CsvManager : MonoBehaviour
                     author = info[0];
                     title = info[1];
                     question = info[2];
-                    diagramEnabled.a = (bool.Parse(info[3]));
-                    diagramEnabled.b = (bool.Parse(info[4]));
+                    diagramEnabled[0] = (bool.Parse(info[3]));
+                    diagramEnabled[1] = (bool.Parse(info[4]));
+                    diagramEnabled[2] = (bool.Parse(info[5]));
+                    diagramEnabled[3] = (bool.Parse(info[6]));
                 }
                 else if (lineNumber == 1)
                 {
@@ -169,13 +172,13 @@ public class CsvManager : MonoBehaviour
 
         }
         this.diagramData.Remove(diagramData.Count - 1);
-        return new DiagramInstanceData(title, author, question,diagramEnabled, this.diagramData);
+        return new DiagramInstanceData(title, author, question, diagramEnabled, this.diagramData);
     }
 
 
     private String[] getTitleBar(string[] record)
     {
-        return new string[5] { record[0], record[1], record[2],record[3],record[4] };
+        return new string[5] { record[0], record[1], record[2], record[3], record[4] };
 
     }
 

@@ -119,9 +119,9 @@ namespace Utilities
         public string title;
         public string author;
         public string diagramQuestion;
-        public Pair<bool, bool> diagramEnabled;
+        public bool[] diagramEnabled;
 
-        public DiagramInstanceData(string title, string author, string diagramQuestion, Pair<bool, bool> diagramEnabled, Dictionary<int, List<DiagramComponent>> diagramData)
+        public DiagramInstanceData(string title, string author, string diagramQuestion, bool[] diagramEnabled, Dictionary<int, List<DiagramComponent>> diagramData)
         {
             this.title = title;
             this.author = author;

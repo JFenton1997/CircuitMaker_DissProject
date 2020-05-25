@@ -8,7 +8,7 @@ public class SaveFileWindow : MonoBehaviour
 {
 
     InputField titleField, authorField, questionField;
-    Toggle circuitToggle, AvowToggle;
+    Toggle circuitToCiruitToggle, circuitToAvowToggle, avowToCircuitToggle, avowToAvowToggle;
     CanvasGroup canvasGroup;
     public Color errorColor; 
     Color fieldColor;
@@ -20,8 +20,12 @@ public class SaveFileWindow : MonoBehaviour
         titleField = transform.Find("diagramName").GetComponent<InputField>();
         authorField = transform.Find("Author").GetComponent<InputField>();
         questionField = transform.Find("Question").GetComponent<InputField>();
-        circuitToggle = transform.Find("Circuit").GetComponent<Toggle>();
-        AvowToggle = transform.Find("Avow").GetComponent<Toggle>();
+
+        circuitToCiruitToggle = transform.Find("CircuitToCircuit").GetComponent<Toggle>();
+        circuitToAvowToggle = transform.Find("CircuitToAvow").GetComponent<Toggle>();
+        avowToCircuitToggle = transform.Find("AvowToCircuit").GetComponent<Toggle>();
+        avowToAvowToggle = transform.Find("AvowToAvow").GetComponent<Toggle>();
+
         canvasGroup = GetComponent<CanvasGroup>();
         canvasGroup.blocksRaycasts = false;
         canvasGroup.interactable = false;
@@ -36,8 +40,10 @@ public class SaveFileWindow : MonoBehaviour
         canvasGroup.blocksRaycasts = true;
         canvasGroup.interactable = true;
         canvasGroup.alpha = 1f;
-        circuitToggle.isOn= true;
-        AvowToggle.isOn = true;
+        circuitToAvowToggle.isOn= true;
+        avowToAvowToggle.isOn = true;
+        circuitToCiruitToggle.isOn= true;
+        avowToCircuitToggle.isOn = true;
 
     }
 
@@ -53,15 +59,19 @@ public class SaveFileWindow : MonoBehaviour
             questionField.GetComponent<Image>().color = errorColor;
 
         }
-        if(!circuitToggle.isOn && !AvowToggle.isOn){
-            circuitToggle.transform.Find("Background").GetComponent<Image>().color = errorColor;
-            AvowToggle.transform.Find("Background").GetComponent<Image>().color = errorColor;
+        if(!circuitToAvowToggle.isOn && !circuitToCiruitToggle.isOn && !avowToAvowToggle.isOn && !avowToCircuitToggle){
+            circuitToAvowToggle.transform.Find("Background").GetComponent<Image>().color = errorColor;
+            circuitToCiruitToggle.transform.Find("Background").GetComponent<Image>().color = errorColor;
+            avowToCircuitToggle.transform.Find("Background").GetComponent<Image>().color = errorColor;
+            avowToAvowToggle.transform.Find("Background").GetComponent<Image>().color = errorColor;
 
         }
         else{
             bool successfulSave;
             DiagramInstanceData diagramToSave =  new DiagramInstanceData(titleField.text,
-            authorField.text,questionField.text,new Pair<bool, bool>(circuitToggle.isOn,AvowToggle.isOn),diagramData);
+            authorField.text,questionField.text
+            ,new bool[]{circuitToCiruitToggle.isOn, circuitToAvowToggle.isOn, avowToCircuitToggle.isOn, avowToAvowToggle.isOn}
+            ,diagramData);
             successfulSave = transform.Find("/ProgramMaster").GetComponent<CsvManager>().writeDataToCsv(diagramToSave);
             Debug.Log("SAVE SUCCESSFUL: " + successfulSave);
             cancel();
@@ -73,8 +83,10 @@ public class SaveFileWindow : MonoBehaviour
         titleField.GetComponent<Image>().color = fieldColor;
         authorField.GetComponent<Image>().color = fieldColor;
         questionField.GetComponent<Image>().color = fieldColor;
-        circuitToggle.transform.Find("Background").GetComponent<Image>().color = fieldColor;
-        AvowToggle.transform.Find("Background").GetComponent<Image>().color = fieldColor;
+        circuitToAvowToggle.transform.Find("Background").GetComponent<Image>().color = fieldColor;
+        circuitToCiruitToggle.transform.Find("Background").GetComponent<Image>().color = fieldColor;
+        avowToCircuitToggle.transform.Find("Background").GetComponent<Image>().color = fieldColor;
+        avowToAvowToggle.transform.Find("Background").GetComponent<Image>().color = fieldColor;
     }
 
     public void cancel(){
