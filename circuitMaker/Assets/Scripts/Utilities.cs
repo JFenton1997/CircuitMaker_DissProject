@@ -166,7 +166,7 @@ namespace Utilities
             if (allConponents is List<CircuitComponent>)
             {
                 List<CircuitComponent> allConponentsCircuit = (List<CircuitComponent>)allConponents;
-                allConponentsCircuit.Find(x => x.conponent == conponent).ColorErrorColor();
+                allConponentsCircuit.Find(x => x.conponent == conponent).toErrorColor();
             }
             else if (allConponents is List<AvowConponent>)
             {

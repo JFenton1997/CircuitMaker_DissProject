@@ -101,10 +101,11 @@ MonoBehaviour:
   connectedColor: {r: 0.33456254, g: 1, b: 0, a: 0.46666667}
   hoverColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   selectedColor: {r: 1, g: 0.758536, b: 0.13679248, a: 1}
-  errorColor: {r: 1, g: 0, b: 0, a: 1}
+  errorColor: {r: 0.6320754, g: 0.12224099, b: 0.12224099, a: 1}
   pastColor: {r: 0, g: 0, b: 0, a: 0}
   AvowFillColorTrans: {fileID: 0}
   boxCollider2D: {fileID: 0}
+  isBlocked: 0
   TopConnections: []
   BotConnections: []
   LeftConnections: []

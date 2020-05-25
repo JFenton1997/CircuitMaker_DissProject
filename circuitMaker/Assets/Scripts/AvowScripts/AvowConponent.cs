@@ -13,6 +13,7 @@ public class AvowConponent : MonoBehaviour
     public BoxCollider2D boxCollider2D;
     private Image AvowFillColorImg;
     private AvowManager avowManager;
+    private List<AvowConponent> sameLayer;
 
     public bool isBlocked;
 
@@ -49,7 +50,9 @@ public class AvowConponent : MonoBehaviour
         LeftConnections = new List<AvowConponent>();
         RightConnections = new List<AvowConponent>();
         avowManager = transform.GetComponentInParent<AvowManager>();
+        sameLayer = new List<AvowConponent>();
         pastColor = fillColour;
+
 
 
     }
@@ -64,15 +67,16 @@ public class AvowConponent : MonoBehaviour
         if (boxCollider2D.OverlapCollider(new ContactFilter2D(), hit) > 0)
         {
             pastColor = AvowFillColorImg.color;
-            AvowFillColorImg.color = Color.red;
+            AvowFillColorImg.color = errorColor;
             isBlocked = true;
         }
         else
         {
-            if (AvowFillColorImg.color == Color.red && isBlocked == true)
+            isBlocked = false;
+            if (AvowFillColorImg.color == errorColor && isBlocked == true)
             {
                 AvowFillColorImg.color = pastColor;
-                isBlocked = false;
+
             }
             else
             {
@@ -225,17 +229,72 @@ public class AvowConponent : MonoBehaviour
         }
     }
 
-
-    public void updateConnections()
+    public void clearConnections()
     {
         TopConnections.Clear();
         BotConnections.Clear();
         RightConnections.Clear();
         LeftConnections.Clear();
+        sameLayer.Clear();
+    }
+
+    public void updateSameLayerConncections()
+    {
+        Debug.Log("CHECK " +gameObject.name);
+        Vector3[] corners = new Vector3[4];
+        Vector3[] rCorners = new Vector3[4];
+        Vector3[] lCorners = new Vector3[4];
+        rectTransform.GetWorldCorners(corners);
+        if (LeftConnections.Count >= 1)
+        {
+
+            AvowConponent l = LeftConnections[LeftConnections.Count - 1];
+            Debug.Log(l.gameObject.name);
+            l.rectTransform.GetWorldCorners(lCorners);
+            if (ExtraUtilities.isEqualWithTolarance(corners[0].y, lCorners[3].y, 0.01f))
+            {
+                foreach (AvowConponent b in l.BotConnections)
+                {
+                    if (!this.BotConnections.Contains(b) && b != this)
+                    {
+                        this.BotConnections.Add(b);
+                    }
+                }
+
+            }
+        }
+        if (RightConnections.Count >= 1)
+        {
+            AvowConponent r = RightConnections[RightConnections.Count - 1];
+            r.rectTransform.GetWorldCorners(rCorners);
+            Debug.Log(r.gameObject.name);
+            Debug.Log(corners[3].y+ "   "+ rCorners[0].y);
+            if (ExtraUtilities.isEqualWithTolarance(corners[3].y, rCorners[0].y, 0.01f))
+            {
+                foreach (AvowConponent b in r.BotConnections)
+                {
+                    if (!this.BotConnections.Contains(b) && b != this)
+                    {
+                        this.BotConnections.Add(b);
+                    }
+                }
+
+            }
+        }
+        BotConnections.Sort((x1, x2) => x1.transform.position.x.CompareTo(x2.transform.position.x));
+    }
+
+
+
+
+    public void updateConnections()
+    {
+
+
         Vector2 sizeDelta = rectTransform.sizeDelta;
         Vector3[] corners = new Vector3[4];
         rectTransform.GetWorldCorners(corners);
-        // Debug.Log("update connection");
+
 
         //TopConnections
         Collider2D[] hitsTOP = Physics2D.OverlapAreaAll(new Vector2(corners[1].x, corners[1].y), new Vector2(corners[2].x, corners[2].y + 0.1f));
@@ -294,7 +353,14 @@ public class AvowConponent : MonoBehaviour
             }
         }
 
+
+        //FIX
+
+
     }
+
+
+
 
     public void addToConnections(AvowConponent avow, char direction)
     {

@@ -27,6 +27,7 @@ public class GenerateCircuit : MonoBehaviour
 
     public void GenerateCircuitObject(Dictionary<int, List<DiagramComponent>> diagramData)
     {
+        DeletePrevGen();
         createdComponents = new List<CircuitComponent>();
         this.diagramData = diagramData;
         initialiseMatrix();
@@ -126,6 +127,8 @@ data.Value
                 connectConponents(c, layerValue);
             }
         }
+
+        convertWiresToLocal();
 
 
         for (int i = 0; i < generatorMatrix.Count; i++)
@@ -413,21 +416,13 @@ generatorMatrix[i]
         this.diagramData = circuitTest.diagramData;
     }
 
-    public void runGeneration()
-    {
-        DeletePrevGen();
-        GenerateCircuitObject(this.diagramData);
-    }
-
     private void DeletePrevGen()
     {
-        foreach (Transform g in transform.GetComponentInChildren<Transform>())
-        {
-            if (g.gameObject.name != "ComponentValueUX")
-            {
+        foreach (RectTransform g in transform.GetComponentInChildren<RectTransform>())
+        {           
+            if(g.parent == transform);
                 DestroyImmediate(g.gameObject);
 
-            }
 
         }
     }
@@ -459,6 +454,16 @@ generatorMatrix[i]
 
         }
         return connections;
+    }
+
+    private void convertWiresToLocal(){
+        foreach(LineRenderer wireLines in (GetComponentsInChildren<LineRenderer>())){
+            wireLines.SetPosition(0,wireLines.transform.InverseTransformPoint(wireLines.GetPosition(0)));
+            wireLines.SetPosition(1,wireLines.transform.InverseTransformPoint(wireLines.GetPosition(1)));
+            wireLines.useWorldSpace = false;
+
+        }
+        
     }
 
 }

@@ -9,7 +9,7 @@ public class ErrorPanel : MonoBehaviour
 
     private CanvasGroup canvasGroup;
     public GameObject errorMessagePrefab;
-    private GameObject ErrorsDisplay;
+    private Transform ErrorsDisplay;
     private List<Pair<GameObject, DiagramError>> ErrorMessages;
 
 
@@ -18,7 +18,7 @@ public class ErrorPanel : MonoBehaviour
     {
         canvasGroup = GetComponent<CanvasGroup>();
         ErrorMessages = new List<Pair<GameObject, DiagramError>>();
-        ErrorsDisplay = transform.Find("Image/Image/Panel/Scroll View/Viewport/ErrorsDisplay").gameObject;
+        ErrorsDisplay = transform.Find("Image/Image/Panel/Scroll View/Viewport/ErrorsDisplay");
         canvasGroup.alpha = 0f;
         canvasGroup.blocksRaycasts = false;
         canvasGroup.interactable = false;
@@ -35,7 +35,7 @@ public class ErrorPanel : MonoBehaviour
         canvasGroup.interactable = true;
         foreach (DiagramError d in diagramErrors)
         {
-            GameObject errorLog = (GameObject)Instantiate(errorMessagePrefab, ErrorsDisplay.transform.position, Quaternion.identity, ErrorsDisplay.transform);
+            GameObject errorLog = (GameObject)Instantiate(errorMessagePrefab, ErrorsDisplay.position, Quaternion.identity, ErrorsDisplay);
             errorLog.transform.Find("ErrorName").GetComponent<Text>().text = d.errorName;
             errorLog.transform.Find("ErrorDesc").GetComponent<Text>().text = d.errorDiscription;
             ErrorMessages.Add(new Pair<GameObject, DiagramError>(errorLog, d));

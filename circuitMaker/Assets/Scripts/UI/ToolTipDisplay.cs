@@ -10,7 +10,6 @@ public class ToolTipDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public string TooltipMessage;
          public void OnPointerEnter(PointerEventData eventData)
      {
-         Debug.Log(gameObject.name);
          if(!UseObjectName)Tooltip.ShowTooltip_Static(TooltipMessage);
          else Tooltip.ShowTooltip_Static(gameObject.name);
      }

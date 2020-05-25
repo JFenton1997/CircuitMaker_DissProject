@@ -28,7 +28,8 @@ public class CircuitClickAndDrag : MonoBehaviour
     {
         isMoving = true;
         collider2D = this.GetComponent<BoxCollider2D>();
-        colliderSize = collider2D.size * 0.5f;
+        colliderSize = collider2D.size;
+        Cursor.visible = false;
 
 
 
@@ -38,12 +39,13 @@ public class CircuitClickAndDrag : MonoBehaviour
     {
         if (isMoving)
         {
-            Cursor.visible = false;
+            
             Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
             Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint);
             transform.position = new Vector2(Mathf.RoundToInt(curPosition.x), Mathf.RoundToInt(curPosition.y));
+            
 
-
+            isBlocked = checkToBlock();
             if (Input.GetKeyDown(KeyCode.Q))
             {
                 transform.Rotate(0, 0, 90, Space.Self);
@@ -52,17 +54,18 @@ public class CircuitClickAndDrag : MonoBehaviour
             {
                 transform.Rotate(0, 0, -90, Space.Self);
             }
+
             else if (Input.GetMouseButtonDown(0))
             {
                 if (isMoving)
                 {
-                    isBlocked = checkToBlock();
+
                     if (!isBlocked)
                     {
                         {
-                            Cursor.visible = true;
+                            
                             isMoving = false;
-
+                            Cursor.visible = true;
                             if (gameObject.GetComponent<Wire>())
                             {
                                 n = CheckForNode();
@@ -82,9 +85,6 @@ public class CircuitClickAndDrag : MonoBehaviour
                                 }
                                 gameObject.GetComponent<Wire>().GridMoveEnded();
                             }
-                            else
-                            {
-                            }
                         }
                     }
                     else
@@ -96,7 +96,8 @@ public class CircuitClickAndDrag : MonoBehaviour
             else if (Input.GetMouseButtonDown(1))
             {
                 Cursor.visible = true;
-                SendMessageUpwards("GridMoveEnded");
+                isMoving = false;
+                
                 Destroy(gameObject);
             }
 
@@ -112,22 +113,44 @@ public class CircuitClickAndDrag : MonoBehaviour
 
     private bool checkToBlock()
     {
-        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(new Vector2(transform.position.x, transform.position.y), colliderSize, 0, circuitLayer);
-        if (collider2Ds.Length > 1)
+        Wire wireCheck;
+        List<Collider2D> collider2Ds = new List<Collider2D>(Physics2D.OverlapBoxAll(new Vector2(transform.position.x, transform.position.y), colliderSize / 2, 0, circuitLayer));
+        collider2Ds.Remove(this.collider2D);
+//        Debug.Log("hits " + gameObject.name + "    " + string.Join(" ", collider2Ds.ConvertAll(x => x.gameObject.name)));
+        if (collider2Ds.Count > 0)
         {
-            if (Physics2D.OverlapBox(new Vector2(transform.position.x, transform.position.y), colliderSize, 0, nodeLayer))
+
+            if (TryGetComponent<Wire>(out wireCheck))
             {
-                return false;
+                if (Physics2D.OverlapBox(new Vector2(transform.position.x, transform.position.y), colliderSize, 0f, nodeLayer))
+                {
+                    wireCheck.toConnectedColor();
+                    return false;
+                }
+                else if (collider2Ds.FindAll(x => x.gameObject.tag != "Wire").Count == 0)
+                {
+                    wireCheck.toConnectedColor();
+                    return false;
+                }
+                else{
+                    wireCheck.toErrorColor();
+                    return true;
+                }
+
+
             }
             else
             {
+                if (TryGetComponent<CircuitComponent>(out CircuitComponent c)) c.toErrorColor();
+
                 return true;
             }
         }
-        else
-        {
-            return false;
-        }
+
+
+        if (TryGetComponent<Wire>(out wireCheck)) wireCheck.toNormalColor();
+        else if (TryGetComponent<CircuitComponent>(out CircuitComponent c)) c.toNormColor();
+        return false;
 
 
 

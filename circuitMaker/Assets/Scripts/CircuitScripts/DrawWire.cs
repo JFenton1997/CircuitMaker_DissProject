@@ -52,11 +52,11 @@ public class DrawWire : MonoBehaviour
                            wire.addConnection(hit.GetComponent<Node>());
                            hit.GetComponent<Node>().updateWire(wire);
                         }
+                         transform.parent.GetComponent<CircuitManager>().buildCircuitWire();
                     }
                     else
                     {
                         GameObject newWire = (GameObject)Instantiate(buildWire.prefab, lineRenderer.GetPosition(1), Quaternion.identity, transform.parent);
-                        newWire.name = buildWire.type.ToString();
                         newWire.GetComponent<Wire>().createdFromUnconnectedWire();
                         newWire.GetComponent<Wire>().addConnection(wire);
                         wire.addConnection(newWire.GetComponent<Wire>());
@@ -70,6 +70,7 @@ public class DrawWire : MonoBehaviour
 
             if (Input.GetMouseButtonDown(1))
             {
+                Cursor.visible = true;
                 SendMessageUpwards("EndWireDraw");
                 Destroy(gameObject);
             }

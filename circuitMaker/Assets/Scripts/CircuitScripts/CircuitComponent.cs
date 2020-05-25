@@ -25,6 +25,8 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
     public Sprite spriteCell, spriteResistor, spriteLight;
     private Image conponentImage, highlight;
+    private Color normalHighlightColor;
+    public Color errorHighlightColor;
     private DisplayConponentValues UIdisplay;
 [HideInInspector]    public CircuitClickAndDrag clickAndDrag;
 
@@ -48,6 +50,7 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
             UIdisplay = transform.Find("Values").GetComponent<DisplayConponentValues>();
             highlight = transform.Find("Highlight").GetComponent<Image>();
             highlight.enabled = false;
+            normalHighlightColor = highlight.color;
 
 
 
@@ -146,19 +149,20 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
 
     public void OnPointerEnter(PointerEventData eventData) { 
-
+        toNormColor();
+        if(conponent.type != ComponentType.UNTYPED)
         UIdisplay.display();
     }
 
     public void ShowHighlight(){
+        if(conponent.type != ComponentType.UNTYPED)
         highlight.enabled = true;
     }
 
-    public void ColorErrorColor(){
+    public void toErrorColor(){highlight.enabled=true; highlight.color = errorHighlightColor;}
+    public void toNormColor(){highlight.enabled=false; highlight.color = normalHighlightColor;}
 
 
-
-    }
 
     public void hideHighlight(){
         highlight.enabled = false;
@@ -174,6 +178,7 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        if(conponent.type != ComponentType.UNTYPED)
         UIdisplay.hide();
     }
 

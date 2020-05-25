@@ -48,10 +48,18 @@ public class AvowManager : MonoBehaviour
 
             }
         }
+        foreach (AvowConponent avow in allAvow)
+        {
+            avow.clearConnections();
+        }
 
         foreach (AvowConponent avow in allAvow)
         {
             avow.updateConnections();
+        }
+        foreach (AvowConponent avow in allAvow)
+        {
+            avow.updateSameLayerConncections();
         }
     }
 
@@ -125,9 +133,10 @@ public class AvowManager : MonoBehaviour
         {
             foundErrors.Add(new DiagramError("NO CONPONENTS FOUND", "theres no conponents to use to create a diagram"));
             transform.Find("/UI/ErrorsPanel").GetComponent<ErrorPanel>().displayErrors(foundErrors);
-            
-            
+
+
         }
+        updateConnections();
         // update Diagram Conponent of the Avows
         updateAllValue();
         //initialise Lists values
@@ -148,8 +157,12 @@ public class AvowManager : MonoBehaviour
         diagramData.Add(layerNumber, listOfConponents);
         visitedConponents.AddRange(listOfConponents);
         //keep looping until next layer has nothing i.e. end of diagram
+        int j = 0;
         while (diagramData[layerNumber].Count != 0)
         {
+            j++;
+
+
             listOfConponents = new List<DiagramComponent>();
             //for each Avow on layer 
             foreach (DiagramComponent diagramComponent in diagramData[layerNumber].ToArray())
@@ -167,19 +180,33 @@ public class AvowManager : MonoBehaviour
                         }
                     }
 
-                    // if not currenlty visisted this layer, add to next layer
-                    if (!listOfConponents.Contains(downConnected)) listOfConponents.Add(downConnected);
                     //add conponent into visisted
                     visitedConponents.Add(downConnected);
 
+                    // if not currenlty visisted this layer, add to next layer
+                    if (!listOfConponents.Contains(downConnected)) listOfConponents.Add(downConnected);
+
+
                 }
 
+            }
+            // incase of infinite loop
+            if (j > 1000)
+            {
+                Debug.LogError("infi while");
+                break;
             }
             //insert into dictionary
             layerNumber++;
             diagramData.Add(layerNumber, listOfConponents);
 
         }
+
+
+        // remove last layer, due to it being empty
+
+        diagramData.Remove(layerNumber);
+
         //debug info for generated data
         foreach (var data in diagramData)
         {
@@ -189,9 +216,7 @@ data.Value
 .ToArray()));
 
         }
-        // remove last layer, due to it being empty
-        Debug.Log(layerNumber + "   " + diagramData.Count);
-        diagramData.Remove(layerNumber);
+
 
         //Final Checks
         //if  2 AVOWs exist with no connections, or 1 Avow with a large diagramData (more than just 1 element), then a avow is unconnected
@@ -202,24 +227,33 @@ data.Value
             //error avow
             foreach (AvowConponent avow in unconnected)
             {
-                foundErrors.Add(new DiagramError("UNCONNECTED", "The Avow " + avow.gameObject.name + " is seen as unconnected, please either delete the avow or make sure it is connected", avow.component,allAvow));
+                foundErrors.Add(new DiagramError("   UNCONNECTED   ", "The Avow " + avow.gameObject.name + " is seen as unconnected, please either delete the avow or make sure it is connected", avow.component, allAvow));
 
             }
 
 
         }
 
-        foreach(AvowConponent avow in allAvow.FindAll(x => x.isBlocked == true)){
-              foundErrors.Add(new DiagramError("BLOCKED", "The Avow " + avow.gameObject.name + " is seen as Blocked, please either delete the avow or Move it",avow.component,allAvow));
+        foreach (AvowConponent avow in allAvow.FindAll(x => x.isBlocked == true))
+        {
+            foundErrors.Add(new DiagramError("   BLOCKED   ", "The Avow " + avow.gameObject.name + " is seen as Blocked, please either delete the avow or Move it", avow.component, allAvow));
 
         }
+        //check for box;
+        // Vector3 tl = allAvow.Find(x => x.component == diagramData[1][0]).transform.position;
+        // Vector3 tr = allAvow.Find(x => x.component == diagramData[1][diagramData[1].Count-1]).transform.position;
+        // Vector3 bl = allAvow.Find(x => x.component == diagramData[diagramData.Count-1][0]).transform.position;
+        // Vector3 br = allAvow.Find(x => x.component == diagramData[diagramData.Count-1][diagramData[diagramData.Count-1].Count-1]).transform.position;
+
+
+
+
+
+
+
         //ERRORS DISPLAY IF ANY
 
-        if(foundErrors.Count != 0){
-            Debug.Log(transform.Find("/UI/ErrorsPanel").name);
-            transform.Find("/UI/ErrorsPanel").GetComponent<ErrorPanel>().displayErrors(foundErrors);
-            return;
-        }
+
 
 
 
@@ -247,21 +281,81 @@ data.Value
             current += d.Values[ComponentParameter.CURRENT].value;
         }
         bool endOfDiagram = false; ;
-        foreach (var d in diagramData)
+        DiagramComponent voltageDiagramCheck = diagramData[1][0];
+        while (true)
         {
-            if (d.Key > 0 && !endOfDiagram)
+            voltage += voltageDiagramCheck.Values[ComponentParameter.VOLTAGE].value;
+            if (voltageDiagramCheck.Bconnections.Count != 0)
             {
-                if (d.Value[0].Bconnections.Count == 1 && d.Value[0].Bconnections[0].type == ComponentType.CELL)
+                if (voltageDiagramCheck.Bconnections[0].type != ComponentType.CELL)
                 {
-                    endOfDiagram = true;
+                    voltageDiagramCheck = voltageDiagramCheck.Bconnections[0];
+                    continue;
                 }
-                Debug.Log("cell check,  Found: " + d.Value[0].name + "   volt: " + d.Value[0].Values[ComponentParameter.VOLTAGE].value);
-                voltage += d.Value[0].Values[ComponentParameter.VOLTAGE].value;
             }
+            break;
+
+
         }
+
+
+
         diagramData[0][0].Values[ComponentParameter.VOLTAGE].value = voltage;
         diagramData[0][0].Values[ComponentParameter.CURRENT].value = current;
         diagramData[0][0].Values[ComponentParameter.RESISTANCE].value = 0f;
+
+        //box check
+        double Cvoltage = 0;
+        double Ccurrent = 0;
+        foreach (DiagramComponent d in diagramData[0][0].Bconnections)
+        {
+            Ccurrent += d.Values[ComponentParameter.CURRENT].value;
+        }
+        endOfDiagram = false;
+        voltageDiagramCheck = diagramData[1][diagramData[1].Count - 1];
+        while (true)
+        {
+            Cvoltage += voltageDiagramCheck.Values[ComponentParameter.VOLTAGE].value;
+            if (voltageDiagramCheck.Bconnections.Count != 0)
+            {
+                if (voltageDiagramCheck.Bconnections[0].type != ComponentType.CELL)
+                {
+                    voltageDiagramCheck = voltageDiagramCheck.Bconnections[0];
+                    continue;
+                }
+            }
+            break;
+
+
+        }
+
+        Debug.Log(Ccurrent + " " + current + "  " + voltage + "  " + Cvoltage);
+        if (Cvoltage != voltage || Ccurrent != current)
+        {
+            foundErrors.Add(new DiagramError("  Layout Error   ", "A Avow must be a rectangle in shape. e.g. must be a complete box with no gaps and exactly 4 sides"));
+        }
+
+
+
+
+        if (foundErrors.Count != 0)
+        {
+            Debug.Log(transform.Find("/UI/ErrorsPanel").name);
+            transform.Find("/UI/ErrorsPanel").GetComponent<ErrorPanel>().displayErrors(foundErrors);
+            return;
+        }
+
+
+        diagramData[0][0].Values[ComponentParameter.VOLTAGE].value = voltage;
+        diagramData[0][0].Values[ComponentParameter.CURRENT].value = current;
+        diagramData[0][0].Values[ComponentParameter.RESISTANCE].value = 0f;
+
+
+
+
+
+
+
 
         // submit avow diagram to save window
         transform.Find("/UI/SaveDiagram").GetComponent<SaveFileWindow>().intialiseSaveWindow(diagramData);

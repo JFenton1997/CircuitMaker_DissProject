@@ -1140,6 +1140,7 @@ MonoBehaviour:
   spriteCell: {fileID: 21300000, guid: a0f00443e34bcea409661f32b2ad6bec, type: 3}
   spriteResistor: {fileID: 21300000, guid: 3c884d1b5078dc543942a8a247aef533, type: 3}
   spriteLight: {fileID: 21300000, guid: 4104704ee788b1740aa87b26b15d44cd, type: 3}
+  errorHighlightColor: {r: 0, g: 0, b: 0, a: 0}
   clickAndDrag: {fileID: 0}
 --- !u!114 &8033148054023405490
 MonoBehaviour:
@@ -1154,7 +1155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dragColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  blockedColor: {r: 1, g: 0, b: 0, a: 1}
+  blockedColor: {r: 1, g: 0, b: 0, a: 0.49411765}
   isMoving: 0
   circuitLayer:
     serializedVersion: 2

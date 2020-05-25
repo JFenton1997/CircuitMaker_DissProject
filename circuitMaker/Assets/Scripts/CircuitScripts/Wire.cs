@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class Wire : MonoBehaviour
 {
@@ -13,16 +14,18 @@ public class Wire : MonoBehaviour
     public HashSet<Node> connectedNode;
 
     private DrawWire drawWire;
-    private SpriteRenderer spriteRenderer;
+    private Image image;
     private CircuitClickAndDrag circuitClickAndDrag;
     private LineRenderer lineRenderer;
     private BoxCollider2D boxCollider;
     bool EndWireDrawBool;
+    private Color normColor;
 
 
 
     private void Awake()
     {
+        
         gameObject.name = "wire";
         EndWireDrawBool = false;
         wires = new List<Wire>();
@@ -30,12 +33,13 @@ public class Wire : MonoBehaviour
         connectedNode = new HashSet<Node>();
         drawWire = this.GetComponent<DrawWire>();
         circuitClickAndDrag = this.GetComponent<CircuitClickAndDrag>();
-        spriteRenderer = this.GetComponent<SpriteRenderer>();
+        image = this.GetComponent<Image>();
+        normColor = image.color;
     }
 
     public void createdFromButton()
     {
-        spriteRenderer.enabled = true;
+        image.enabled = true;
         circuitClickAndDrag.enabled = true;
         circuitClickAndDrag.MoveStart();
 
@@ -43,7 +47,7 @@ public class Wire : MonoBehaviour
 
     public void createdFromUnconnectedWire()
     {
-        spriteRenderer.enabled = false;
+        image.enabled = false;
         drawWire.enabled = true;
         gameObject.name = "wire";
         drawWire.StartDrawingLine();
@@ -72,9 +76,15 @@ public class Wire : MonoBehaviour
 
 
 
+    public void toNormalColor() => image.color = normColor;
+    public void toErrorColor() => image.color =Color.red;
+    public void toConnectedColor() => image.color =Color.green;
+
+
+
     public void createdFromCicuitGen(Vector2 a, Vector2 b)
     {
-        this.GetComponent<SpriteRenderer>().enabled = false;
+        this.GetComponent<Image>().enabled = false;
         boxCollider = gameObject.GetComponent<BoxCollider2D>();
         lineRenderer = gameObject.GetComponent<LineRenderer>();
         Vector3[] linePositions = { new Vector3(a.x, a.y, 0), new Vector3(b.x, b.y, 0) };
@@ -109,11 +119,11 @@ public class Wire : MonoBehaviour
         Collider2D[] allHits = Physics2D.OverlapBoxAll(new Vector2((a.x+b.x)/2 ,(a.y+b.y)/2),GetComponent<BoxCollider2D>().size,0f );
         foreach (Collider2D collider in allHits)
         {
-            // if (collider.transform.TryGetComponent<Node>(out Node foundNode))
-            // {
-            //     foundNode.ConnectedWire = this;
-            //     addConnection(foundNode);
-            // }
+             if (collider.transform.TryGetComponent<Node>(out Node foundNode))
+             {
+                 foundNode.ConnectedWire = this;
+                 addConnection(foundNode);
+             }
             if (collider.transform.TryGetComponent<Wire>(out Wire foundWire))
             {
                 foundWire.addConnection(this);
@@ -157,6 +167,7 @@ public class Wire : MonoBehaviour
 
     private void OnDestroy()
     {
+        if(connectedWires.Count>0)
         foreach (Wire w in connectedWires)
         {
             w.removeConnection(this);
@@ -165,6 +176,7 @@ public class Wire : MonoBehaviour
         {
             n.updateWire(null);
         }
+        Cursor.visible = true;
     }
 
     [System.Obsolete]

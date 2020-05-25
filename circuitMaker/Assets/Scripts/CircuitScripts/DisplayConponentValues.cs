@@ -34,7 +34,6 @@ public class DisplayConponentValues : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(voltage);
         voltage.text = conponent.Values[ComponentParameter.VOLTAGE].value.ToString();
         current.text = conponent.Values[ComponentParameter.CURRENT].value.ToString();
         resistance.text = conponent.Values[ComponentParameter.RESISTANCE].value.ToString();
