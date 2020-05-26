@@ -389,7 +389,7 @@ public class AvowConponent : MonoBehaviour
     {
         try
         {
-            GameObject.Find("ValuesPanel").GetComponent<AvowValuesPanel>().newSelected(this);
+            GameObject.Find("ValuesPanelAvow").GetComponent<AvowValuesPanel>().newSelected(this);
         }
         catch (System.Exception ex)
         {

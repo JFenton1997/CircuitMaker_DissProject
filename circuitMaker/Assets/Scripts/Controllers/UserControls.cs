@@ -28,7 +28,7 @@ public class UserControls : MonoBehaviour
 
         try
         {
-            transform.Find("/UI/bot/Snapping/Toggle").TryGetComponent<Toggle>(out avowSnapToggle);
+            transform.Find("/UI/BotAvow/Snapping/Toggle").TryGetComponent<Toggle>(out avowSnapToggle);
 
 
         }
@@ -41,11 +41,12 @@ public class UserControls : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(avowSnapToggle)
         if(Input.GetKeyDown(toggleSnap))avowSnapToggleLastPos = avowSnapToggle.isOn;
         if (Input.GetKey(toggleSnap) || Input.GetKeyDown(toggleSnap))
         {
             GlobalValues.AvowSnapping = true;
-           
+           if(avowSnapToggle)
             avowSnapToggle.isOn = true;
 
         }
@@ -54,7 +55,8 @@ public class UserControls : MonoBehaviour
             GlobalValues.AvowSnapping = false;
             
         }
-        if(Input.GetKeyUp(toggleSnap)) avowSnapToggle.isOn = avowSnapToggleLastPos;
+
+        if(avowSnapToggle) if(Input.GetKeyUp(toggleSnap)) avowSnapToggle.isOn = avowSnapToggleLastPos;
 
         if (avowSnapToggle) if (avowSnapToggle.isOn == true) GlobalValues.AvowSnapping = true;
 
