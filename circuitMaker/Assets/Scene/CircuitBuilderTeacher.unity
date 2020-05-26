@@ -260,6 +260,7 @@ MonoBehaviour:
   circuitWirePrefab: {fileID: 3860872145938003100, guid: 650cc7ff703484641b8eee81d58a0808,
     type: 3}
   allConponents: []
+  Interactable: 0
 --- !u!224 &177663056
 RectTransform:
   m_ObjectHideFlags: 0
@@ -679,6 +680,7 @@ MonoBehaviour:
   circuitWirePrefab: {fileID: 3860872145938003100, guid: 650cc7ff703484641b8eee81d58a0808,
     type: 3}
   allConponents: []
+  Interactable: 0
 --- !u!1001 &678803728
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -933,7 +935,7 @@ PrefabInstance:
     - target: {fileID: 2964908316994283436, guid: eea839b160b1cb44295dd3011dcd0f3f,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.000030517578
+      value: -153.98439
       objectReference: {fileID: 0}
     - target: {fileID: 2964908316994283436, guid: eea839b160b1cb44295dd3011dcd0f3f,
         type: 3}
@@ -1396,6 +1398,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 664728099}
+    - target: {fileID: 7303864214381603922, guid: 64f6c283fbb61514db470e2b95334fa0,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8324143467966368121, guid: 64f6c283fbb61514db470e2b95334fa0,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1518,6 +1525,12 @@ PrefabInstance:
       objectReference: {fileID: 664728099}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64f6c283fbb61514db470e2b95334fa0, type: 3}
+--- !u!224 &1646564498316550577 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7303864214381603922, guid: 64f6c283fbb61514db470e2b95334fa0,
+    type: 3}
+  m_PrefabInstance: {fileID: 1646564498316550576}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2973661575191221687
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1798,7 +1811,7 @@ RectTransform:
   m_Children:
   - {fileID: 892068480796350074}
   - {fileID: 1943609362}
-  - {fileID: 7303864215612794550}
+  - {fileID: 1646564498316550577}
   - {fileID: 526137377}
   - {fileID: 1876709904}
   - {fileID: 3748587975394928309}
@@ -1967,12 +1980,6 @@ RectTransform:
   m_AnchoredPosition: {x: 4, y: 4}
   m_SizeDelta: {x: 42.545, y: 16.03}
   m_Pivot: {x: 0, y: 0}
---- !u!224 &7303864215612794550 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 8324143468152932102, guid: 64f6c283fbb61514db470e2b95334fa0,
-    type: 3}
-  m_PrefabInstance: {fileID: 1646564498316550576}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7804223179154074973
 PrefabInstance:
   m_ObjectHideFlags: 0

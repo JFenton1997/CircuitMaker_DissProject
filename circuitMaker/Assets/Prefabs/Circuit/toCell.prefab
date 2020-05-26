@@ -1249,6 +1249,7 @@ MonoBehaviour:
   spriteCell: {fileID: 0}
   spriteResistor: {fileID: 0}
   spriteLight: {fileID: 0}
+  errorHighlightColor: {r: 0, g: 0, b: 0, a: 0}
   clickAndDrag: {fileID: 0}
 --- !u!222 &4359039513604699648
 CanvasRenderer:

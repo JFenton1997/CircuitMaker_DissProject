@@ -150,6 +150,8 @@
      <Compile Include="Assets\Scripts\UI\ErrorPanel.cs" />
      <Compile Include="Assets\Scripts\UI\ExitScript.cs" />
      <Compile Include="Assets\Scripts\UI\FileSearchWIndow.cs" />
+     <Compile Include="Assets\Scripts\UI\HeldDown.cs" />
+     <Compile Include="Assets\Scripts\UI\ProblemViewer.cs" />
      <Compile Include="Assets\Scripts\UI\SaveFileWindow.cs" />
      <Compile Include="Assets\Scripts\UI\ToolTipDisplay.cs" />
      <Compile Include="Assets\Scripts\UI\Tooltip.cs" />

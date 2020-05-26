@@ -18,6 +18,12 @@ EditorBuildSettings:
     path: Assets/Scene/CircuitBuilderTeacher.unity
     guid: 00e4e41b4108d464a8079c720725cac0
   - enabled: 1
+    path: Assets/Scene/MenuScenes/SolveQuestionMenu.unity
+    guid: e678c862e6ad7b344a1444673039d38c
+  - enabled: 1
     path: Assets/Scene/MenuScenes/FileSearch/CircuiToCircuitSearch.unity
     guid: da7bb0a2f6fb1e34996b3b1db8bbebfa
+  - enabled: 1
+    path: Assets/Scene/CircuitToCircuitSolve.unity
+    guid: 59f98f1cc94462049bd2135157f11aed
   m_configObjects: {}

@@ -1420,6 +1420,11 @@ PrefabInstance:
       propertyPath: m_TargetGraphic
       value: 
       objectReference: {fileID: 1287428415}
+    - target: {fileID: 441658274301161201, guid: 233025f64a10fd4458c23b1f3e3a86ec,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -3.8799438
+      objectReference: {fileID: 0}
     - target: {fileID: 441658274830548419, guid: 233025f64a10fd4458c23b1f3e3a86ec,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1915,7 +1920,7 @@ PrefabInstance:
     - target: {fileID: 2964908316994283436, guid: eea839b160b1cb44295dd3011dcd0f3f,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 160.84567
+      value: -0.012268066
       objectReference: {fileID: 0}
     - target: {fileID: 2964908317243593758, guid: eea839b160b1cb44295dd3011dcd0f3f,
         type: 3}

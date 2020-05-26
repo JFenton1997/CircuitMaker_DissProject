@@ -25,6 +25,13 @@ public class GenerateCircuit : MonoBehaviour
     private List<DiagramComponent> connectionsB;
 
 
+    private void Start()
+    {
+        CellLocation = transform.position;
+        GenerateCircuitObject(transform.Find("/ProgramMaster").GetComponent<CsvManager>().testRead().diagramData);
+    }
+
+
     public void GenerateCircuitObject(Dictionary<int, List<DiagramComponent>> diagramData)
     {
         DeletePrevGen();
@@ -140,6 +147,16 @@ generatorMatrix[i]
 .ToArray()));
         }
 
+        //getSizeAndMidPoint
+    
+        RectTransform rt = GetComponent<RectTransform>();
+        List<RectTransform> allChildren = new List<RectTransform> (GetComponentsInChildren<RectTransform>());
+        Vector2 tl = CellLocation;
+
+        
+
+
+
 
 
 
@@ -183,7 +200,7 @@ generatorMatrix[i]
         else
         {
             Debug.Log(c);
-            Debug.Log(c.nodeA + " "+ c.nodeB);
+            Debug.Log(c.nodeA + " " + c.nodeB);
             Vector2 wireAEnd = new Vector2(c.nodeA.transform.position.x, c.nodeA.transform.position.y + 1);
             Vector2 wireBEnd = new Vector2(c.nodeB.transform.position.x, c.nodeB.transform.position.y - 1);
             GameObject wireA = (GameObject)Instantiate(wirePrefab, c.nodeA.transform.position, Quaternion.identity, transform);
@@ -360,8 +377,7 @@ generatorMatrix[i]
     private void generateValues()
     {
         int numberOfLayers = diagramData.Count;
-        CellLocation = new Vector2(0, 0);//-Mathf.RoundToInt((numberOfLayers-1)/2));
-        ComponentOrigin = new Vector2(HorizontalComponentGap, 0);
+        ComponentOrigin = new Vector2(CellLocation.x + HorizontalComponentGap, CellLocation.y);
 
 
 
@@ -419,9 +435,9 @@ generatorMatrix[i]
     private void DeletePrevGen()
     {
         foreach (RectTransform g in transform.GetComponentInChildren<RectTransform>())
-        {           
-            if(g.parent == transform);
-                DestroyImmediate(g.gameObject);
+        {
+            if (g.parent == transform) ;
+            DestroyImmediate(g.gameObject);
 
 
         }
@@ -456,14 +472,16 @@ generatorMatrix[i]
         return connections;
     }
 
-    private void convertWiresToLocal(){
-        foreach(LineRenderer wireLines in (GetComponentsInChildren<LineRenderer>())){
-            wireLines.SetPosition(0,wireLines.transform.InverseTransformPoint(wireLines.GetPosition(0)));
-            wireLines.SetPosition(1,wireLines.transform.InverseTransformPoint(wireLines.GetPosition(1)));
+    private void convertWiresToLocal()
+    {
+        foreach (LineRenderer wireLines in (GetComponentsInChildren<LineRenderer>()))
+        {
+            wireLines.SetPosition(0, wireLines.transform.InverseTransformPoint(wireLines.GetPosition(0)));
+            wireLines.SetPosition(1, wireLines.transform.InverseTransformPoint(wireLines.GetPosition(1)));
             wireLines.useWorldSpace = false;
 
         }
-        
+
     }
 
 }

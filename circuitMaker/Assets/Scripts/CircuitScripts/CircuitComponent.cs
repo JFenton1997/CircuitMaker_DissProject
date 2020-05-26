@@ -17,7 +17,7 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
     [HideInInspector]
     public string name;
-[HideInInspector]
+    [HideInInspector]
     public Node nodeA;
     [HideInInspector]
     public Node nodeB;
@@ -28,9 +28,12 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
     private Color normalHighlightColor;
     public Color errorHighlightColor;
     private DisplayConponentValues UIdisplay;
-[HideInInspector]    public CircuitClickAndDrag clickAndDrag;
+    [HideInInspector] public CircuitClickAndDrag clickAndDrag;
 
     private bool prevDisplayValue;
+
+    private GenerateCircuit foundGen;
+    private ProblemViewer viewer;
 
 
 
@@ -61,11 +64,16 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
             Debug.LogError(this.name + " failed to find nodes");
         }
 
+        if (transform.parent.TryGetComponent<GenerateCircuit>(out GenerateCircuit gen))
+        {
+            foundGen = gen;
+            viewer = transform.Find("/UI/ProblemView").GetComponent<ProblemViewer>();
+        }
+
     }
 
     private void Start()
     {
-
 
         DiagramComponent component = new DiagramComponent();
         //Assigning Text Variables
@@ -80,7 +88,7 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
     private void Update()
     {
-        
+
 
         switch (conponent.type)
         {
@@ -103,17 +111,36 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
         }
 
-        if(GlobalValues.circuitDisplayAll == true){
-            if(conponent.type!= ComponentType.UNTYPED)
-            UIdisplay.display();
-            prevDisplayValue = true;
+        if (GlobalValues.circuitDisplayAll == true)
+        {
+            if (!foundGen)
+            {
+                if (conponent.type != ComponentType.UNTYPED)
+                    UIdisplay.display();
+                prevDisplayValue = true;
+            }
+        }
+        if (GlobalValues.circuitDisplayAll == false && prevDisplayValue == true)
+        {
+            if (!foundGen)
+            {
+                if (conponent.type != ComponentType.UNTYPED)
+                    UIdisplay.hide();
+                prevDisplayValue = false;
+            }
 
         }
-        if(GlobalValues.circuitDisplayAll  == false && prevDisplayValue == true){
-            if(conponent.type!= ComponentType.UNTYPED)
-            UIdisplay.hide();
-            prevDisplayValue = false;
 
+        if (foundGen)
+        {
+            if(conponent.type != ComponentType.UNTYPED)
+            if (viewer.displayValues)
+            {
+                UIdisplay.display();
+
+            }
+            else
+                UIdisplay.hide();
         }
 
         conponent.name = this.gameObject.name;
@@ -124,18 +151,22 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
     }
 
-    public void removeWireConnections(){
-        if(nodeA.ConnectedWire)
-        Destroy(nodeA.ConnectedWire.gameObject);
-        if(nodeB.ConnectedWire)
-        Destroy(nodeB.ConnectedWire.gameObject);
+    public void removeWireConnections()
+    {
+        if (nodeA.ConnectedWire)
+            Destroy(nodeA.ConnectedWire.gameObject);
+        if (nodeB.ConnectedWire)
+            Destroy(nodeB.ConnectedWire.gameObject);
     }
 
 
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        transform.Find("/UI/ValuesPanelCircuit").GetComponent<CircuitValuesPanel>().newSelected(GetComponent<CircuitComponent>());
+        if (!foundGen)
+        {
+            transform.Find("/UI/ValuesPanelCircuit").GetComponent<CircuitValuesPanel>().newSelected(GetComponent<CircuitComponent>());
+        }
     }
 
 
@@ -148,38 +179,53 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
 
 
-    public void OnPointerEnter(PointerEventData eventData) { 
-        toNormColor();
-        if(conponent.type != ComponentType.UNTYPED)
-        UIdisplay.display();
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!foundGen)
+        {
+            toNormColor();
+            if (conponent.type != ComponentType.UNTYPED)
+                UIdisplay.display();
+        }
+
     }
 
-    public void ShowHighlight(){
-        if(conponent.type != ComponentType.UNTYPED)
-        highlight.enabled = true;
+    public void ShowHighlight()
+    {
+        if (!foundGen)
+        {
+            if (conponent.type != ComponentType.UNTYPED)
+                highlight.enabled = true;
+        }
     }
 
-    public void toErrorColor(){if(conponent.type!= ComponentType.UNTYPED)highlight.enabled=true; highlight.color = errorHighlightColor;}
-    public void toNormColor(){if(conponent.type!= ComponentType.UNTYPED) highlight.enabled=false; highlight.color = normalHighlightColor;}
+    public void toErrorColor() { if (conponent.type != ComponentType.UNTYPED) highlight.enabled = true; highlight.color = errorHighlightColor; }
+    public void toNormColor() { if (conponent.type != ComponentType.UNTYPED) highlight.enabled = false; highlight.color = normalHighlightColor; }
 
 
 
-    public void hideHighlight(){
+    public void hideHighlight()
+    {
+
         highlight.enabled = false;
     }
 
-    private void OnDestroy() {
+    private void OnDestroy()
+    {
         transform.parent.GetComponent<CircuitManager>().allConponents.Remove(this);
     }
 
-    
+
 
 
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if(conponent.type != ComponentType.UNTYPED)
-        UIdisplay.hide();
+        if (!foundGen)
+        {
+            if (conponent.type != ComponentType.UNTYPED)
+                UIdisplay.hide();
+        }
     }
 
 

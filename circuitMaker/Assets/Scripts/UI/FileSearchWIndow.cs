@@ -24,7 +24,7 @@ public class FileSearchWIndow : MonoBehaviour
     void Start()
     {
         DiagramFiles = transform.Find("/ProgramMaster").GetComponent<CsvManager>().GetAllFilesType(filter);
-        FilesDisplay = transform.Find("Image/Main/Panel/Scroll View/Viewport/FileDisplay");
+        FilesDisplay = transform.Find("Image/Contents/Main/Panel/Scroll View/Viewport/FileDisplay");
         displayFiles();
     }
 
@@ -33,7 +33,7 @@ public class FileSearchWIndow : MonoBehaviour
     {
 
 
-        transform.Find("Image/Main/Panel/Scroll View/Scrollbar Vertical").GetComponent<Scrollbar>().value = 1f;
+        transform.Find("Image/Contents/Main/Panel/Scroll View/Scrollbar Vertical").GetComponent<Scrollbar>().value = 1f;
         if (DiagramFiles.Count == 0)
         {
             GameObject FileLog = (GameObject)Instantiate(FileMessagePrefab, FilesDisplay.position, Quaternion.identity, FilesDisplay);
@@ -66,6 +66,12 @@ public class FileSearchWIndow : MonoBehaviour
     {
         GlobalValues.selectedDiagram = DiagramFiles [int.Parse(button.gameObject.name)] ;
         Debug.Log(GlobalValues.selectedDiagram.title);
+        switch(filter){
+            case DiagramFilter.CIRCUIT_TO_CIRCUIT:
+                transform.Find("/ProgramMaster").GetComponent<AppSceneManager>().loadScene(6);
+                break;
+        }
+        
 
     }
 

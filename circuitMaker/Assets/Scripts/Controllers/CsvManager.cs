@@ -26,9 +26,9 @@ public class CsvManager : MonoBehaviour
         return (writeDataToCsv(diagram));
     }
 
-    public void testRead()
+    public DiagramInstanceData testRead()
     {
-        generate.GenerateCircuitObject(ReadFile(testNameRead, "JamesTest").diagramData);
+       return ReadFile(filePath +testNameRead, "JamesTest"+fileExtension);
 
 
     }

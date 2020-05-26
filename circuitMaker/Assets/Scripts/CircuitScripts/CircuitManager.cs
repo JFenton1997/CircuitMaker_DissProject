@@ -21,7 +21,6 @@ public class CircuitManager : MonoBehaviour
 
     private void Start()
     {
-        Interactable = false;
         foundErrors = new HashSet<DiagramError>();
         allConponents = new List<CircuitComponent>();
     }

@@ -153,16 +153,13 @@ MonoBehaviour:
     Aconnections: []
     Bconnections: []
     direction: 0
-  directionImage: {fileID: 0}
-  normalColor: {r: 0, g: 0, b: 0, a: 1}
-  hiddenColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   name: 
   nodeA: {fileID: 0}
   nodeB: {fileID: 0}
-  ValuesUX: {fileID: 0}
   spriteCell: {fileID: 0}
   spriteResistor: {fileID: 0}
   spriteLight: {fileID: 0}
+  errorHighlightColor: {r: 0, g: 0, b: 0, a: 0}
   clickAndDrag: {fileID: 0}
 --- !u!222 &6988772093406888391
 CanvasRenderer:
