@@ -196,6 +196,15 @@ namespace Utilities
 
 
     }
+
+
+    public enum DiagramFilter{
+        CIRCUIT_TO_CIRCUIT = 0,
+        CIRCUIT_TO_AVOW = 1,
+        AVOW_TO_CIRCUIT =2,
+        AVOW_TO_AVOW = 3
+        
+    }
 }
 
 

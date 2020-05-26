@@ -22,6 +22,7 @@ public class CsvManager : MonoBehaviour
     public bool WriteDigram(Dictionary<int, List<DiagramComponent>> diagramData, String author, String diagramTitle, String diagramQuestion, bool[] diagramEnabled)
     {
         DiagramInstanceData diagram = new DiagramInstanceData(diagramTitle, author, diagramQuestion, diagramEnabled, diagramData);
+
         return (writeDataToCsv(diagram));
     }
 
@@ -32,10 +33,64 @@ public class CsvManager : MonoBehaviour
 
     }
 
+    public List<DiagramInstanceData> GetAllFilesType(DiagramFilter filter)
+    {
+        List<DiagramInstanceData> diagramsToReturn = new List<DiagramInstanceData>();
+        List<String> files = new List<string>(Directory.GetFiles(@filePath, "*_*.csv"));
+        Debug.Log(string.Join("\n", files));
+
+        foreach (String filename in files)
+        {
+            try
+            {
+                diagramsToReturn.Add(ReadFile(filename));
+
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError(e);
+            }
+        }
+        switch(filter){
+            case DiagramFilter.CIRCUIT_TO_CIRCUIT:
+                return diagramsToReturn.FindAll(x => x.diagramEnabled[0]);
+
+            case DiagramFilter.CIRCUIT_TO_AVOW:
+                return diagramsToReturn.FindAll(x => x.diagramEnabled[1]);
+
+            case DiagramFilter.AVOW_TO_CIRCUIT:
+                return diagramsToReturn.FindAll(x => x.diagramEnabled[2]);
+
+            case DiagramFilter.AVOW_TO_AVOW:
+                return diagramsToReturn.FindAll(x => x.diagramEnabled[3]);
+
+            default:
+                Debug.LogError("INVALID FILTER");
+                return diagramsToReturn;
+
+
+
+        }
+
+
+
+        
+
+
+
+
+
+
+
+    }
+
     public Dictionary<int, List<DiagramComponent>> avowTestRead()
     {
         return ReadFile(testNameRead, "JamesTest").diagramData;
     }
+
+
+
 
 
     // Update is called once per frame
@@ -135,24 +190,25 @@ public class CsvManager : MonoBehaviour
         bool[] diagramEnabled = new bool[4];
         createdComponents = new List<DiagramComponent>();
         diagramData = new Dictionary<int, List<DiagramComponent>>();
+        
 
         int lineNumber = 0;
-        using (var reader = new StreamReader(@filePath + filename + fileExtension))
+        using (var reader = new StreamReader(@filename))
         {
             while (!reader.EndOfStream)
             {
                 var line = reader.ReadLine();
+                
                 var record = line.Split(',');
                 if (lineNumber == 0)
                 {
-                    string[] info = getTitleBar(record);
-                    author = info[0];
-                    title = info[1];
-                    question = info[2];
-                    diagramEnabled[0] = (bool.Parse(info[3]));
-                    diagramEnabled[1] = (bool.Parse(info[4]));
-                    diagramEnabled[2] = (bool.Parse(info[5]));
-                    diagramEnabled[3] = (bool.Parse(info[6]));
+                    author = record[1];
+                    title = record[0];
+                    question = record[2];
+                    diagramEnabled[0] = (bool.Parse(record[3]));
+                    diagramEnabled[1] = (bool.Parse(record[4]));
+                    diagramEnabled[2] = (bool.Parse(record[5]));
+                    diagramEnabled[3] = (bool.Parse(record[6]));
                 }
                 else if (lineNumber == 1)
                 {
@@ -175,12 +231,6 @@ public class CsvManager : MonoBehaviour
         return new DiagramInstanceData(title, author, question, diagramEnabled, this.diagramData);
     }
 
-
-    private String[] getTitleBar(string[] record)
-    {
-        return new string[5] { record[0], record[1], record[2], record[3], record[4] };
-
-    }
 
     private void generateDiagramData(string[] record)
     {
@@ -219,7 +269,7 @@ public class CsvManager : MonoBehaviour
         int pointer = 9;
         while (record[pointer] != "\0")
         {
-            Debug.Log(createdComponents.ConvertAll(i => i.name).IndexOf(record[pointer]) + " " + record[pointer]);
+            // Debug.Log(createdComponents.ConvertAll(i => i.name).IndexOf(record[pointer]) + " " + record[pointer]);
             d.Aconnections.Add(createdComponents[createdComponents.ConvertAll(i => i.name).IndexOf(record[pointer])]);
             pointer++;
             if (pointer > 1000)

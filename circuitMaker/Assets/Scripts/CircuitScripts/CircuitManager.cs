@@ -13,12 +13,15 @@ public class CircuitManager : MonoBehaviour
     public List<CircuitComponent> allConponents;
     public HashSet<DiagramError> foundErrors;
 
+    public bool Interactable;
+
 
 
     private char ConpName = 'A';
 
     private void Start()
     {
+        Interactable = false;
         foundErrors = new HashSet<DiagramError>();
         allConponents = new List<CircuitComponent>();
     }

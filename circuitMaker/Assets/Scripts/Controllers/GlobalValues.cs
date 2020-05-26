@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Utilities;
 
 public static class GlobalValues 
 {
@@ -10,6 +11,10 @@ public static class GlobalValues
     public static bool ToolTipsEnabled;
     public static bool circuitDisplayAll;
     public static string workingDirectory;
+
+    public static string fileSearch;
+
+    public static DiagramInstanceData selectedDiagram;
 
     public static void getPlayerPrefs(){
         workingDirectory  = PlayerPrefs.GetString("workingDirectory","/DiagramFiles");
