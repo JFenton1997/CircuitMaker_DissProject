@@ -1,0 +1,424 @@
+﻿using System.Collections;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Events;
+using Utilities;
+public class AvowComponent : MonoBehaviour
+{
+    public DiagramComponent component;
+    public Color fillColour, connectedColor = Color.green, hoverColor = Color.gray, selectedColor = Color.magenta, errorColor = Color.red, pastColor;
+    public RectTransform AvowFillColorTrans;
+    public BoxCollider2D boxCollider2D;
+    private Image AvowFillColorImg;
+    private AvowManager avowManager;
+    private List<AvowComponent> sameLayer;
+
+    public bool isBlocked;
+
+
+    [SerializeField]
+    public List<AvowComponent> TopConnections, BotConnections, LeftConnections, RightConnections;
+
+    Image image;
+    public RectTransform rectTransform;
+
+    public float voltage = 1, current = 1;
+    Vector2 fillSize;
+
+
+    [HideInInspector]
+    public string name;
+
+
+
+    public Canvas ValuesUX;
+
+
+    // Start is called before the first frame update
+    private void Awake()
+    {
+
+        boxCollider2D = this.GetComponent<BoxCollider2D>();
+        rectTransform = this.GetComponent<RectTransform>();
+        image = this.GetComponent<Image>();
+        AvowFillColorTrans = transform.GetChild(0).GetComponent<RectTransform>();
+        AvowFillColorImg = AvowFillColorTrans.GetComponent<Image>();
+        TopConnections = new List<AvowComponent>();
+        BotConnections = new List<AvowComponent>();
+        LeftConnections = new List<AvowComponent>();
+        RightConnections = new List<AvowComponent>();
+        avowManager = transform.GetComponentInParent<AvowManager>();
+        sameLayer = new List<AvowComponent>();
+        pastColor = fillColour;
+
+
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        updateFill();
+        this.GetComponent<BoxCollider2D>().size = fillSize;
+        Collider2D[] hit = new Collider2D[10];
+
+        if (boxCollider2D.OverlapCollider(new ContactFilter2D(), hit) > 0)
+        {
+            pastColor = AvowFillColorImg.color;
+            AvowFillColorImg.color = errorColor;
+            isBlocked = true;
+        }
+        else
+        {
+            isBlocked = false;
+            if (AvowFillColorImg.color == errorColor && isBlocked == true)
+            {
+                AvowFillColorImg.color = pastColor;
+
+            }
+            else
+            {
+                pastColor = AvowFillColorImg.color;
+
+            }
+
+        }
+
+
+
+    }
+
+
+
+    private void updateFill()
+    {
+        //temp
+        updateSize(voltage, current);
+        fillSize = new Vector2(rectTransform.rect.width - (0.05f * (Camera.main.orthographicSize / 10)), rectTransform.rect.height
+         - (0.05f * (Camera.main.orthographicSize / 10)));
+
+        AvowFillColorTrans.sizeDelta = fillSize;
+
+
+
+    }
+
+    public void updateSize(double voltage, double current)
+    {
+        if (current > 0 && voltage > 0)
+        {
+            rectTransform.sizeDelta = new Vector2((float)current, (float)voltage);
+        }
+    }
+
+    public void ColorToConnected()
+    {
+        AvowFillColorImg.color = connectedColor;
+    }
+
+    public void ColorToMain()
+    {
+        AvowFillColorImg.color = fillColour;
+
+    }
+
+    public void ColorToHover()
+    {
+        AvowFillColorImg.color = hoverColor;
+        foreach (AvowComponent avow in TopConnections)
+        {
+            avow.ColorToConnected();
+        }
+        foreach (AvowComponent avow in BotConnections)
+        {
+            avow.ColorToConnected();
+        }
+        foreach (AvowComponent avow in RightConnections)
+        {
+            avow.ColorToConnected();
+        }
+        foreach (AvowComponent avow in LeftConnections)
+        {
+            avow.ColorToConnected();
+        }
+
+
+    }
+
+    public void ColorToSelected()
+    {
+        AvowFillColorImg.color = selectedColor;
+
+    }
+
+    public void ColorToParam(Color color)
+    {
+        AvowFillColorImg.color = color;
+    }
+
+
+
+    public float nextSpaceInDirection(char direction)
+    {
+        switch (direction)
+        {
+            case 'U':
+                return rectTransform.position.y + rectTransform.sizeDelta.y / 2;
+            case 'D':
+                return rectTransform.position.y - (rectTransform.sizeDelta.y / 2);
+            case 'L':
+                return rectTransform.position.x - rectTransform.sizeDelta.x / 2;
+            case 'R':
+                return rectTransform.position.x + (rectTransform.sizeDelta.x / 2);
+            default:
+                Debug.LogError(this.name + " nextSpace call with unknown direction: " + direction);
+                return 0f;
+
+        }
+    }
+
+    public float nextFreeSlotInSpaceInDirection(char direction)
+    {
+        switch (direction)
+        {
+            case 'U':
+                if (TopConnections.Count == 0)
+                {
+                    Debug.Log("Correct");
+                    return rectTransform.position.x - rectTransform.sizeDelta.x / 2;
+                }
+                else
+                {
+                    return TopConnections[TopConnections.Count - 1].nextSpaceInDirection('R');
+                }
+            case 'D':
+                if (BotConnections.Count == 0)
+                {
+                    return rectTransform.position.x - rectTransform.sizeDelta.x / 2;
+                }
+                else
+                {
+                    return BotConnections[BotConnections.Count - 1].nextSpaceInDirection('R');
+                }
+            case 'L':
+                if (LeftConnections.Count == 0)
+                {
+                    return rectTransform.position.y + rectTransform.sizeDelta.y / 2;
+                }
+                else
+                {
+                    return LeftConnections[LeftConnections.Count - 1].nextSpaceInDirection('D');
+                }
+            case 'R':
+                if (RightConnections.Count == 0)
+                {
+                    return rectTransform.position.y + rectTransform.sizeDelta.y / 2;
+                }
+                else
+                {
+                    return RightConnections[RightConnections.Count - 1].nextSpaceInDirection('D');
+                }
+            default:
+                Debug.LogError(this.name + " nextSlot Space call with unknown direction: " + direction);
+                return 0f;
+
+
+
+        }
+    }
+
+    public void clearConnections()
+    {
+        TopConnections.Clear();
+        BotConnections.Clear();
+        RightConnections.Clear();
+        LeftConnections.Clear();
+        sameLayer.Clear();
+    }
+
+    public void updateSameLayerConncections()
+    {
+        Debug.Log("CHECK " +gameObject.name);
+        Vector3[] corners = new Vector3[4];
+        Vector3[] rCorners = new Vector3[4];
+        Vector3[] lCorners = new Vector3[4];
+        rectTransform.GetWorldCorners(corners);
+        if (LeftConnections.Count >= 1)
+        {
+
+            AvowComponent l = LeftConnections[LeftConnections.Count - 1];
+            Debug.Log(l.gameObject.name);
+            l.rectTransform.GetWorldCorners(lCorners);
+            if (ExtraUtilities.isEqualWithTolarance(corners[0].y, lCorners[3].y, 0.01f))
+            {
+                foreach (AvowComponent b in l.BotConnections)
+                {
+                    if (!this.BotConnections.Contains(b) && b != this)
+                    {
+                        this.BotConnections.Add(b);
+                    }
+                }
+
+            }
+        }
+        if (RightConnections.Count >= 1)
+        {
+            AvowComponent r = RightConnections[RightConnections.Count - 1];
+            r.rectTransform.GetWorldCorners(rCorners);
+            Debug.Log(r.gameObject.name);
+            Debug.Log(corners[3].y+ "   "+ rCorners[0].y);
+            if (ExtraUtilities.isEqualWithTolarance(corners[3].y, rCorners[0].y, 0.01f))
+            {
+                foreach (AvowComponent b in r.BotConnections)
+                {
+                    if (!this.BotConnections.Contains(b) && b != this)
+                    {
+                        this.BotConnections.Add(b);
+                    }
+                }
+
+            }
+        }
+        BotConnections.Sort((x1, x2) => x1.transform.position.x.CompareTo(x2.transform.position.x));
+    }
+
+
+
+
+    public void updateConnections()
+    {
+
+
+        Vector2 sizeDelta = rectTransform.sizeDelta;
+        Vector3[] corners = new Vector3[4];
+        rectTransform.GetWorldCorners(corners);
+
+
+        //TopConnections
+        Collider2D[] hitsTOP = Physics2D.OverlapAreaAll(new Vector2(corners[1].x, corners[1].y), new Vector2(corners[2].x, corners[2].y + 0.1f));
+        Array.Sort(hitsTOP, (x1, x2) => x1.transform.position.x.CompareTo(x2.transform.position.x));
+        if (hitsTOP.Length > 0)
+        {
+            foreach (Collider2D hit in hitsTOP)
+            {
+                if (hit.TryGetComponent(out AvowComponent avowHit))
+                {
+                    if (avowHit != this) TopConnections.Add(avowHit);
+                }
+
+            }
+        }
+        //BotConnections
+        Collider2D[] hitsBOT = Physics2D.OverlapAreaAll(new Vector2(corners[0].x, corners[0].y), new Vector2(corners[3].x, corners[3].y - 0.1f));
+        Array.Sort(hitsBOT, (x1, x2) => x1.transform.position.x.CompareTo(x2.transform.position.x));
+        if (hitsBOT.Length > 0)
+        {
+            foreach (Collider2D hit in hitsBOT)
+            {
+                if (hit.TryGetComponent(out AvowComponent avowHit))
+                {
+                    if (avowHit != this) BotConnections.Add(avowHit);
+                }
+
+            }
+        }
+        //LeftConnections
+        Collider2D[] hitsL = Physics2D.OverlapAreaAll(new Vector2(corners[0].x, corners[0].y), new Vector2(corners[1].x - 0.1f, corners[1].y));
+        if (hitsL.Length > 0)
+        {
+            Array.Sort(hitsL, (x1, x2) => x2.transform.position.y.CompareTo(x1.transform.position.y));
+            foreach (Collider2D hit in hitsL)
+            {
+                if (hit.TryGetComponent(out AvowComponent avowHit))
+                {
+                    if (avowHit != this) LeftConnections.Add(avowHit);
+                }
+
+            }
+        }
+        Collider2D[] hitsR = Physics2D.OverlapAreaAll(new Vector2(corners[2].x, corners[2].y), new Vector2(corners[3].x + 0.1f, corners[3].y));
+        if (hitsR.Length > 0)
+        {
+
+            Array.Sort(hitsR, (x1, x2) => x2.transform.position.y.CompareTo(x1.transform.position.y));
+            foreach (Collider2D hit in hitsR)
+            {
+                if (hit.TryGetComponent(out AvowComponent avowHit))
+                {
+                    if (avowHit != this) RightConnections.Add(avowHit);
+                }
+
+            }
+        }
+
+
+        //FIX
+
+
+    }
+
+
+
+
+    public void addToConnections(AvowComponent avow, char direction)
+    {
+        switch (direction)
+        {
+            case 'U':
+                TopConnections.Add(avow);
+                return;
+            case 'D':
+                BotConnections.Add(avow);
+                return;
+            case 'L':
+                LeftConnections.Add(avow);
+                return;
+            case 'R':
+                RightConnections.Add(avow);
+                return;
+            default:
+                Debug.LogError(this.name + " delete call with unknown direction: " + direction);
+                return;
+
+        }
+    }
+
+    private void OnMouseDown()
+    {
+        try
+        {
+            GameObject.Find("ValuesPanelAvow").GetComponent<AvowValuesPanel>().newSelected(this);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("MISSING OR CANT FIND VALUES PANEL\n" + ex.ToString());
+        }
+
+    }
+
+    public void removeAvowConnection(AvowComponent avowComponent)
+    {
+        TopConnections.Remove(avowComponent);
+        BotConnections.Remove(avowComponent);
+        RightConnections.Remove(avowComponent);
+        LeftConnections.Remove(avowComponent);
+    }
+
+    private void OnDestroy()
+    {
+        this.GetComponent<AvowDragDrop>().enabled = false;
+        try
+        {
+            GetComponentInParent<AvowManager>().removeAvow(this);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogWarning(ex.Message);
+
+        }
+    }
+
+
+}

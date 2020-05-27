@@ -16,6 +16,7 @@ public class ProblemViewer : MonoBehaviour
     public float zoomSpeed = 5f;
     public float minY = 2f;
     public float maxY = 20f;
+    public float sizeChangeSpeed = 10f;
 
     private Vector3 defaultPos;
     private float defualZoom;
@@ -65,6 +66,30 @@ public class ProblemViewer : MonoBehaviour
     public void toggleDetails(){
         displayValues = !displayValues;
 
+    }
+
+    public void sizeChange(int value){
+        switch (value){
+            case 0:
+             rectTransform.sizeDelta = new Vector2(DisplayW / 12, DisplayH / 12);
+            break;
+            case 1:
+            rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x - sizeChangeSpeed , rectTransform.sizeDelta.y - sizeChangeSpeed);
+            break;
+            case 2:
+            rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x + sizeChangeSpeed , rectTransform.sizeDelta.y + sizeChangeSpeed);
+            break;
+
+
+        }
+            
+            
+
+        
+        Vector2 SizeCheck = new Vector2();
+        SizeCheck.x= Mathf.Clamp(rectTransform.sizeDelta.x, DisplayW/60, DisplayW/5);
+        SizeCheck.y= Mathf.Clamp(rectTransform.sizeDelta.y, DisplayH/60, DisplayH/5);
+        rectTransform.sizeDelta = SizeCheck;
     }
 
 

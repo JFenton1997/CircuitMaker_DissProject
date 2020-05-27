@@ -5,13 +5,13 @@ using UnityEngine.EventSystems;
 
 
 using Utilities;
-
+using System;
 
 public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
 {
 
 
-    public DiagramComponent conponent;
+    public DiagramComponent component;
 
 
 
@@ -24,10 +24,10 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
 
     public Sprite spriteCell, spriteResistor, spriteLight;
-    private Image conponentImage, highlight;
+    private Image componentImage, highlight;
     private Color normalHighlightColor;
     public Color errorHighlightColor;
-    private DisplayConponentValues UIdisplay;
+    private DisplayComponentValues UIdisplay;
     [HideInInspector] public CircuitClickAndDrag clickAndDrag;
 
     private bool prevDisplayValue;
@@ -42,15 +42,15 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
     private void Awake()
     {
         prevDisplayValue = false;
-        conponentImage = GetComponent<Image>();
-        // conponent.type = ComponentType.CELL;
+        componentImage = GetComponent<Image>();
+        // component.type = ComponentType.CELL;
         clickAndDrag = GetComponent<CircuitClickAndDrag>();
 
         try
         {
             nodeA = transform.Find("nodeA").gameObject.GetComponent<Node>();
             nodeB = transform.Find("nodeB").gameObject.GetComponent<Node>();
-            UIdisplay = transform.Find("Values").GetComponent<DisplayConponentValues>();
+            UIdisplay = transform.Find("Values").GetComponent<DisplayComponentValues>();
             highlight = transform.Find("Highlight").GetComponent<Image>();
             highlight.enabled = false;
             normalHighlightColor = highlight.color;
@@ -89,20 +89,20 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
     {
 
 
-        switch (conponent.type)
+        switch (component.type)
         {
             case ComponentType.CELL:
-                conponentImage.sprite = spriteCell;
+                componentImage.sprite = spriteCell;
                 break;
             case ComponentType.RESISTOR:
-                conponentImage.sprite = spriteResistor;
+                componentImage.sprite = spriteResistor;
                 break;
             case ComponentType.LIGHT:
-                conponentImage.sprite = spriteLight;
+                componentImage.sprite = spriteLight;
                 break;
             default:
-                conponentImage.sprite = null;
-                //Debug.LogError("UNKOWN CONPONENT TYPE");
+                componentImage.sprite = null;
+                //Debug.LogError("UNKOWN component TYPE");
                 break;
 
 
@@ -114,7 +114,7 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
         {
             if (!foundGen)
             {
-                if (conponent.type != ComponentType.UNTYPED)
+                if (component.type != ComponentType.UNTYPED)
                     UIdisplay.display();
                 prevDisplayValue = true;
             }
@@ -123,7 +123,7 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
         {
             if (!foundGen)
             {
-                if (conponent.type != ComponentType.UNTYPED)
+                if (component.type != ComponentType.UNTYPED)
                     UIdisplay.hide();
                 prevDisplayValue = false;
             }
@@ -132,7 +132,7 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
         if (foundGen)
         {
-            if(conponent.type != ComponentType.UNTYPED)
+            if(component.type != ComponentType.UNTYPED)
             if (viewer.displayValues)
             {
                 UIdisplay.display();
@@ -142,10 +142,10 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
                 UIdisplay.hide();
         }
 
-        conponent.name = this.gameObject.name;
-        if (conponent.type == ComponentType.CELL)
+        component.name = this.gameObject.name;
+        if (component.type == ComponentType.CELL)
         {
-            conponent.direction = Direction.B_to_A;
+            component.direction = Direction.B_to_A;
         }
 
     }
@@ -182,8 +182,8 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
     {
         if (!foundGen)
         {
-            toNormColor();
-            if (conponent.type != ComponentType.UNTYPED)
+            //toNormColor();
+            if (component.type != ComponentType.UNTYPED)
                 UIdisplay.display();
         }
 
@@ -193,26 +193,25 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
     {
         if (!foundGen)
         {
-            if (conponent.type != ComponentType.UNTYPED)
+            if (component.type != ComponentType.UNTYPED)
                 highlight.enabled = true;
         }
     }
 
-    public void toErrorColor() { if (conponent.type != ComponentType.UNTYPED) highlight.enabled = true; highlight.color = errorHighlightColor; }
-    public void toNormColor() { if (conponent.type != ComponentType.UNTYPED) highlight.enabled = false; highlight.color = normalHighlightColor; }
+    public void toErrorColor() { if (component.type != ComponentType.UNTYPED) highlight.enabled = true; highlight.color = errorHighlightColor; }
+    public void toNormColor() { if (component.type != ComponentType.UNTYPED) highlight.enabled = false; highlight.color = normalHighlightColor; }
 
 
 
     public void hideHighlight()
     {
-
         highlight.enabled = false;
     }
 
     private void OnDestroy()
     {
         if(! foundGen)
-                transform.parent.GetComponent<CircuitManager>().allConponents.Remove(this);
+                transform.parent.GetComponent<CircuitManager>().allcomponents.Remove(this);
     }
 
 
@@ -223,14 +222,15 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
     {
         if (!foundGen)
         {
-            if (conponent.type != ComponentType.UNTYPED)
+            if (component.type != ComponentType.UNTYPED)
                 UIdisplay.hide();
         }
     }
 
-
-
-
+    public static implicit operator CircuitComponent(DiagramComponent v)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 

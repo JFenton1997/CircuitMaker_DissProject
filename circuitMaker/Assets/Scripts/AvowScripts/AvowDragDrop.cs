@@ -31,8 +31,8 @@ public class AvowDragDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
     public float snapOffset = GlobalValues.AvowSnappingOffset;
     private CanvasGroup self, canvasGroup;
     private List<LocationStruct> locationStructs;
-    AvowConponent YAvow = null;
-    AvowConponent XAvow = null;
+    AvowComponent YAvow = null;
+    AvowComponent XAvow = null;
     AvowManager avowManager;
 
     BoxCollider2D boxCollider2D;
@@ -86,11 +86,11 @@ public class AvowDragDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
             if (xToNearest.a.rectTransform != null)
             {
-                XAvow = xToNearest.a.rectTransform.GetComponent<AvowConponent>();
+                XAvow = xToNearest.a.rectTransform.GetComponent<AvowComponent>();
             }
             if (yToNearest.a.rectTransform != null)
             {
-                YAvow = yToNearest.a.rectTransform.GetComponent<AvowConponent>();
+                YAvow = yToNearest.a.rectTransform.GetComponent<AvowComponent>();
             }
 
 
@@ -332,23 +332,23 @@ public class AvowDragDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        this.GetComponent<AvowConponent>().ColorToHover();
+        this.GetComponent<AvowComponent>().ColorToHover();
         
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        this.GetComponent<AvowConponent>().ColorToMain();
-         foreach(AvowConponent avow in this.GetComponent<AvowConponent>().TopConnections){
+        this.GetComponent<AvowComponent>().ColorToMain();
+         foreach(AvowComponent avow in this.GetComponent<AvowComponent>().TopConnections){
             avow.ColorToMain();
         }
-        foreach(AvowConponent avow in this.GetComponent<AvowConponent>().BotConnections){
+        foreach(AvowComponent avow in this.GetComponent<AvowComponent>().BotConnections){
             avow.ColorToMain();
         }
-        foreach(AvowConponent avow in this.GetComponent<AvowConponent>().RightConnections){
+        foreach(AvowComponent avow in this.GetComponent<AvowComponent>().RightConnections){
             avow.ColorToMain();
         }
-        foreach(AvowConponent avow in this.GetComponent<AvowConponent>().LeftConnections){
+        foreach(AvowComponent avow in this.GetComponent<AvowComponent>().LeftConnections){
             avow.ColorToMain();
         }
     }

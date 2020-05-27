@@ -59,18 +59,18 @@ namespace Utilities
     public class Pair
     {
         [SerializeField]
-        private double _value;
+        private float _value;
         [SerializeField]
         private bool _hidden;
         public Pair() { }
-        public Pair(double value, bool hidden)
+        public Pair(float value, bool hidden)
         {
             this._value = value;
             this._hidden = hidden;
         }
 
 
-        public double value { get { return _value; } set { _value = value; } }
+        public float value { get { return _value; } set { _value = value; } }
         public bool hidden { get { return _hidden; } set { _hidden = value; } }
 
 
@@ -139,7 +139,7 @@ namespace Utilities
     {
         public string errorName;
         public string errorDiscription;
-        public DiagramComponent conponent;
+        public DiagramComponent component;
 
 
 
@@ -147,31 +147,31 @@ namespace Utilities
         {
             errorName = name;
             errorDiscription = desc;
-            conponent = null;
+            component = null;
 
         }
 
-        public DiagramError(string name, string desc, DiagramComponent conponent, object allConponents)
+        public DiagramError(string name, string desc, DiagramComponent component, object allComponents)
         {
             errorName = name;
             errorDiscription = desc;
-            this.conponent = conponent;
-            setErrorColor(allConponents);
+            this.component = component;
+            setErrorColor(allComponents);
 
         }
 
-        public void setErrorColor(object allConponents)
+        public void setErrorColor(object allComponents)
         {
-            DiagramComponent conponent = this.conponent;
-            if (allConponents is List<CircuitComponent>)
+            DiagramComponent component = this.component;
+            if (allComponents is List<CircuitComponent>)
             {
-                List<CircuitComponent> allConponentsCircuit = (List<CircuitComponent>)allConponents;
-                allConponentsCircuit.Find(x => x.conponent == conponent).toErrorColor();
+                List<CircuitComponent> allComponentsCircuit = (List<CircuitComponent>)allComponents;
+                allComponentsCircuit.Find(x => x.component == component).toErrorColor();
             }
-            else if (allConponents is List<AvowConponent>)
+            else if (allComponents is List<AvowComponent>)
             {
-                List<AvowConponent> allConponentsCircuit = (List<AvowConponent>)allConponents;
-                allConponentsCircuit.Find(x => x.component == conponent).ColorToParam(Color.red);
+                List<AvowComponent> allComponentsCircuit = (List<AvowComponent>)allComponents;
+                allComponentsCircuit.Find(x => x.component == component).ColorToParam(Color.red);
 
             }
 

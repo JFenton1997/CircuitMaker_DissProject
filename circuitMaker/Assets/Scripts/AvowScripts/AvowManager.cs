@@ -8,7 +8,7 @@ using Utilities;
 public class AvowManager : MonoBehaviour
 {
 
-    public List<AvowConponent> allAvow;
+    public List<AvowComponent> allAvow;
     public GameObject avowPrefab;
     public char currentName;
     public float scale = 1;
@@ -21,7 +21,7 @@ public class AvowManager : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-        allAvow = new List<AvowConponent>();
+        allAvow = new List<AvowComponent>();
         currentName = 'A';
 
     }
@@ -41,23 +41,23 @@ public class AvowManager : MonoBehaviour
         {
             if (t.parent == transform)
             {
-                if (!allAvow.Contains(t.GetComponent<AvowConponent>()))
+                if (!allAvow.Contains(t.GetComponent<AvowComponent>()))
                 {
-                    allAvow.Add(t.GetComponent<AvowConponent>());
+                    allAvow.Add(t.GetComponent<AvowComponent>());
                 }
 
             }
         }
-        foreach (AvowConponent avow in allAvow)
+        foreach (AvowComponent avow in allAvow)
         {
             avow.clearConnections();
         }
 
-        foreach (AvowConponent avow in allAvow)
+        foreach (AvowComponent avow in allAvow)
         {
             avow.updateConnections();
         }
-        foreach (AvowConponent avow in allAvow)
+        foreach (AvowComponent avow in allAvow)
         {
             avow.updateSameLayerConncections();
         }
@@ -68,12 +68,12 @@ public class AvowManager : MonoBehaviour
         Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
         Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint);
         GameObject avowObject = (GameObject)Instantiate(avowPrefab, new Vector3(curPosition.x, curPosition.y + 6f, 0), Quaternion.identity, transform);
-        AvowConponent avowConponent = avowObject.GetComponent<AvowConponent>();
+        AvowComponent avowComponent = avowObject.GetComponent<AvowComponent>();
         avowObject.name = currentName.ToString();
-        avowConponent.component.type = ComponentType.RESISTOR;
-        avowConponent.component.Values[ComponentParameter.VOLTAGE].hidden = false;
-        avowConponent.component.Values[ComponentParameter.CURRENT].hidden = false;
-        avowConponent.component.Values[ComponentParameter.RESISTANCE].hidden = false;
+        avowComponent.component.type = ComponentType.RESISTOR;
+        avowComponent.component.Values[ComponentParameter.VOLTAGE].hidden = false;
+        avowComponent.component.Values[ComponentParameter.CURRENT].hidden = false;
+        avowComponent.component.Values[ComponentParameter.RESISTANCE].hidden = false;
         currentName++;
         allAvow.Clear();
 
@@ -81,25 +81,25 @@ public class AvowManager : MonoBehaviour
         {
             if (t.parent == transform)
             {
-                if (!allAvow.Contains(t.GetComponent<AvowConponent>()))
+                if (!allAvow.Contains(t.GetComponent<AvowComponent>()))
                 {
-                    allAvow.Add(t.GetComponent<AvowConponent>());
+                    allAvow.Add(t.GetComponent<AvowComponent>());
                 }
             }
         }
     }
 
-    public void removeAvow(AvowConponent avowToDestroy)
+    public void removeAvow(AvowComponent avowToDestroy)
     {
         allAvow.Clear();
         foreach (Transform t in transform.GetComponentInChildren<Transform>())
         {
             if (t.parent == transform && t == avowToDestroy.transform)
             {
-                if (!allAvow.Contains(t.GetComponent<AvowConponent>()))
+                if (!allAvow.Contains(t.GetComponent<AvowComponent>()))
                 {
-                    allAvow.Add(t.GetComponent<AvowConponent>());
-                    t.GetComponent<AvowConponent>().removeAvowConnection(avowToDestroy);
+                    allAvow.Add(t.GetComponent<AvowComponent>());
+                    t.GetComponent<AvowComponent>().removeAvowConnection(avowToDestroy);
                 }
 
             }
@@ -111,7 +111,7 @@ public class AvowManager : MonoBehaviour
 
     public void updateAllValue()
     {
-        foreach (AvowConponent avow in allAvow)
+        foreach (AvowComponent avow in allAvow)
         {
             avow.component.direction = Direction.A_to_B;
             avow.component.Values[ComponentParameter.VOLTAGE].value = avow.voltage * scale;
@@ -131,31 +131,31 @@ public class AvowManager : MonoBehaviour
 
         if (allAvow.Count == 0)
         {
-            foundErrors.Add(new DiagramError("NO CONPONENTS FOUND", "theres no conponents to use to create a diagram"));
+            foundErrors.Add(new DiagramError("NO componentS FOUND", "theres no components to use to create a diagram"));
             transform.Find("/UI/ErrorsPanel").GetComponent<ErrorPanel>().displayErrors(foundErrors);
 
 
         }
         updateConnections();
-        // update Diagram Conponent of the Avows
+        // update Diagram component of the Avows
         updateAllValue();
         //initialise Lists values
         Dictionary<int, List<DiagramComponent>> diagramData = new Dictionary<int, List<DiagramComponent>>(); //diagram datatype
-        List<DiagramComponent> listOfConponents = new List<DiagramComponent>(); // used to insert data into diagram data
-        List<DiagramComponent> visitedConponents = new List<DiagramComponent>(); // keep track of prev
+        List<DiagramComponent> listOfcomponents = new List<DiagramComponent>(); // used to insert data into diagram data
+        List<DiagramComponent> visitedcomponents = new List<DiagramComponent>(); // keep track of prev
         //adding CELL into layer 0
         int layerNumber = 0;
-        listOfConponents.Add(new DiagramComponent());
-        listOfConponents[0].name = "CELL";
-        listOfConponents[0].type = ComponentType.CELL;
-        listOfConponents[0].direction = Direction.B_to_A;
-        diagramData.Add(layerNumber, listOfConponents);
+        listOfcomponents.Add(new DiagramComponent());
+        listOfcomponents[0].name = "CELL";
+        listOfcomponents[0].type = ComponentType.CELL;
+        listOfcomponents[0].direction = Direction.B_to_A;
+        diagramData.Add(layerNumber, listOfcomponents);
         layerNumber++;
-        listOfConponents = new List<DiagramComponent>();
+        listOfcomponents = new List<DiagramComponent>();
         //getting layer 1 = all AVOW with no top connections
-        listOfConponents = allAvow.ConvertAll(x => x.component).FindAll(x => x.Aconnections.Count == 0);
-        diagramData.Add(layerNumber, listOfConponents);
-        visitedConponents.AddRange(listOfConponents);
+        listOfcomponents = allAvow.ConvertAll(x => x.component).FindAll(x => x.Aconnections.Count == 0);
+        diagramData.Add(layerNumber, listOfcomponents);
+        visitedcomponents.AddRange(listOfcomponents);
         //keep looping until next layer has nothing i.e. end of diagram
         int j = 0;
         while (diagramData[layerNumber].Count != 0)
@@ -163,7 +163,7 @@ public class AvowManager : MonoBehaviour
             j++;
 
 
-            listOfConponents = new List<DiagramComponent>();
+            listOfcomponents = new List<DiagramComponent>();
             //for each Avow on layer 
             foreach (DiagramComponent diagramComponent in diagramData[layerNumber].ToArray())
             {
@@ -171,7 +171,7 @@ public class AvowManager : MonoBehaviour
                 foreach (DiagramComponent downConnected in diagramComponent.Bconnections.ToArray())
                 {
                     //if visited before, remove visisted from prev layers
-                    if (visitedConponents.Contains(downConnected))
+                    if (visitedcomponents.Contains(downConnected))
                     {
                         Debug.Log("VISITED BEFORE: " + downConnected.name);
                         foreach (var keyValuePair in diagramData)
@@ -180,11 +180,11 @@ public class AvowManager : MonoBehaviour
                         }
                     }
 
-                    //add conponent into visisted
-                    visitedConponents.Add(downConnected);
+                    //add component into visisted
+                    visitedcomponents.Add(downConnected);
 
                     // if not currenlty visisted this layer, add to next layer
-                    if (!listOfConponents.Contains(downConnected)) listOfConponents.Add(downConnected);
+                    if (!listOfcomponents.Contains(downConnected)) listOfcomponents.Add(downConnected);
 
 
                 }
@@ -198,7 +198,7 @@ public class AvowManager : MonoBehaviour
             }
             //insert into dictionary
             layerNumber++;
-            diagramData.Add(layerNumber, listOfConponents);
+            diagramData.Add(layerNumber, listOfcomponents);
 
         }
 
@@ -220,12 +220,12 @@ data.Value
 
         //Final Checks
         //if  2 AVOWs exist with no connections, or 1 Avow with a large diagramData (more than just 1 element), then a avow is unconnected
-        List<AvowConponent> unconnected = allAvow.FindAll(x => x.TopConnections.Count == 0 && x.BotConnections.Count == 0 &&
+        List<AvowComponent> unconnected = allAvow.FindAll(x => x.TopConnections.Count == 0 && x.BotConnections.Count == 0 &&
         x.LeftConnections.Count == 0 && x.RightConnections.Count == 0);
         if (unconnected.Count > 1 || (unconnected.Count == 1 && diagramData[1].Count > 1))
         {
             //error avow
-            foreach (AvowConponent avow in unconnected)
+            foreach (AvowComponent avow in unconnected)
             {
                 foundErrors.Add(new DiagramError("   UNCONNECTED   ", "The Avow " + avow.gameObject.name + " is seen as unconnected, please either delete the avow or make sure it is connected", avow.component, allAvow));
 
@@ -234,7 +234,7 @@ data.Value
 
         }
 
-        foreach (AvowConponent avow in allAvow.FindAll(x => x.isBlocked == true))
+        foreach (AvowComponent avow in allAvow.FindAll(x => x.isBlocked == true))
         {
             foundErrors.Add(new DiagramError("   BLOCKED   ", "The Avow " + avow.gameObject.name + " is seen as Blocked, please either delete the avow or Move it", avow.component, allAvow));
 
@@ -274,8 +274,8 @@ data.Value
         }
 
         //calculate Cell Values
-        double voltage = 0;
-        double current = 0;
+        float voltage = 0;
+        float current = 0;
         foreach (DiagramComponent d in diagramData[1])
         {
             current += d.Values[ComponentParameter.CURRENT].value;

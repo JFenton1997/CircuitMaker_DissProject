@@ -10,10 +10,11 @@ public class CircuitManager : MonoBehaviour
     public Dictionary<int, List<DiagramComponent>> diagramData;
     private DiagramComponent cellComponent = null;
     public GameObject circuitComponentPrefab, circuitWirePrefab;
-    public List<CircuitComponent> allConponents;
+    public List<CircuitComponent> allcomponents;
     public HashSet<DiagramError> foundErrors;
 
-    public bool Interactable;
+
+    public bool isBuilder = true;
 
 
 
@@ -22,30 +23,30 @@ public class CircuitManager : MonoBehaviour
     private void Start()
     {
         foundErrors = new HashSet<DiagramError>();
-        allConponents = new List<CircuitComponent>();
+        allcomponents = new List<CircuitComponent>();
     }
 
-    public void buildCircuitConponent()
+    public void buildCircuitcomponent()
     {
         GameObject circuitComponentOBJ = (GameObject)Instantiate(circuitComponentPrefab, new Vector3(0f, 0f, 1000f), Quaternion.identity, transform);
-        CircuitComponent newConponent = circuitComponentOBJ.GetComponent<CircuitComponent>();
+        CircuitComponent newcomponent = circuitComponentOBJ.GetComponent<CircuitComponent>();
 
-        newConponent.name = "CELL";
+        newcomponent.name = "CELL";
         circuitComponentOBJ.name = "CELL";
-        newConponent.name = "CELL";
-        allConponents.Add(newConponent);
-        if (allConponents.FindAll(x => x.conponent.type == ComponentType.CELL).Count > 1)
+        newcomponent.name = "CELL";
+        allcomponents.Add(newcomponent);
+        if (allcomponents.FindAll(x => x.component.type == ComponentType.CELL).Count > 1)
         {
-            newConponent.conponent.type = ComponentType.RESISTOR;
-            newConponent.conponent.Values[ComponentParameter.RESISTANCE].value = 1f;
-            newConponent.conponent.direction = Direction.A_to_B;
+            newcomponent.component.type = ComponentType.RESISTOR;
+            newcomponent.component.Values[ComponentParameter.RESISTANCE].value = 1f;
+            newcomponent.component.direction = Direction.A_to_B;
             circuitComponentOBJ.name = ConpName.ToString();
-            newConponent.name = ConpName.ToString();
+            newcomponent.name = ConpName.ToString();
             ConpName++;
         }
 
-        newConponent.clickAndDrag.enabled = true;
-        newConponent.clickAndDrag.MoveStart();
+        newcomponent.clickAndDrag.enabled = true;
+        newcomponent.clickAndDrag.MoveStart();
 
 
     }
@@ -55,9 +56,9 @@ public class CircuitManager : MonoBehaviour
     public void buildCircuitWire()
     {
         GameObject circuitComponentOBJ = (GameObject)Instantiate(circuitWirePrefab, Vector3.zero, Quaternion.identity, transform);
-        Wire newConponent = circuitComponentOBJ.GetComponent<Wire>();
-        newConponent.gameObject.name = "wire";
-        newConponent.createdFromButton();
+        Wire newcomponent = circuitComponentOBJ.GetComponent<Wire>();
+        newcomponent.gameObject.name = "wire";
+        newcomponent.createdFromButton();
 
 
     }
@@ -70,36 +71,36 @@ public class CircuitManager : MonoBehaviour
         foundErrors.Clear();
         foreach (CircuitComponent c in transform.GetComponentsInChildren<CircuitComponent>())
         {
-            if (c.conponent.type != ComponentType.UNTYPED)
+            if (c.component.type != ComponentType.UNTYPED)
             {
-                if (!allConponents.Contains(c))
+                if (!allcomponents.Contains(c))
                 {
-                    allConponents.Add(c);
+                    allcomponents.Add(c);
                 }
             }
         }
 
 
 
-        // no conponents
-        if (allConponents.Count == 0)
+        // no components
+        if (allcomponents.Count == 0)
         {
-            foundErrors.Add(new DiagramError("No Conponent Error    ", "There are no conponents to make a diagram from, please create a diagram before trying to save."));
+            foundErrors.Add(new DiagramError("No component Error    ", "There are no components to make a diagram from, please create a diagram before trying to save."));
             transform.Find("/UI/ErrorsPanel").GetComponent<ErrorPanel>().displayErrors(foundErrors);
             return;
 
         }
-        //only just 1 conponent
-        if (allConponents.Count == 1)
+        //only just 1 component
+        if (allcomponents.Count == 1)
         {
-            foundErrors.Add(new DiagramError("NO CONPONENT ERROR", "There are no conponents to make a diagram from, please use at least 2 conponents before saving."));
+            foundErrors.Add(new DiagramError("NO component ERROR", "There are no components to make a diagram from, please use at least 2 components before saving."));
             transform.Find("/UI/ErrorsPanel").GetComponent<ErrorPanel>().displayErrors(foundErrors);
             return;
 
         }
 
         // more or less than 1 battery
-        if (allConponents.FindAll(x => x.conponent.type == ComponentType.CELL).Count != 1)
+        if (allcomponents.FindAll(x => x.component.type == ComponentType.CELL).Count != 1)
         {
             foundErrors.Add(new DiagramError("CELL NUMBER ERROR  ", "has be one cell in the diagram, and only one. please remove/add the required cells."));
             transform.Find("/UI/ErrorsPanel").GetComponent<ErrorPanel>().displayErrors(foundErrors);
@@ -127,12 +128,12 @@ public class CircuitManager : MonoBehaviour
 
 
 
-        //conponent with no connections
-        foreach (CircuitComponent c in allConponents.FindAll(x => x.conponent.Aconnections.Count == 0 || x.conponent.Bconnections.Count == 0))
+        //component with no connections
+        foreach (CircuitComponent c in allcomponents.FindAll(x => x.component.Aconnections.Count == 0 || x.component.Bconnections.Count == 0))
         {
             foundErrors.Add(new DiagramError("NO CONNECTION ERROR   ",
-            "Conponent " + c.name + " is not fully connected to circuit\nA Connections Found: " + string.Join(" , ", c.conponent.Aconnections.ConvertAll(x => x.name)) +
-            "\nB Connections Found: " + string.Join(" , ", c.conponent.Bconnections.ConvertAll(x => x.name)) + "\n(no name means no connections.", c.conponent, allConponents));
+            "component " + c.name + " is not fully connected to circuit\nA Connections Found: " + string.Join(" , ", c.component.Aconnections.ConvertAll(x => x.name)) +
+            "\nB Connections Found: " + string.Join(" , ", c.component.Bconnections.ConvertAll(x => x.name)) + "\n(no name means no connections.", c.component, allcomponents));
             transform.Find("/UI/ErrorsPanel").GetComponent<ErrorPanel>().displayErrors(foundErrors);
             return;
 
@@ -146,13 +147,14 @@ public class CircuitManager : MonoBehaviour
 
 
 
-        //conponent with incorrect values
-        foreach (CircuitComponent c in allConponents.FindAll(x => x.conponent.Values[ComponentParameter.VOLTAGE].value / x.conponent.Values[ComponentParameter.CURRENT].value
-         != x.conponent.Values[ComponentParameter.RESISTANCE].value))
+        //component with incorrect values
+        if(isBuilder)
+        foreach (CircuitComponent c in allcomponents.FindAll(x => x.component.Values[ComponentParameter.VOLTAGE].value / x.component.Values[ComponentParameter.CURRENT].value
+         != x.component.Values[ComponentParameter.RESISTANCE].value))
         {
-            if (c.conponent.type != ComponentType.CELL && c.conponent.type != ComponentType.UNTYPED)
+            if (c.component.type != ComponentType.CELL && c.component.type != ComponentType.UNTYPED)
             {
-                foundErrors.Add(new DiagramError("CONPONENT VALUE ERROR    ", "the values for " + c.gameObject.name + " dont add up correctly to ohm's law, fix values or use auto feature", c.conponent, allConponents));
+                foundErrors.Add(new DiagramError("component VALUE ERROR    ", "the values for " + c.gameObject.name + " dont add up correctly to ohm's law, fix values or use auto feature", c.component, allcomponents));
             }
 
 
@@ -164,14 +166,14 @@ public class CircuitManager : MonoBehaviour
         diagramData = new Dictionary<int, List<DiagramComponent>>();
         foreach (CircuitComponent d in transform.GetComponentsInChildren<CircuitComponent>())
         {
-            DiagramComponent c = d.conponent;
+            DiagramComponent c = d.component;
             c.Aconnections.Sort((x1, x2) => getCircuitComponent(x1).transform.position.x.CompareTo(getCircuitComponent(x2).transform.position.x));
             c.Bconnections.Sort((x1, x2) => getCircuitComponent(x1).transform.position.x.CompareTo(getCircuitComponent(x2).transform.position.x));
 
         }
         foreach (CircuitComponent circuitComponent in transform.GetComponentsInChildren<CircuitComponent>())
         {
-            DiagramComponent c = circuitComponent.conponent;
+            DiagramComponent c = circuitComponent.component;
 
             if (c.type == ComponentType.CELL)
             {
@@ -198,7 +200,7 @@ public class CircuitManager : MonoBehaviour
             if (layerValue > 1000)
             {
                 Debug.LogError("infinteLoop");
-                 foundErrors.Add(new DiagramError("INFINITE LOOP CREATED  ", "following connections made an infinite loop, this is caused by having a conponent connected to itself,"+
+                 foundErrors.Add(new DiagramError("INFINITE LOOP CREATED  ", "following connections made an infinite loop, this is caused by having a component connected to itself,"+
                  " Please keep to standard DC circuit, avoid any recursion"));
                      transform.Find("/UI/ErrorsPanel").GetComponent<ErrorPanel>().displayErrors(foundErrors);
                 return;
@@ -269,7 +271,7 @@ public class CircuitManager : MonoBehaviour
 
         }
 
-
+        if(isBuilder)
         if (diagramData[0][0].Values[ComponentParameter.VOLTAGE].value != voltage || diagramData[0][0].Values[ComponentParameter.CURRENT].value != current)
         {
             foundErrors.Add(new DiagramError("CELL VALUE ERROR ",
@@ -340,8 +342,12 @@ public class CircuitManager : MonoBehaviour
 
 
 
-
+        if(isBuilder)
         transform.Find("/UI/SaveDiagram").GetComponent<SaveFileWindow>().intialiseSaveWindow(diagramData);
+        else{
+            transform.Find("/UI/SolverPanel").GetComponent<SolverScript>().compareAnswers(diagramData);
+
+        }
 
 
         foreach (var data in diagramData)
@@ -379,7 +385,7 @@ data.Value
     {
         foreach (CircuitComponent circuitComponent in transform.GetComponentsInChildren<CircuitComponent>())
         {
-            if (circuitComponent.conponent == d)
+            if (circuitComponent.component == d)
             {
                 return circuitComponent;
             }
@@ -433,7 +439,7 @@ data.Value
     private bool isNodeOutput(Node n)
     {
         CircuitComponent c = n.GetComponentInParent<CircuitComponent>();
-        DiagramComponent d = c.conponent;
+        DiagramComponent d = c.component;
         if (d.direction == Direction.A_to_B)
         {
             if (n.name == "nodeA")
@@ -487,7 +493,7 @@ data.Value
             }
 
             SetComponentConnections(circuitComponent);
-            DiagramComponent component = circuitComponent.conponent;
+            DiagramComponent component = circuitComponent.component;
             Debug.Log(component.name + "     " + component.type.ToString());
             Debug.Log("Aconnections = " + String.Join("",
             component.Aconnections
@@ -505,7 +511,7 @@ data.Value
 
     private void SetComponentConnections(CircuitComponent circuitComponent)
     {
-        DiagramComponent component = circuitComponent.conponent;
+        DiagramComponent component = circuitComponent.component;
         Debug.Log(circuitComponent.gameObject);
         component.Aconnections = GetConnectedComponents(circuitComponent.nodeA, isNodeOutput(circuitComponent.nodeA));
         component.Bconnections = GetConnectedComponents(circuitComponent.nodeB, isNodeOutput(circuitComponent.nodeB));
@@ -525,11 +531,11 @@ data.Value
             Wire w = wiresToTest[0];
             foreach (Node n in w.connectedNode)
             {
-                if (!connectedComponents.Contains(n.GetComponentInParent<CircuitComponent>().conponent) && n != node)
+                if (!connectedComponents.Contains(n.GetComponentInParent<CircuitComponent>().component) && n != node)
                 {
                     if (isCorrectNode(n, isOutput))
                     {
-                        connectedComponents.Add(n.GetComponentInParent<CircuitComponent>().conponent);
+                        connectedComponents.Add(n.GetComponentInParent<CircuitComponent>().component);
                     }
                 }
             }
@@ -560,7 +566,7 @@ data.Value
         //for each component
         foreach (CircuitComponent circuitComponent in transform.GetComponentsInChildren<CircuitComponent>())
         {
-            DiagramComponent c = circuitComponent.conponent;
+            DiagramComponent c = circuitComponent.component;
             if (c.type != ComponentType.CELL)
             {
                 //for each output connected

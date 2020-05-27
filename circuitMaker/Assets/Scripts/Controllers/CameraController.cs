@@ -12,6 +12,7 @@ public class CameraController : MonoBehaviour
     public float scrollSpeed = 5f;
     public float minY = 10f;
     public float maxY = 80f;
+    public float clamps = 128f;
 
     private Vector3 mouseLocation;
 
@@ -82,8 +83,18 @@ public class CameraController : MonoBehaviour
 
         camera.orthographicSize -= scroll * 500 * scrollSpeed * Time.deltaTime;
         camera.orthographicSize = Mathf.Clamp(camera.orthographicSize, minY, maxY);
+        camera.orthographicSize = Mathf.Clamp(camera.orthographicSize, minY, maxY);
+          
+        Vector3 checkPos = new Vector2();
+        checkPos.z =-10; 
+        checkPos.x= Mathf.Clamp(  transform.position.x,-clamps, clamps);
+        checkPos.y= Mathf.Clamp(transform.position.y, -clamps, clamps);
+        transform.position = checkPos;
 
-        transform.position = pos;
+    }
+
+    public void resetCam(){
+        transform.position = new Vector3(0f,0f,-10f);
 
     }
 }

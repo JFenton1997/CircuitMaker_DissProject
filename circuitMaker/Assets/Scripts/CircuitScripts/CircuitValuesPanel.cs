@@ -13,7 +13,7 @@ public class CircuitValuesPanel : MonoBehaviour
     private CircuitComponent currentCircuit;
     private InputField voltage, current, resistance, selectedText;
     private Toggle voltHidden, currentHidden, resistanceHidden;
-    private Dropdown conponentType;
+    private Dropdown componentType;
     private LeanSwitch direction;
 
     private CanvasGroup canvasGroup;
@@ -34,7 +34,7 @@ public class CircuitValuesPanel : MonoBehaviour
         currentHidden = transform.Find("Values/Current/Hidden").GetComponent<Toggle>();
         resistanceHidden = transform.Find("Values/Resistance/Hidden").GetComponent<Toggle>();
 
-        conponentType = transform.Find("Values/Dropdown").GetComponent<Dropdown>();
+        componentType = transform.Find("Values/Dropdown").GetComponent<Dropdown>();
 
         direction = transform.Find("Values/DirectionSelector").GetComponent<LeanSwitch>();
         upArrow = direction.transform.Find("BtoA (R)").GetComponent<Image>();
@@ -58,7 +58,7 @@ public class CircuitValuesPanel : MonoBehaviour
         }
         else
         {
-             if (direction.State == 0)
+            if (direction.State == 0)
             {
                 upArrow.color = offColor;
                 downArrow.color = onColor;
@@ -70,19 +70,35 @@ public class CircuitValuesPanel : MonoBehaviour
             }
 
             // currentCircuit.ColorToSelected();
+
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                updatecomponentValues();
+                //   currentCircuit.ColorToMain();
+                currentCircuit.hideHighlight();
+                currentCircuit = null;
+
+            }
+            if (componentType.value == 0)
+            {
+                currentCircuit.component.Values[ComponentParameter.RESISTANCE].value = 0;
+                resistance.gameObject.SetActive(false);
+                direction.gameObject.SetActive(false);
+                autoC.SetActive(false);
+                autoV.SetActive(false);
+            }
+            else
+            {
+                resistance.gameObject.SetActive(true);
+                direction.gameObject.SetActive(true);
+                autoC.SetActive(true);
+                autoV.SetActive(true);
+            }
         }
 
-        if (Input.GetMouseButtonDown(1) && currentCircuit)
-        {
-            updateConponentValues();
-            //   currentCircuit.ColorToMain();
-            currentCircuit.hideHighlight();
-            currentCircuit = null;
-
-        }
 
 
-      
 
     }
 
@@ -92,7 +108,7 @@ public class CircuitValuesPanel : MonoBehaviour
     {
         if (currentCircuit)
         {
-            updateConponentValues();
+            updatecomponentValues();
             currentCircuit.hideHighlight();
         }
 
@@ -110,13 +126,13 @@ public class CircuitValuesPanel : MonoBehaviour
         canvasGroup.blocksRaycasts = true;
         canvasGroup.interactable = true;
         selectedText.text = currentCircuit.gameObject.name;
-        voltage.text = currentCircuit.conponent.Values[ComponentParameter.VOLTAGE].value.ToString();
-        current.text = currentCircuit.conponent.Values[ComponentParameter.CURRENT].value.ToString();
-        resistance.text = currentCircuit.conponent.Values[ComponentParameter.RESISTANCE].value.ToString();
-        conponentType.value = (int)currentCircuit.conponent.type - 1;
-        voltHidden.isOn = currentCircuit.conponent.Values[ComponentParameter.VOLTAGE].hidden;
-        currentHidden.isOn = currentCircuit.conponent.Values[ComponentParameter.CURRENT].hidden;
-        resistanceHidden.isOn = currentCircuit.conponent.Values[ComponentParameter.RESISTANCE].hidden;
+        voltage.text = currentCircuit.component.Values[ComponentParameter.VOLTAGE].value.ToString();
+        current.text = currentCircuit.component.Values[ComponentParameter.CURRENT].value.ToString();
+        resistance.text = currentCircuit.component.Values[ComponentParameter.RESISTANCE].value.ToString();
+        componentType.value = (int)currentCircuit.component.type - 1;
+        voltHidden.isOn = currentCircuit.component.Values[ComponentParameter.VOLTAGE].hidden;
+        currentHidden.isOn = currentCircuit.component.Values[ComponentParameter.CURRENT].hidden;
+        resistanceHidden.isOn = currentCircuit.component.Values[ComponentParameter.RESISTANCE].hidden;
 
 
 
@@ -126,47 +142,33 @@ public class CircuitValuesPanel : MonoBehaviour
 
 
 
-    public void updateConponentValues()
+    public void updatecomponentValues()
     {
         if (float.Parse(voltage.text
         , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > 0)
-            currentCircuit.conponent.Values[ComponentParameter.VOLTAGE].value = double.Parse(voltage.text
+            currentCircuit.component.Values[ComponentParameter.VOLTAGE].value = float.Parse(voltage.text
             , System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 
         if (float.Parse(current.text
         , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > 0)
-            currentCircuit.conponent.Values[ComponentParameter.CURRENT].value = double.Parse(current.text
+            currentCircuit.component.Values[ComponentParameter.CURRENT].value = float.Parse(current.text
             , System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 
         if (float.Parse(resistance.text
-                 , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > 0 && conponentType.value != 0)
-            currentCircuit.conponent.Values[ComponentParameter.RESISTANCE].value = double.Parse(resistance.text
+                 , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > 0 && componentType.value != 0)
+            currentCircuit.component.Values[ComponentParameter.RESISTANCE].value = float.Parse(resistance.text
             , System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 
 
-        if (conponentType.value == 0)
-        {
-            currentCircuit.conponent.Values[ComponentParameter.RESISTANCE].value = 0;
-            resistance.gameObject.SetActive(false);
-            direction.gameObject.SetActive(false);
-            autoC.SetActive(false);
-            autoV.SetActive(false);
-        }
-        else
-        {
-            resistance.gameObject.SetActive(true);
-            direction.gameObject.SetActive(true);
-            autoC.SetActive(true);
-            autoV.SetActive(true);
-        }
+
 
         if (direction.State == 0)
         {
-            currentCircuit.conponent.direction = Direction.A_to_B;
+            currentCircuit.component.direction = Direction.A_to_B;
         }
         else
         {
-            currentCircuit.conponent.direction = Direction.B_to_A;
+            currentCircuit.component.direction = Direction.B_to_A;
         }
 
 
@@ -177,12 +179,12 @@ public class CircuitValuesPanel : MonoBehaviour
             currentCircuit.gameObject.name = selectedText.text;
         }
 
-        currentCircuit.conponent.type = (ComponentType)conponentType.value + 1;
-        conponentType.value = (int)currentCircuit.conponent.type - 1;
+        currentCircuit.component.type = (ComponentType)componentType.value + 1;
+        componentType.value = (int)currentCircuit.component.type - 1;
 
-        currentCircuit.conponent.Values[ComponentParameter.VOLTAGE].hidden = voltHidden.isOn;
-        currentCircuit.conponent.Values[ComponentParameter.CURRENT].hidden = currentHidden.isOn;
-        currentCircuit.conponent.Values[ComponentParameter.RESISTANCE].hidden = resistanceHidden.isOn;
+        currentCircuit.component.Values[ComponentParameter.VOLTAGE].hidden = voltHidden.isOn;
+        currentCircuit.component.Values[ComponentParameter.CURRENT].hidden = currentHidden.isOn;
+        currentCircuit.component.Values[ComponentParameter.RESISTANCE].hidden = resistanceHidden.isOn;
 
         //         Debug.Log(currentAvow.component.Values[ComponentParameter.VOLTAGE].hidden+" "+
         // currentAvow.component.Values[ComponentParameter.CURRENT].hidden +" "+currentAvow.component.Values[ComponentParameter.RESISTANCE ].hidden);
@@ -230,7 +232,7 @@ public class CircuitValuesPanel : MonoBehaviour
             , System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 
         if (float.Parse(resistance.text
-                 , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > 0 && conponentType.value != 0)
+                 , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > 0 && componentType.value != 0)
             resistanceT = double.Parse(resistance.text
             , System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
         if (voltageT > 0f && currentT > 0f && resistanceT > 0)
@@ -251,7 +253,7 @@ public class CircuitValuesPanel : MonoBehaviour
                     Debug.LogError("invalide type");
                     break;
             }
-            updateConponentValues();
+            updatecomponentValues();
         }
 
 

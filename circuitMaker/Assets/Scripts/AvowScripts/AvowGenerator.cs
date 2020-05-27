@@ -17,25 +17,25 @@ public class AvowGenerator : AvowManager
     public void GenerateAvowDiagram(Dictionary<int, List<DiagramComponent>> diagramData, float scale)
     {
         //using a depth first methode using a stack
-        Stack<DiagramComponent> conponentsToProcess = new Stack<DiagramComponent>();
-        List<AvowConponent> builtAvows = new List<AvowConponent>();
+        Stack<DiagramComponent> componentsToProcess = new Stack<DiagramComponent>();
+        List<AvowComponent> builtAvows = new List<AvowComponent>();
 
 
         int prevAvowInRow = 0;
         DiagramComponent firstAvow = diagramData[1][0];
         builtAvows.Add(BuildAvow(firstAvow, startLocation));
-        foreach (DiagramComponent layerConponent in diagramData[1])
+        foreach (DiagramComponent layerComponent in diagramData[1])
         {
             Debug.Log(builtAvows.Count + " , " + prevAvowInRow);
-            if (layerConponent != firstAvow)
+            if (layerComponent != firstAvow)
             {
-                builtAvows.Add(BuildAvow(builtAvows[prevAvowInRow], 'R', layerConponent, scale));
+                builtAvows.Add(BuildAvow(builtAvows[prevAvowInRow], 'R', layerComponent, scale));
                 prevAvowInRow++;
             }
-            foreach (DiagramComponent output in outConponents(layerConponent))
+            foreach (DiagramComponent output in outComponents(layerComponent))
             {
                 if (output.type != ComponentType.CELL)
-                    conponentsToProcess.Push(output);
+                    componentsToProcess.Push(output);
             }
 
 
@@ -44,40 +44,40 @@ public class AvowGenerator : AvowManager
 
         //reverse stack
         Stack<DiagramComponent> tempStack = new Stack<DiagramComponent>();
-        foreach (DiagramComponent diagram in conponentsToProcess.ToArray())
+        foreach (DiagramComponent diagram in componentsToProcess.ToArray())
         {
-            tempStack.Push(conponentsToProcess.Pop());
+            tempStack.Push(componentsToProcess.Pop());
         }
-        conponentsToProcess = tempStack;
+        componentsToProcess = tempStack;
         tempStack = new Stack<DiagramComponent>();
 
-        foreach (DiagramComponent d in conponentsToProcess)
+        foreach (DiagramComponent d in componentsToProcess)
         {
             Debug.Log(d.name);
         }
 
-        while (conponentsToProcess.Count > 0)
+        while (componentsToProcess.Count > 0)
         {
-            DiagramComponent currentAvow = conponentsToProcess.Pop();
+            DiagramComponent currentAvow = componentsToProcess.Pop();
             // if not built and not cell
             if (!builtAvows.ConvertAll(x => x.component).Contains(currentAvow) && currentAvow.type != ComponentType.CELL)
             {
                 builtAvows.Sort((x1, x2) => x1.transform.position.x.CompareTo(x2.transform.position.x));
                 
-                AvowConponent inputOfCurrentAvow = builtAvows.Find(x => outConponents(x.component).Contains(currentAvow))
+                AvowComponent inputOfCurrentAvow = builtAvows.Find(x => outComponents(x.component).Contains(currentAvow))
                     ;
-                AvowConponent builtAvow = BuildAvow(inputOfCurrentAvow, 'D', currentAvow, scale);
+                AvowComponent builtAvow = BuildAvow(inputOfCurrentAvow, 'D', currentAvow, scale);
                 if( currentAvow.name == "H"){
                    Debug.Log(inputOfCurrentAvow); 
                     
                 }
                 builtAvows.Add(builtAvow);
-                foreach(AvowConponent a in builtAvows.FindAll(x => outConponents(x.component).Contains(currentAvow))){
+                foreach(AvowComponent a in builtAvows.FindAll(x => outComponents(x.component).Contains(currentAvow))){
                     a.BotConnections.Add(builtAvow);
 
                 }
                 tempStack.Clear();
-                foreach (DiagramComponent output in outConponents(currentAvow))
+                foreach (DiagramComponent output in outComponents(currentAvow))
                 {
                     tempStack.Push(output);
 
@@ -88,10 +88,10 @@ public class AvowGenerator : AvowManager
                 }
 
 
-                foreach (DiagramComponent conponent in tempStack.ToArray())
+                foreach (DiagramComponent component in tempStack.ToArray())
                 {
                     
-                    conponentsToProcess.Push(conponent);
+                    componentsToProcess.Push(component);
 
                     
                     
@@ -110,7 +110,7 @@ public class AvowGenerator : AvowManager
 
     }
 
-    public List<DiagramComponent> outConponents(DiagramComponent diagram)
+    public List<DiagramComponent> outComponents(DiagramComponent diagram)
     {
         if (diagram.direction == Direction.A_to_B)
         {
@@ -125,24 +125,24 @@ public class AvowGenerator : AvowManager
 
 
 
-    private AvowConponent BuildAvow(DiagramComponent conponent, Vector2 locationToBuild)
+    private AvowComponent BuildAvow(DiagramComponent component, Vector2 locationToBuild)
     {
         Vector3 buildPos = new Vector3(locationToBuild.x, locationToBuild.y, 0);
         GameObject AvowObject = (GameObject)Instantiate(avowPrefab, buildPos, Quaternion.identity, transform);
-        AvowConponent avow = AvowObject.GetComponent<AvowConponent>();
-        avow.component = conponent;
-        avow.name = conponent.name;
-        AvowObject.name = conponent.name;
-        avow.voltage = conponent.Values[ComponentParameter.VOLTAGE].value;
-        avow.current = conponent.Values[ComponentParameter.CURRENT].value;
+        AvowComponent avow = AvowObject.GetComponent<AvowComponent>();
+        avow.component = component;
+        avow.name = component.name;
+        AvowObject.name = component.name;
+        avow.voltage = component.Values[ComponentParameter.VOLTAGE].value;
+        avow.current = component.Values[ComponentParameter.CURRENT].value;
         avow.updateSize(avow.voltage, avow.current);
         return avow;
     }
 
-    private AvowConponent BuildAvow(AvowConponent Original, char direction, DiagramComponent newConponent, float scale)
+    private AvowComponent BuildAvow(AvowComponent Original, char direction, DiagramComponent newComponent, float scale)
     {
         Vector2 buildLocation = Vector2.zero;
-        Vector2 newAvowSize = new Vector2((float)newConponent.Values[ComponentParameter.CURRENT].value * scale, (float)newConponent.Values[ComponentParameter.VOLTAGE].value * scale);
+        Vector2 newAvowSize = new Vector2((float)newComponent.Values[ComponentParameter.CURRENT].value * scale, (float)newComponent.Values[ComponentParameter.VOLTAGE].value * scale);
         switch (direction)
         {
             case 'U':
@@ -159,11 +159,11 @@ public class AvowGenerator : AvowManager
                 buildLocation = new Vector2(Original.nextSpaceInDirection(direction) + (newAvowSize.x), Original.nextFreeSlotInSpaceInDirection(direction) + (newAvowSize.y / 2));
                 break;
             default:
-                Debug.LogError("UNKOWN Direction    original:" + Original.name + "  new conponent:" + newConponent.name);
+                Debug.LogError("UNKOWN Direction    original:" + Original.name + "  new component:" + newComponent.name);
                 break;
         }
-        //Debug.Log("BUILD NEW AVOW: " + newConponent.name + "   using: " + Original.name + "   new size: " + newAvowSize.ToString() + "  new location: " + buildLocation.ToString());
-        return BuildAvow(newConponent, buildLocation);
+        //Debug.Log("BUILD NEW AVOW: " + newComponent.name + "   using: " + Original.name + "   new size: " + newAvowSize.ToString() + "  new location: " + buildLocation.ToString());
+        return BuildAvow(newComponent, buildLocation);
 
     }
 }

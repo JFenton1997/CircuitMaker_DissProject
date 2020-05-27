@@ -73,7 +73,12 @@ public class SaveFileWindow : MonoBehaviour
             ,new bool[]{circuitToCiruitToggle.isOn, circuitToAvowToggle.isOn, avowToCircuitToggle.isOn, avowToAvowToggle.isOn}
             ,diagramData);
             successfulSave = transform.Find("/ProgramMaster").GetComponent<CsvManager>().writeDataToCsv(diagramToSave);
-            Debug.Log("SAVE SUCCESSFUL: " + successfulSave);
+            if(successfulSave){
+                 transform.Find("/ProgramMaster").GetComponent<AppSceneManager>().loadScene(0);
+            }
+            else{
+                Debug.LogError("FAILED TO SAVE FILE");
+            }
             cancel();
             //CLOSE WINDOW
         }

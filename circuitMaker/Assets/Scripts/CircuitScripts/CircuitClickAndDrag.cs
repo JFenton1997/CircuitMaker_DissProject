@@ -141,7 +141,9 @@ public class CircuitClickAndDrag : MonoBehaviour
             }
             else
             {
-                if (TryGetComponent<CircuitComponent>(out CircuitComponent c)) c.toErrorColor();
+                if (TryGetComponent<CircuitComponent>(out CircuitComponent c)){
+                    c.toErrorColor();
+                } 
 
                 return true;
             }

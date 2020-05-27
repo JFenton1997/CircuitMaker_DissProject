@@ -36,7 +36,7 @@ public class CsvManager : MonoBehaviour
     public List<DiagramInstanceData> GetAllFilesType(DiagramFilter filter)
     {
         List<DiagramInstanceData> diagramsToReturn = new List<DiagramInstanceData>();
-        List<String> files = new List<string>(Directory.GetFiles(@filePath, "*_*.csv"));
+        List<String> files = new List<string>(Directory.GetFiles(@GlobalValues.workingDirectory+"/", "*_*.csv"));
         Debug.Log(string.Join("\n", files));
 
         foreach (String filename in files)
@@ -96,7 +96,7 @@ public class CsvManager : MonoBehaviour
     // Update is called once per frame
     public bool writeDataToCsv(DiagramInstanceData diagram)
     {
-        filePath = GlobalValues.workingDirectory;
+        filePath = GlobalValues.workingDirectory+"/";
         toWrite = new List<string>();
         this.diagramData = diagram.diagramData;
         writeTitleBar(diagram.title, diagram.author, diagram.diagramQuestion, diagram.diagramEnabled);
@@ -159,7 +159,7 @@ public class CsvManager : MonoBehaviour
     {
         try
         {
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@filePath + title + "_" + author + fileExtension, false))
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@filePath+ title + "_" + author + fileExtension, false))
             {
                 foreach (string record in toWrite)
                 {
@@ -183,7 +183,7 @@ public class CsvManager : MonoBehaviour
 
     public DiagramInstanceData ReadFile(string filename)
     {
-        filePath = GlobalValues.workingDirectory;
+        filePath = GlobalValues.workingDirectory+"/";
         string author = "";
         string title = "";
         string question = "";

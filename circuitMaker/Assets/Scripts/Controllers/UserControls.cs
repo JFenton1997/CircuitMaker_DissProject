@@ -22,6 +22,7 @@ public class UserControls : MonoBehaviour
 
     private void Start()
     {
+ 
         GlobalValues.AvowSnapping = false;
         GlobalValues.AvowSnappingOffset = 0.5f;
         avowSnapToggleLastPos = false;

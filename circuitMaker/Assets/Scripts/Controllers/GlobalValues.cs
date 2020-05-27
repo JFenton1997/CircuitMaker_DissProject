@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Utilities;
+using System.IO;
 
 public static class GlobalValues 
 {
@@ -15,9 +16,9 @@ public static class GlobalValues
     public static string fileSearch;
 
     public static DiagramInstanceData selectedDiagram;
-
-    public static void getPlayerPrefs(){
-        workingDirectory  = PlayerPrefs.GetString("workingDirectory","/DiagramFiles");
+     public static void getPlayerPrefs(){
+        Directory.CreateDirectory(Application.dataPath + "/diagramFiles");
+        workingDirectory  = PlayerPrefs.GetString("workingDirectory",Application.dataPath + "/diagramFiles");
         switch( PlayerPrefs.GetInt("toolTipsEnables", 1)){
             case 0:
                 ToolTipsEnabled = false;
@@ -37,6 +38,10 @@ public static class GlobalValues
         PlayerPrefs.SetString("workingDirectory",workingDirectory);
          if(ToolTipsEnabled)  PlayerPrefs.SetInt("toolTipsEnables", 1);
          else PlayerPrefs.SetInt("toolTipsEnables",0);
+    }
+
+    public static void clearPlayerPrefs(){
+        PlayerPrefs.DeleteAll();
     }
 
 
