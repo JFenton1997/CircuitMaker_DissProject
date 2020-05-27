@@ -32,7 +32,7 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
     private bool prevDisplayValue;
 
-    private GenerateCircuit foundGen;
+    public GenerateCircuit foundGen;
     private ProblemViewer viewer;
 
 
@@ -61,13 +61,12 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
         }
         catch
         {
-            Debug.LogError(this.name + " failed to find nodes");
         }
 
         if (transform.parent.TryGetComponent<GenerateCircuit>(out GenerateCircuit gen))
         {
             foundGen = gen;
-            viewer = transform.Find("/UI/ProblemView").GetComponent<ProblemViewer>();
+            viewer = transform.Find("/UI/ProblemDisplayer/ProblemView").GetComponent<ProblemViewer>();
         }
 
     }
@@ -212,7 +211,8 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
     private void OnDestroy()
     {
-        transform.parent.GetComponent<CircuitManager>().allConponents.Remove(this);
+        if(! foundGen)
+                transform.parent.GetComponent<CircuitManager>().allConponents.Remove(this);
     }
 
 

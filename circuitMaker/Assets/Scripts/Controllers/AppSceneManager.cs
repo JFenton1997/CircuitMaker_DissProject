@@ -6,11 +6,12 @@ using UnityEngine.SceneManagement;
 public class AppSceneManager : MonoBehaviour
 {
     private void Awake() {
-        //DontDestroyOnLoad(transform);    
+              GlobalValues.getPlayerPrefs(); 
     }
 
     public void loadScene(int sceneInt){
         try{
+            GlobalValues.updatePlayerPrefs();
             SceneManager.LoadScene (sceneInt);
         }catch(System.Exception e){
             Debug.LogError(e);

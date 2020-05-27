@@ -28,7 +28,13 @@ public class GenerateCircuit : MonoBehaviour
     private void Start()
     {
         CellLocation = transform.position;
-        GenerateCircuitObject(transform.Find("/ProgramMaster").GetComponent<CsvManager>().testRead().diagramData);
+        if(GlobalValues.selectedDiagram.diagramData != null){
+            GenerateCircuitObject(GlobalValues.selectedDiagram.diagramData);
+        }else{
+            GenerateCircuitObject(transform.Find("/ProgramMaster").GetComponent<CsvManager>().testRead().diagramData);
+
+        }
+        
     }
 
 

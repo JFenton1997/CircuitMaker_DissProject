@@ -1142,6 +1142,7 @@ MonoBehaviour:
   spriteLight: {fileID: 21300000, guid: 4104704ee788b1740aa87b26b15d44cd, type: 3}
   errorHighlightColor: {r: 0, g: 0, b: 0, a: 0}
   clickAndDrag: {fileID: 0}
+  foundGen: {fileID: 0}
 --- !u!114 &8033148054023405490
 MonoBehaviour:
   m_ObjectHideFlags: 0
