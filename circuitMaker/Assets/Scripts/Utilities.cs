@@ -120,14 +120,16 @@ namespace Utilities
         public string author;
         public string diagramQuestion;
         public bool[] diagramEnabled;
+        public float scale;
 
-        public DiagramInstanceData(string title, string author, string diagramQuestion, bool[] diagramEnabled, Dictionary<int, List<DiagramComponent>> diagramData)
+        public DiagramInstanceData(string title, string author, string diagramQuestion, bool[] diagramEnabled, float scale, Dictionary<int, List<DiagramComponent>> diagramData)
         {
             this.title = title;
             this.author = author;
             this.diagramQuestion = diagramQuestion;
             this.diagramData = diagramData;
             this.diagramEnabled = diagramEnabled;
+            this.scale = scale;
 
 
 

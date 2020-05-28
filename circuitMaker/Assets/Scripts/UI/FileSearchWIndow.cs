@@ -54,9 +54,9 @@ public class FileSearchWIndow : MonoBehaviour
             FileLog.transform.Find("Items/Desc").GetComponent<Text>().text = d.diagramQuestion;
             Button fileLogButton = FileLog.GetComponent<Button>();
             ColorBlock buttonColorBlock = fileLogButton.colors;
-            buttonColorBlock.normalColor= colours[colorNum % colours.Count];
+            buttonColorBlock.normalColor = colours[colorNum % colours.Count];
             fileLogButton.colors = buttonColorBlock;
-            fileLogButton.onClick.AddListener(delegate{diagramSelected(fileLogButton.transform);});
+            fileLogButton.onClick.AddListener(delegate { diagramSelected(fileLogButton.transform); });
             colorNum++;
             fileNo++;
         }
@@ -64,14 +64,24 @@ public class FileSearchWIndow : MonoBehaviour
 
     public void diagramSelected(Transform button)
     {
-        GlobalValues.selectedDiagram = DiagramFiles [int.Parse(button.gameObject.name)] ;
+        GlobalValues.selectedDiagram = DiagramFiles[int.Parse(button.gameObject.name)];
         Debug.Log(GlobalValues.selectedDiagram.title);
-        switch(filter){
+        switch (filter)
+        {
             case DiagramFilter.CIRCUIT_TO_CIRCUIT:
                 transform.Find("/ProgramMaster").GetComponent<AppSceneManager>().loadScene(6);
                 break;
+            case DiagramFilter.CIRCUIT_TO_AVOW:
+                transform.Find("/ProgramMaster").GetComponent<AppSceneManager>().loadScene(10);
+                break;
+            case DiagramFilter.AVOW_TO_CIRCUIT:
+                transform.Find("/ProgramMaster").GetComponent<AppSceneManager>().loadScene(12);
+                break;
+            case DiagramFilter.AVOW_TO_AVOW:
+                transform.Find("/ProgramMaster").GetComponent<AppSceneManager>().loadScene(11);
+                break;
         }
-        
+
 
     }
 

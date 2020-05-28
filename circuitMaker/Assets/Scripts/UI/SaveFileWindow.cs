@@ -13,6 +13,7 @@ public class SaveFileWindow : MonoBehaviour
     public Color errorColor; 
     Color fieldColor;
     Dictionary<int, List<DiagramComponent>> diagramData;
+    float scale;
 
     // Start is called before the first frame update
     private void Start()
@@ -34,7 +35,7 @@ public class SaveFileWindow : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void intialiseSaveWindow(Dictionary<int, List<DiagramComponent>> diagramData)
+    public void intialiseSaveWindow(Dictionary<int, List<DiagramComponent>> diagramData, float scale)
     {
         this.diagramData = diagramData;
         canvasGroup.blocksRaycasts = true;
@@ -44,6 +45,7 @@ public class SaveFileWindow : MonoBehaviour
         avowToAvowToggle.isOn = true;
         circuitToCiruitToggle.isOn= true;
         avowToCircuitToggle.isOn = true;
+        this.scale = scale;
 
     }
 
@@ -71,7 +73,7 @@ public class SaveFileWindow : MonoBehaviour
             DiagramInstanceData diagramToSave =  new DiagramInstanceData(titleField.text,
             authorField.text,questionField.text
             ,new bool[]{circuitToCiruitToggle.isOn, circuitToAvowToggle.isOn, avowToCircuitToggle.isOn, avowToAvowToggle.isOn}
-            ,diagramData);
+            ,scale,diagramData);
             successfulSave = transform.Find("/ProgramMaster").GetComponent<CsvManager>().writeDataToCsv(diagramToSave);
             if(successfulSave){
                  transform.Find("/ProgramMaster").GetComponent<AppSceneManager>().loadScene(0);

@@ -172,6 +172,7 @@ public class Wire : MonoBehaviour
         {
             w.removeConnection(this);
         }
+         if(connectedNode.Count>0)
         foreach (Node n in connectedNode)
         {
             n.updateWire(null);

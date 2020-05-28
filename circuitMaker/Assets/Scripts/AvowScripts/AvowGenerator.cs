@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Utilities;
@@ -8,9 +9,16 @@ public class AvowGenerator : AvowManager
 {
     public Vector2 startLocation;
 
-    public void testGenerate()
+     private void Start()
     {
-        GenerateAvowDiagram(csv.avowTestRead(), 1);
+        startLocation = transform.position;
+        if(GlobalValues.selectedDiagram.diagramData != null){
+            GenerateAvowDiagram(GlobalValues.selectedDiagram.diagramData,  GlobalValues.selectedDiagram.scale);
+        }else{
+            GenerateAvowDiagram(transform.Find("/ProgramMaster").GetComponent<CsvManager>().testRead().diagramData,transform.Find("/ProgramMaster").GetComponent<CsvManager>().testRead().scale);
+
+        }
+        
     }
 
 //create a Avow diagram
@@ -19,11 +27,12 @@ public class AvowGenerator : AvowManager
         //using a depth first methode using a stack
         Stack<DiagramComponent> componentsToProcess = new Stack<DiagramComponent>();
         List<AvowComponent> builtAvows = new List<AvowComponent>();
+        transform.Find("/UI/ProblemDisplayer/ProblemView").GetComponent<ProblemViewer>().showScaleText(scale);
 
 
         int prevAvowInRow = 0;
         DiagramComponent firstAvow = diagramData[1][0];
-        builtAvows.Add(BuildAvow(firstAvow, startLocation));
+        builtAvows.Add(BuildAvow(firstAvow, startLocation,scale));
         foreach (DiagramComponent layerComponent in diagramData[1])
         {
             Debug.Log(builtAvows.Count + " , " + prevAvowInRow);
@@ -125,7 +134,7 @@ public class AvowGenerator : AvowManager
 
 
 
-    private AvowComponent BuildAvow(DiagramComponent component, Vector2 locationToBuild)
+    private AvowComponent BuildAvow(DiagramComponent component, Vector2 locationToBuild, float scale)
     {
         Vector3 buildPos = new Vector3(locationToBuild.x, locationToBuild.y, 0);
         GameObject AvowObject = (GameObject)Instantiate(avowPrefab, buildPos, Quaternion.identity, transform);
@@ -133,8 +142,8 @@ public class AvowGenerator : AvowManager
         avow.component = component;
         avow.name = component.name;
         AvowObject.name = component.name;
-        avow.voltage = component.Values[ComponentParameter.VOLTAGE].value;
-        avow.current = component.Values[ComponentParameter.CURRENT].value;
+        avow.voltage = (float)Math.Round(component.Values[ComponentParameter.VOLTAGE].value/scale,2);
+        avow.current = (float)Math.Round(component.Values[ComponentParameter.CURRENT].value/scale,2);
         avow.updateSize(avow.voltage, avow.current);
         return avow;
     }
@@ -142,7 +151,7 @@ public class AvowGenerator : AvowManager
     private AvowComponent BuildAvow(AvowComponent Original, char direction, DiagramComponent newComponent, float scale)
     {
         Vector2 buildLocation = Vector2.zero;
-        Vector2 newAvowSize = new Vector2((float)newComponent.Values[ComponentParameter.CURRENT].value * scale, (float)newComponent.Values[ComponentParameter.VOLTAGE].value * scale);
+        Vector2 newAvowSize = new Vector2((float)newComponent.Values[ComponentParameter.CURRENT].value / scale, (float)newComponent.Values[ComponentParameter.VOLTAGE].value / scale);
         switch (direction)
         {
             case 'U':
@@ -163,7 +172,7 @@ public class AvowGenerator : AvowManager
                 break;
         }
         //Debug.Log("BUILD NEW AVOW: " + newComponent.name + "   using: " + Original.name + "   new size: " + newAvowSize.ToString() + "  new location: " + buildLocation.ToString());
-        return BuildAvow(newComponent, buildLocation);
+        return BuildAvow(newComponent, buildLocation, scale);
 
     }
 }

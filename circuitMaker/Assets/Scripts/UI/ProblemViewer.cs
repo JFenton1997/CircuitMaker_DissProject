@@ -11,6 +11,7 @@ public class ProblemViewer : MonoBehaviour
 
     [SerializeField]
     public RenderTexture renderTarget;
+    private Text scaleText;
     RectTransform rectTransform;
     public float panSpeed = 5f;
     public float zoomSpeed = 5f;
@@ -29,6 +30,8 @@ public class ProblemViewer : MonoBehaviour
 
         DisplayH = Screen.height;
         DisplayW = Screen.width;
+        scaleText = transform.Find("Buttons/Scale/ScaleText").GetComponent<Text>();
+       scaleText.transform.parent.gameObject.SetActive(false);
         problemCam = transform.Find("/ProblemCamera").GetComponent<Camera>();
         defaultPos = problemCam.transform.position;
         defualZoom = problemCam.orthographicSize;
@@ -52,6 +55,7 @@ public class ProblemViewer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("PROBLEM V:" + displayValues);
 
 
         viewImage.texture = problemCam.activeTexture;
@@ -66,6 +70,11 @@ public class ProblemViewer : MonoBehaviour
     public void toggleDetails(){
         displayValues = !displayValues;
 
+    }
+
+    public void showScaleText(float scale){
+        scaleText.text = scale.ToString() + " : 1";
+        scaleText.transform.parent.gameObject.SetActive(true);
     }
 
     public void sizeChange(int value){

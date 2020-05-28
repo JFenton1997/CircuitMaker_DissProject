@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using Lean.Gui;
 using UnityEngine.EventSystems;
 using Utilities;
+using System;
 
 public class CircuitValuesPanel : MonoBehaviour
 {
@@ -87,6 +88,8 @@ public class CircuitValuesPanel : MonoBehaviour
                 direction.gameObject.SetActive(false);
                 autoC.SetActive(false);
                 autoV.SetActive(false);
+                selectedText.text = "CELL";
+                selectedText.interactable = false;
             }
             else
             {
@@ -94,6 +97,8 @@ public class CircuitValuesPanel : MonoBehaviour
                 direction.gameObject.SetActive(true);
                 autoC.SetActive(true);
                 autoV.SetActive(true);
+                selectedText.interactable = true;
+
             }
         }
 
@@ -104,9 +109,9 @@ public class CircuitValuesPanel : MonoBehaviour
 
 
 
-    public void newSelected(CircuitComponent selectedCoponent)
+    public void newSelected(CircuitComponent selectedComponent)
     {
-        if (currentCircuit)
+        if (currentCircuit && currentCircuit != selectedComponent)
         {
             updatecomponentValues();
             currentCircuit.hideHighlight();
@@ -116,10 +121,31 @@ public class CircuitValuesPanel : MonoBehaviour
         this.currentCircuit = null;
 
 
+
         // canvasGroup.blocksRaycasts = true;
 
 
-        this.currentCircuit = selectedCoponent;
+        this.currentCircuit = selectedComponent;
+        if (currentCircuit)
+        {
+            if (currentCircuit.isBuilder)
+            {
+                currentHidden.gameObject.SetActive(true);
+                voltHidden.gameObject.SetActive(true);
+                resistanceHidden.gameObject.SetActive(true);
+            }
+            else
+            {
+                currentHidden.gameObject.SetActive(false);
+                voltHidden.gameObject.SetActive(false);
+                resistanceHidden.gameObject.SetActive(false);
+
+            }
+        }
+
+
+
+
         currentCircuit.ShowHighlight();
         // currentCircuit.ColorToSelected();
         canvasGroup.alpha = 1f;
@@ -144,20 +170,20 @@ public class CircuitValuesPanel : MonoBehaviour
 
     public void updatecomponentValues()
     {
-        if (float.Parse(voltage.text
-        , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > 0)
-            currentCircuit.component.Values[ComponentParameter.VOLTAGE].value = float.Parse(voltage.text
-            , System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+        if (decimal.Parse(voltage.text
+        , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > (decimal)0.001f)
+            currentCircuit.component.Values[ComponentParameter.VOLTAGE].value = (float)Math.Round(decimal.Parse(voltage.text
+            , System.Globalization.CultureInfo.InvariantCulture.NumberFormat), 2);
 
-        if (float.Parse(current.text
-        , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > 0)
-            currentCircuit.component.Values[ComponentParameter.CURRENT].value = float.Parse(current.text
-            , System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+        if (decimal.Parse(current.text
+        , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > (decimal)0.001f)
+            currentCircuit.component.Values[ComponentParameter.CURRENT].value = (float)Math.Round(decimal.Parse(current.text
+            , System.Globalization.CultureInfo.InvariantCulture.NumberFormat), 2);
 
-        if (float.Parse(resistance.text
+        if (decimal.Parse(resistance.text
                  , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > 0 && componentType.value != 0)
-            currentCircuit.component.Values[ComponentParameter.RESISTANCE].value = float.Parse(resistance.text
-            , System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+            currentCircuit.component.Values[ComponentParameter.RESISTANCE].value = (float)Math.Round(decimal.Parse(resistance.text
+            , System.Globalization.CultureInfo.InvariantCulture.NumberFormat), 3);
 
 
 
@@ -188,7 +214,7 @@ public class CircuitValuesPanel : MonoBehaviour
 
         //         Debug.Log(currentAvow.component.Values[ComponentParameter.VOLTAGE].hidden+" "+
         // currentAvow.component.Values[ComponentParameter.CURRENT].hidden +" "+currentAvow.component.Values[ComponentParameter.RESISTANCE ].hidden);
-
+        newSelected(currentCircuit);
     }
 
     public void DestoryCurrentSelected()
@@ -218,23 +244,23 @@ public class CircuitValuesPanel : MonoBehaviour
 
     public void autoPick(ComponentParameter c)
     {
-        double voltageT = 0f;
-        double currentT = 0f;
-        double resistanceT = 0f;
-        if (float.Parse(voltage.text
-        , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > 0)
-            voltageT = double.Parse(voltage.text
-            , System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+        float voltageT = 0f;
+        float currentT = 0f;
+        float resistanceT = 0f;
+        if (decimal.Parse(voltage.text
+        , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > (decimal)0.0001f)
+            voltageT = (float)Math.Round(decimal.Parse(voltage.text
+            , System.Globalization.CultureInfo.InvariantCulture.NumberFormat), 2);
 
-        if (float.Parse(current.text
-        , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > 0)
-            currentT = double.Parse(current.text
-            , System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+        if (decimal.Parse(current.text
+        , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > (decimal)0.0001f)
+            currentT = (float)Math.Round(decimal.Parse(current.text
+            , System.Globalization.CultureInfo.InvariantCulture.NumberFormat), 2);
 
-        if (float.Parse(resistance.text
-                 , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > 0 && componentType.value != 0)
-            resistanceT = double.Parse(resistance.text
-            , System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+        if (decimal.Parse(resistance.text
+                 , System.Globalization.CultureInfo.InvariantCulture.NumberFormat) > (decimal)0.0001f && componentType.value != 0)
+            resistanceT = (float)Math.Round(decimal.Parse(resistance.text
+            , System.Globalization.CultureInfo.InvariantCulture.NumberFormat), 2);
         if (voltageT > 0f && currentT > 0f && resistanceT > 0)
         {
 
@@ -247,13 +273,16 @@ public class CircuitValuesPanel : MonoBehaviour
                     current.text = (voltageT / resistanceT).ToString();
                     break;
                 case ComponentParameter.RESISTANCE:
-                    resistance.text = (voltageT / currentT).ToString();
+                    resistance.text = Math.Round((voltageT / currentT), 2).ToString();
                     break;
                 default:
                     Debug.LogError("invalide type");
                     break;
             }
             updatecomponentValues();
+        }
+        else
+        {
         }
 
 

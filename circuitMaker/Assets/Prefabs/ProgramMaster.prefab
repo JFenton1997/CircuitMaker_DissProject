@@ -49,7 +49,7 @@ MonoBehaviour:
   plusOffset: 110
   minusOffset: 109
   toggleToolTips: 116
-  circuitDisplayAll: 304
+  circuitDisplayAll: 306
 --- !u!114 &3239038114068513748
 MonoBehaviour:
   m_ObjectHideFlags: 0

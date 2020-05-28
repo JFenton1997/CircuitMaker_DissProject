@@ -726,6 +726,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upArrow: {fileID: 21300000, guid: b044f18a8cf159048b4da2fd78321ee8, type: 3}
   downArrow: {fileID: 21300000, guid: 6aa5bcd5dde052a43a7fb7935e2e0e38, type: 3}
+  hiddenColor: {r: 0.7924528, g: 0.40744036, b: 0.48352373, a: 1}
 --- !u!1 &5059930299311085403
 GameObject:
   m_ObjectHideFlags: 0

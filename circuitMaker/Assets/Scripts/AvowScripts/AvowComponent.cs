@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Events;
+using TMPro;
 using Utilities;
 public class AvowComponent : MonoBehaviour
 {
@@ -14,18 +14,25 @@ public class AvowComponent : MonoBehaviour
     private Image AvowFillColorImg;
     private AvowManager avowManager;
     private List<AvowComponent> sameLayer;
+    private CanvasGroup infoPanel;
+    private TMP_Text widthText , nameText, heightText , typeText; 
 
     public bool isBlocked;
-
+    public bool isBuilder;
 
     [SerializeField]
     public List<AvowComponent> TopConnections, BotConnections, LeftConnections, RightConnections;
+    private ProblemViewer problem;
+    private AvowGenerator foundGen;
+    private SolverScript solver;
+    bool checkIfAnswers;
 
     Image image;
     public RectTransform rectTransform;
 
     public float voltage = 1, current = 1;
     Vector2 fillSize;
+    public Color hiddenColor;
 
 
     [HideInInspector]
@@ -33,12 +40,23 @@ public class AvowComponent : MonoBehaviour
 
 
 
-    public Canvas ValuesUX;
 
 
     // Start is called before the first frame update
     private void Awake()
-    {
+    {try{
+        if(transform.Find("/UI/ProblemDisplayer/ProblemView").TryGetComponent<ProblemViewer>(out problem)){
+            Debug.Log("FOUNDPROBLEM");
+            solver = transform.Find("/UI/SolverPanel").GetComponent<SolverScript>();
+
+        }
+        if(transform.parent.TryGetComponent<AvowGenerator>(out foundGen)){
+            Debug.Log("FOUNDGEN");
+
+        }
+    }catch{}
+        
+
 
         boxCollider2D = this.GetComponent<BoxCollider2D>();
         rectTransform = this.GetComponent<RectTransform>();
@@ -50,17 +68,28 @@ public class AvowComponent : MonoBehaviour
         LeftConnections = new List<AvowComponent>();
         RightConnections = new List<AvowComponent>();
         avowManager = transform.GetComponentInParent<AvowManager>();
+        isBuilder = avowManager.isBuilder;
         sameLayer = new List<AvowComponent>();
         pastColor = fillColour;
+        infoPanel = transform.Find("AvowFillColor/Panel").GetComponent<CanvasGroup>();
+        widthText = infoPanel.transform.Find("Width").GetComponent<TMP_Text>();
+        nameText = infoPanel.transform.Find("Name").GetComponent<TMP_Text>();
+        heightText = infoPanel.transform.Find("Height").GetComponent<TMP_Text>();
+        typeText = infoPanel.transform.Find("Type").GetComponent<TMP_Text>();
+        infoPanel.alpha = 0f;
+
 
 
 
     }
 
+
+
     // Update is called once per frame
     void Update()
     {
         updateFill();
+        component.name = gameObject.name;
         this.GetComponent<BoxCollider2D>().size = fillSize;
         Collider2D[] hit = new Collider2D[10];
 
@@ -85,19 +114,75 @@ public class AvowComponent : MonoBehaviour
             }
 
         }
+        nameText.text = component.name;
+        typeText.text =component.type.ToString();
+
+        widthText.text = current.ToString()+" :W";
+        heightText.text = voltage.ToString()+" :H";
+
+        if(foundGen) checkIfAnswers = solver.showAnswer;
+        else checkIfAnswers = false;
+
+        if(!component.Values[ComponentParameter.CURRENT].hidden || !foundGen) widthText.text =widthText.text = current.ToString()+" :W";
+        else if (checkIfAnswers){
+            widthText.text = current.ToString()+" :W";
+
+        }
+        else{ widthText.text = "? :W"; widthText.color = hiddenColor;};
+
+        if(!component.Values[ComponentParameter.VOLTAGE].hidden || !foundGen) heightText.text = voltage + " :H";
+        else if (checkIfAnswers){
+            heightText.text = voltage + ":H";
+
+        }
+        else{ heightText.text = "? :H"; heightText.color = hiddenColor;};
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+        if(GlobalValues.circuitDisplayAll && !foundGen){
+            infoPanel.alpha=1;
+        }
+        else if(foundGen){
+            if(problem.displayValues){
+
+                infoPanel.alpha=1;
+            }
+            else infoPanel.alpha = 0f;
+        }
+        else{
+            infoPanel.alpha=0;
+        }
     }
 
+
+
+
+
+    
 
 
     private void updateFill()
     {
         //temp
+        
         updateSize(voltage, current);
-        fillSize = new Vector2(rectTransform.rect.width - (0.05f * (Camera.main.orthographicSize / 10)), rectTransform.rect.height
-         - (0.05f * (Camera.main.orthographicSize / 10)));
+        if(isBuilder)
+        fillSize = new Vector2(rectTransform.rect.width - (0.1f * (Camera.main.orthographicSize / 5)), rectTransform.rect.height
+         - (0.05f * (Camera.main.orthographicSize / 5)));
+         else{
+             fillSize = new Vector2(rectTransform.rect.width - 0.1f, rectTransform.rect.height - 0.1f);
+         }
 
         AvowFillColorTrans.sizeDelta = fillSize;
 
@@ -105,7 +190,7 @@ public class AvowComponent : MonoBehaviour
 
     }
 
-    public void updateSize(double voltage, double current)
+    public void updateSize(float voltage, float current)
     {
         if (current > 0 && voltage > 0)
         {
@@ -238,7 +323,7 @@ public class AvowComponent : MonoBehaviour
         sameLayer.Clear();
     }
 
-    public void updateSameLayerConncections()
+    public void updateSameLayerConnections()
     {
         Debug.Log("CHECK " +gameObject.name);
         Vector3[] corners = new Vector3[4];
@@ -268,7 +353,7 @@ public class AvowComponent : MonoBehaviour
             AvowComponent r = RightConnections[RightConnections.Count - 1];
             r.rectTransform.GetWorldCorners(rCorners);
             Debug.Log(r.gameObject.name);
-            Debug.Log(corners[3].y+ "   "+ rCorners[0].y);
+           Debug.Log(corners[3].y+ "   "+ rCorners[0].y);
             if (ExtraUtilities.isEqualWithTolarance(corners[3].y, rCorners[0].y, 0.01f))
             {
                 foreach (AvowComponent b in r.BotConnections)

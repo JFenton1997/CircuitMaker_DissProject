@@ -133,7 +133,8 @@ public class CircuitManager : MonoBehaviour
         {
             foundErrors.Add(new DiagramError("NO CONNECTION ERROR   ",
             "component " + c.name + " is not fully connected to circuit\nA Connections Found: " + string.Join(" , ", c.component.Aconnections.ConvertAll(x => x.name)) +
-            "\nB Connections Found: " + string.Join(" , ", c.component.Bconnections.ConvertAll(x => x.name)) + "\n(no name means no connections.", c.component, allcomponents));
+            "\nB Connections Found: " + string.Join(" , ", c.component.Bconnections.ConvertAll(x => x.name)) + "\n(no name means no connections.\n"+
+            "make sure connections are going into the component and not along the component", c.component, allcomponents));
             transform.Find("/UI/ErrorsPanel").GetComponent<ErrorPanel>().displayErrors(foundErrors);
             return;
 
@@ -149,11 +150,15 @@ public class CircuitManager : MonoBehaviour
 
         //component with incorrect values
         if(isBuilder)
-        foreach (CircuitComponent c in allcomponents.FindAll(x => x.component.Values[ComponentParameter.VOLTAGE].value / x.component.Values[ComponentParameter.CURRENT].value
-         != x.component.Values[ComponentParameter.RESISTANCE].value))
+        foreach (CircuitComponent c in allcomponents.FindAll(x => Math.Round(x.component.Values[ComponentParameter.VOLTAGE].value / x.component.Values[ComponentParameter.CURRENT].value
+        ,2) != Math.Round(x.component.Values[ComponentParameter.RESISTANCE].value,2)))
         {
+            
             if (c.component.type != ComponentType.CELL && c.component.type != ComponentType.UNTYPED)
             {
+                Debug.Log(Math.Round(c.component.Values[ComponentParameter.VOLTAGE].value / c.component.Values[ComponentParameter.CURRENT].value
+        ,2));
+             
                 foundErrors.Add(new DiagramError("component VALUE ERROR    ", "the values for " + c.gameObject.name + " dont add up correctly to ohm's law, fix values or use auto feature", c.component, allcomponents));
             }
 
@@ -248,8 +253,8 @@ public class CircuitManager : MonoBehaviour
 
 
         //calculate Cell Values
-        double voltage = 0;
-        double current = 0;
+        float voltage = 0;
+        float current = 0;
         foreach (DiagramComponent d in diagramData[1])
         {
             current += d.Values[ComponentParameter.CURRENT].value;
@@ -276,7 +281,7 @@ public class CircuitManager : MonoBehaviour
         {
             foundErrors.Add(new DiagramError("CELL VALUE ERROR ",
             "the cells values dont add up to the rest of the circuit using a basic check, using top for current and leftmost path for voltage, the values should be " +
-            voltage + "V    " + current + "I"));
+            Math.Round(voltage,2) + "V    " + Math.Round(current,2)+ "I"));
 
         }
         // diagramData[0][0].Values[ComponentParameter.VOLTAGE].value = voltage;
@@ -284,8 +289,8 @@ public class CircuitManager : MonoBehaviour
         // diagramData[0][0].Values[ComponentParameter.RESISTANCE].value = 0f;
 
         //box check
-        double Cvoltage = 0;
-        double Ccurrent = 0;
+        float Cvoltage = 0;
+        float Ccurrent = 0;
         foreach (DiagramComponent d in diagramData[0][0].Bconnections)
         {
             Ccurrent += d.Values[ComponentParameter.CURRENT].value;
@@ -308,15 +313,15 @@ public class CircuitManager : MonoBehaviour
         }
 
         Debug.Log(Ccurrent + " " + current + "  " + voltage + "  " + Cvoltage);
-        if (Cvoltage != voltage)
+        if (Cvoltage != voltage && isBuilder)
         {
             foundErrors.Add(new DiagramError("VALUES ERROR   ", "Using a basic check, the values of the circuit are Incorrect, the voltage down the leftmost path is " +
-            voltage + "Vand on the leftMost path is " + Cvoltage + "V, all paths should add up to the same, this error check isnt conprohensive, please double check the values"));
+            voltage + "Vand on the leftMost path is " + Cvoltage + "V, all paths should add up to the same, this error check isnt conprohensive, please float check the values"));
         }
-        if (Ccurrent != current)
+        if (Ccurrent != current && isBuilder)
         {
             foundErrors.Add(new DiagramError("VALUES ERROR   ", "Using a basic check, the values of the circuit are Incorrect, the current on the top path is " +
-            current + "I and on the bottom path is " + Ccurrent + "I, all paths should add up to the same, this error check isnt conprohensive, please double check the values"));
+            current + "I and on the bottom path is " + Ccurrent + "I, all paths should add up to the same, this error check isnt conprohensive, please float check the values"));
         }
 
         if (foundErrors.Count != 0)
@@ -324,6 +329,32 @@ public class CircuitManager : MonoBehaviour
             Debug.Log(transform.Find("/UI/ErrorsPanel").name);
             transform.Find("/UI/ErrorsPanel").GetComponent<ErrorPanel>().displayErrors(foundErrors);
             return;
+        }
+
+        //set scale
+        float scale =1;
+        float smallest = Mathf.Infinity;
+        foreach(float lowestVal in allcomponents.ConvertAll(x=>x.component.Values[ComponentParameter.CURRENT].value.CompareTo(
+        x.component.Values[ComponentParameter.VOLTAGE].value))){
+            if(smallest  <lowestVal){
+                smallest = lowestVal;
+            }
+        }
+        scale = 0.001f;
+        if(smallest > 0.1){
+            scale = 0.1f;
+        }
+        if(smallest> 1){
+            scale = 1f;
+        }
+        if(smallest >10){
+            scale = 10f;
+        }
+        if(smallest >100){
+            scale = 100f;
+        }
+        if(smallest >1000){
+            scale = 1000f;
         }
 
 
@@ -343,7 +374,7 @@ public class CircuitManager : MonoBehaviour
 
 
         if(isBuilder)
-        transform.Find("/UI/SaveDiagram").GetComponent<SaveFileWindow>().intialiseSaveWindow(diagramData);
+        transform.Find("/UI/SaveDiagram").GetComponent<SaveFileWindow>().intialiseSaveWindow(diagramData,scale);
         else{
             transform.Find("/UI/SolverPanel").GetComponent<SolverScript>().compareAnswers(diagramData);
 
@@ -537,7 +568,15 @@ data.Value
                     {
                         connectedComponents.Add(n.GetComponentInParent<CircuitComponent>().component);
                     }
+
+                            
+
+                    
                 }
+                                    if(!vistedWires.Contains(n.ConnectedWire)){
+                        wiresToTest.Add(n.ConnectedWire);
+                        vistedWires.Add(n.ConnectedWire);
+                    }
             }
 
             foreach (Wire u in w.connectedWires)

@@ -333,6 +333,9 @@ generatorMatrix[i]
                 case ComponentType.RESISTOR:
                     temp = (GameObject)Instantiate(resistorPrefab, generateLocation(layerValue), Quaternion.identity, transform);
                     break;
+                case ComponentType.LIGHT:
+                    temp = (GameObject)Instantiate(resistorPrefab, generateLocation(layerValue), Quaternion.identity, transform);
+                    break;
                 default:
                     Debug.LogError("unknown");
                     temp = new GameObject("ERROR");

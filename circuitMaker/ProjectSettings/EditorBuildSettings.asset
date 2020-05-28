@@ -12,18 +12,36 @@ EditorBuildSettings:
     path: Assets/Scene/MenuScenes/MakeQuestionMenu.unity
     guid: 2f5d46ad80520474e8263528467468b5
   - enabled: 1
-    path: Assets/Scene/AvowBuilderTeacher.unity
+    path: Assets/Scene/Builders/AvowBuilderTeacher.unity
     guid: 868da5fbe2f90eb4e959f2cacb0a95e8
   - enabled: 1
-    path: Assets/Scene/CircuitBuilderTeacher.unity
+    path: Assets/Scene/Builders/CircuitBuilderTeacher.unity
     guid: 00e4e41b4108d464a8079c720725cac0
   - enabled: 1
     path: Assets/Scene/MenuScenes/SolveQuestionMenu.unity
     guid: e678c862e6ad7b344a1444673039d38c
   - enabled: 1
-    path: Assets/Scene/MenuScenes/FileSearch/CircuiToCircuitSearch.unity
+    path: Assets/Scene/FileSearch/CircuiToCircuitSearch.unity
     guid: da7bb0a2f6fb1e34996b3b1db8bbebfa
   - enabled: 1
-    path: Assets/Scene/CircuitToCircuitSolve.unity
+    path: Assets/Scene/Solvers/CircuitToCircuitSolve.unity
     guid: 59f98f1cc94462049bd2135157f11aed
+  - enabled: 1
+    path: Assets/Scene/FileSearch/CircuitToAvow.unity
+    guid: 45e4a905766c08146974f468833f704c
+  - enabled: 1
+    path: Assets/Scene/FileSearch/AvowToCircuit.unity
+    guid: 41450d88cae643b49baf2077403159ee
+  - enabled: 1
+    path: Assets/Scene/FileSearch/AvowToAvow.unity
+    guid: 5aec430b921e30b49b9eed0ba96ddcf5
+  - enabled: 1
+    path: Assets/Scene/Solvers/CircuitToAvowSolve.unity
+    guid: a790d6197d47db74c9b8505ba4075f20
+  - enabled: 1
+    path: Assets/Scene/Solvers/AvowToAvowSolve.unity
+    guid: c05e57ebc2fc8f844bf288866a678bc3
+  - enabled: 1
+    path: Assets/Scene/Solvers/AvowToCircuitSolve.unity
+    guid: d4ef34cbee48537479996052a866be8f
   m_configObjects: {}

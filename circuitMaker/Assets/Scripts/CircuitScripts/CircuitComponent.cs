@@ -34,6 +34,7 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
     public GenerateCircuit foundGen;
     private ProblemViewer viewer;
+    public bool isBuilder;
 
 
 
@@ -41,6 +42,7 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
     private void Awake()
     {
+        isBuilder = transform.parent.GetComponent<CircuitManager>().isBuilder;
         prevDisplayValue = false;
         componentImage = GetComponent<Image>();
         // component.type = ComponentType.CELL;
@@ -227,10 +229,7 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
         }
     }
 
-    public static implicit operator CircuitComponent(DiagramComponent v)
-    {
-        throw new NotImplementedException();
-    }
+
 }
 
 

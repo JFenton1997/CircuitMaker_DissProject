@@ -14,6 +14,7 @@ public class AvowManager : MonoBehaviour
     public float scale = 1;
 
     public CsvManager csv;
+    public bool isBuilder;
 
     private HashSet<DiagramError> foundErrors;
 
@@ -59,7 +60,7 @@ public class AvowManager : MonoBehaviour
         }
         foreach (AvowComponent avow in allAvow)
         {
-            avow.updateSameLayerConncections();
+            avow.updateSameLayerConnections();
         }
     }
 
@@ -67,7 +68,7 @@ public class AvowManager : MonoBehaviour
     {
         Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
         Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint);
-        GameObject avowObject = (GameObject)Instantiate(avowPrefab, new Vector3(curPosition.x, curPosition.y + 6f, 0), Quaternion.identity, transform);
+        GameObject avowObject = (GameObject)Instantiate(avowPrefab, new Vector3(curPosition.x, curPosition.y + 5f, 0), Quaternion.identity, transform);
         AvowComponent avowComponent = avowObject.GetComponent<AvowComponent>();
         avowObject.name = currentName.ToString();
         avowComponent.component.type = ComponentType.RESISTOR;
@@ -133,6 +134,7 @@ public class AvowManager : MonoBehaviour
         {
             foundErrors.Add(new DiagramError("NO componentS FOUND", "theres no components to use to create a diagram"));
             transform.Find("/UI/ErrorsPanel").GetComponent<ErrorPanel>().displayErrors(foundErrors);
+            return;
 
 
         }
@@ -224,7 +226,7 @@ data.Value
         x.LeftConnections.Count == 0 && x.RightConnections.Count == 0);
         if (unconnected.Count > 1 || (unconnected.Count == 1 && diagramData[1].Count > 1))
         {
-            //error avow
+            if(isBuilder)
             foreach (AvowComponent avow in unconnected)
             {
                 foundErrors.Add(new DiagramError("   UNCONNECTED   ", "The Avow " + avow.gameObject.name + " is seen as unconnected, please either delete the avow or make sure it is connected", avow.component, allAvow));
@@ -305,8 +307,8 @@ data.Value
         diagramData[0][0].Values[ComponentParameter.RESISTANCE].value = 0f;
 
         //box check
-        double Cvoltage = 0;
-        double Ccurrent = 0;
+        float Cvoltage = 0;
+        float Ccurrent = 0;
         foreach (DiagramComponent d in diagramData[0][0].Bconnections)
         {
             Ccurrent += d.Values[ComponentParameter.CURRENT].value;
@@ -329,7 +331,7 @@ data.Value
 
         }
 
-        Debug.Log(Ccurrent + " " + current + "  " + voltage + "  " + Cvoltage);
+        Debug.Log("CELL GEN = "+Ccurrent + " " + current + "  " + voltage + "  " + Cvoltage+ "  s:"+ scale);
         if (Cvoltage != voltage || Ccurrent != current)
         {
             foundErrors.Add(new DiagramError("  Layout Error   ", "A Avow must be a rectangle in shape. e.g. must be a complete box with no gaps and exactly 4 sides"));
@@ -358,7 +360,11 @@ data.Value
 
 
         // submit avow diagram to save window
-        transform.Find("/UI/SaveDiagram").GetComponent<SaveFileWindow>().intialiseSaveWindow(diagramData);
+        if(isBuilder)
+        transform.Find("/UI/SaveDiagram").GetComponent<SaveFileWindow>().intialiseSaveWindow(diagramData,scale);
+        else{
+            transform.Find("/UI/SolverPanel").GetComponent<SolverScript>().compareAnswers(diagramData);
+        }
 
 
 
@@ -370,25 +376,23 @@ data.Value
     {
         switch (dropdown.value)
         {
+
             case 0:
-                scale = 0.001f;
+                scale = 0.01f;
                 break;
             case 1:
-                scale = 0.01f;
+                scale = 0.1f;
                 break;
             case 2:
-                scale = 0.01f;
-                break;
-            case 3:
                 scale = 1f;
                 break;
-            case 4:
+            case 3:
                 scale = 10f;
                 break;
-            case 5:
+            case 4:
                 scale = 100f;
                 break;
-            case 6:
+            case 5:
                 scale = 1000f;
                 break;
             default:

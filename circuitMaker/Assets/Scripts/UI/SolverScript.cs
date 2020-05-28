@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Utilities;
 using UnityEngine.UI;
+using System;
 
 public class SolverScript : MonoBehaviour
 {
@@ -14,20 +15,35 @@ public class SolverScript : MonoBehaviour
 
     private DiagramInstanceData question;
     private HashSet<DiagramError> foundErrors;
-    public Text questionDesc; 
+    public Text questionDesc;
 
+    private Button FinishButton;
+    private int attempts;
+    public bool showAnswer, timerIsON;
+    private float timer;
+    public Color solvedColor, timerColor, attemptColor;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        FinishButton = transform.Find("Buttons/Finish").GetComponent<Button>();
+
+
+        timerIsON = true;
+        attempts = 0;
+
+        timer = 0f;
+        showAnswer = false;
+        FinishButton.gameObject.SetActive(false);
         foundErrors = new HashSet<DiagramError>();
         question = GlobalValues.selectedDiagram;
-        if(question.diagramData == null){
+        if (question.diagramData == null)
+        {
             question = transform.Find("/ProgramMaster").GetComponent<CsvManager>().testRead();
 
-        }  
-        questionDesc.text = question.diagramQuestion;
+        }
+        questionDesc.text =  question.title+ " : " +question.diagramQuestion;
 
         canvasGroup = GetComponent<CanvasGroup>();
         ErrorMessages = new List<Pair<GameObject, DiagramError>>();
@@ -38,25 +54,65 @@ public class SolverScript : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        if (timerIsON)
+            timer += Time.deltaTime;
+    }
+
     // Update is called once per frame
     public void displayErrors(HashSet<DiagramError> diagramErrors)
     {
-        Debug.Log("displayErrors");
+        GameObject errorLog;
         clear();
         canvasGroup.alpha = 1f;
         canvasGroup.blocksRaycasts = true;
         canvasGroup.interactable = true;
         transform.Find("Image/Image/Panel/Scroll View/Scrollbar Vertical").GetComponent<Scrollbar>().value = 1f;
-        if(diagramErrors.Count >0){
+        
+        string minutes = Mathf.Floor(timer / 60).ToString("00");
+        string seconds = (timer % 60).ToString("00");
+
+
+        errorLog = (GameObject)Instantiate(errorMessagePrefab, ErrorsDisplay.position, Quaternion.identity, ErrorsDisplay);
+        errorLog.transform.Find("ErrorName").GetComponent<Text>().text = "ATTEMPT NO";
+        errorLog.transform.Find("ErrorDesc").GetComponent<Text>().text = attempts.ToString();
+        errorLog.transform.Find("forground").GetComponent<Image>().color = attemptColor;
+        ErrorMessages.Add(new Pair<GameObject, DiagramError>(errorLog, new DiagramError("","")));
+        errorLog = (GameObject)Instantiate(errorMessagePrefab, ErrorsDisplay.position, Quaternion.identity, ErrorsDisplay);
+
+
+        errorLog.transform.Find("ErrorName").GetComponent<Text>().text = "TIME PASSED";
+        errorLog.transform.Find("ErrorDesc").GetComponent<Text>().text = minutes + ":" + seconds;
+        errorLog.transform.Find("forground").GetComponent<Image>().color = timerColor;
+        ErrorMessages.Add(new Pair<GameObject, DiagramError>(errorLog, new DiagramError("","")));
+    
+        if (diagramErrors.Count > 0)
+        {
             foreach (DiagramError d in diagramErrors)
+
+
+
             {
-                GameObject errorLog = (GameObject)Instantiate(errorMessagePrefab, ErrorsDisplay.position, Quaternion.identity, ErrorsDisplay);
+                errorLog = (GameObject)Instantiate(errorMessagePrefab, ErrorsDisplay.position, Quaternion.identity, ErrorsDisplay);
                 errorLog.transform.Find("ErrorName").GetComponent<Text>().text = d.errorName;
                 errorLog.transform.Find("ErrorDesc").GetComponent<Text>().text = d.errorDiscription;
                 ErrorMessages.Add(new Pair<GameObject, DiagramError>(errorLog, d));
             }
-        }else{
-            Debug.Log("correct");
+
+
+
+        }
+        else
+        {
+            timerIsON = false;
+
+            errorLog = (GameObject)Instantiate(errorMessagePrefab, ErrorsDisplay.position, Quaternion.identity, ErrorsDisplay);
+            errorLog.transform.Find("ErrorName").GetComponent<Text>().text = "CORRECT";
+            errorLog.transform.Find("ErrorDesc").GetComponent<Text>().text = "you have successfully the question";
+            errorLog.transform.Find("forground").GetComponent<Image>().color = solvedColor;
+
+            FinishButton.gameObject.SetActive(true);
         }
 
     }
@@ -84,6 +140,7 @@ public class SolverScript : MonoBehaviour
 
     public void compareAnswers(Dictionary<int, List<DiagramComponent>> diagram)
     {
+        attempts++;
         foundErrors.Clear();
         Dictionary<int, List<DiagramComponent>> solution = question.diagramData;
         List<DiagramComponent> allComponents = new List<DiagramComponent>();
@@ -107,9 +164,9 @@ public class SolverScript : MonoBehaviour
             if (layers.Value.Count != solution[layers.Key].Count)
             {
                 foundErrors.Add(new DiagramError("LAYOUT INCORRECT    ", "the component dont follow the same layout , using max number of component away from the cell\n" +
-                "conponents which are " + layers.Key + "away from the cell are in the problem:\n" +
+                "components which are " + layers.Key + "away from the cell are in the problem:\n" +
                 string.Join(" , ", solution[layers.Key].ConvertAll(x => x.name)) +
-                "however you got:\n" + string.Join(" , ", layers.Value.ConvertAll(x => x.name))));
+                "\nhowever you got:\n" + string.Join(" , ", layers.Value.ConvertAll(x => x.name))));
             }
 
         }
@@ -142,17 +199,20 @@ public class SolverScript : MonoBehaviour
 
 
 
-        // check all submitted values to ohms law
-        foreach (DiagramComponent d in allComponents.FindAll(x => x.Values[ComponentParameter.VOLTAGE].value / x.Values[ComponentParameter.CURRENT].value
-        != x.Values[ComponentParameter.RESISTANCE].value))
-        {
-            if (d.type != ComponentType.CELL && d.type != ComponentType.UNTYPED)
-            {
-                foundErrors.Add(new DiagramError("Component VALUE INCORRECT    ", "the values for " + d.name + " dont add up correctly to ohm's law, fix values or use auto feature", d, allComponents));
-            }
+        // // check all submitted values to ohms law
+        // foreach (DiagramComponent c in allComponents.FindAll(x => Math.Round(x.Values[ComponentParameter.VOLTAGE].value / x.Values[ComponentParameter.CURRENT].value
+        // , 2) != Math.Round(x.Values[ComponentParameter.RESISTANCE].value, 2)))
+        // {
 
+        //     if (c.type != ComponentType.CELL && c.type != ComponentType.UNTYPED)
+        //     {
+        //         Debug.Log(Math.Round(c.Values[ComponentParameter.VOLTAGE].value / c.Values[ComponentParameter.CURRENT].value
+        // , 2));
 
-        }
+        //         foundErrors.Add(new DiagramError("component VALUE ERROR    ", "the values for " + c.name + " dont add up correctly to ohm's law, fix values or use auto feature", c, allComponents));
+        //     }
+        // }
+
 
         if (foundErrors.Count != 0)
         {
@@ -166,9 +226,9 @@ public class SolverScript : MonoBehaviour
             foreach (DiagramComponent d in layers.Value)
             {
                 if (solution[layers.Key].FindAll(x => x.name == d.name &&
-                  d.Values[ComponentParameter.VOLTAGE].value == x.Values[ComponentParameter.VOLTAGE].value &&
-                   d.Values[ComponentParameter.CURRENT].value == x.Values[ComponentParameter.CURRENT].value &&
-                    d.Values[ComponentParameter.RESISTANCE].value == x.Values[ComponentParameter.RESISTANCE].value && d.type == x.type).Count == 0)
+                  Math.Round(d.Values[ComponentParameter.VOLTAGE].value, 2) == Math.Round(x.Values[ComponentParameter.VOLTAGE].value, 2) &&
+                   Math.Round(d.Values[ComponentParameter.CURRENT].value, 2) == Math.Round(x.Values[ComponentParameter.CURRENT].value, 2) &&
+                    Math.Round(d.Values[ComponentParameter.RESISTANCE].value, 2) == Math.Round(x.Values[ComponentParameter.RESISTANCE].value, 2) && d.type == x.type).Count == 0)
                 {
                     foundErrors.Add(new DiagramError("Component Is INCORRECT    ", "the values for " + d.name + " correlate with the question", d, allComponents));
                 }
@@ -191,7 +251,7 @@ public class SolverScript : MonoBehaviour
                 {
                     foreach (string s in d.Bconnections.ConvertAll(x => x.name))
                     {
-                        if (!solution[layers.Key].Find(x => x.name == d.name).Aconnections.ConvertAll(x => x.name).Contains(s))
+                        if (!solution[layers.Key].Find(x => x.name == d.name).Bconnections.ConvertAll(x => x.name).Contains(s))
                         {
                             foundErrors.Add(new DiagramError("Component Has Incorrect Outputs ", " component "
                             + d.name + " is missing a Output ", d, allComponents));
@@ -221,5 +281,12 @@ public class SolverScript : MonoBehaviour
 
 
         }
+    }
+
+    public void showAnswers()
+    {
+        showAnswer = true;
+        Debug.Log("SHOW ANSWER VALUE " + showAnswer);
+        close();
     }
 }

@@ -14,7 +14,10 @@ public class DisplayComponentValues : MonoBehaviour
     private CircuitComponent circuitComponent;  
 
     private ProblemViewer viewer;
-    private GenerateCircuit foundGen;  
+    private SolverScript solver;
+    private GenerateCircuit foundGen; 
+    public Color hiddenColor;
+    bool checkIfAnswers; 
     // Start is called before the first frame update
     void Start()
     {
@@ -31,10 +34,14 @@ public class DisplayComponentValues : MonoBehaviour
         canvasGroup.blocksRaycasts = false;
         canvasGroup.interactable = false;
 
-                if (transform.parent.TryGetComponent<GenerateCircuit>(out GenerateCircuit gen))
+        if (transform.parent.GetComponent<CircuitComponent>().foundGen)
         {
-            foundGen = gen;
+            foundGen = transform.parent.GetComponent<CircuitComponent>().foundGen;
             viewer = transform.Find("/UI/ProblemDisplayer/ProblemView").GetComponent<ProblemViewer>();
+            solver = transform.Find("/UI/SolverPanel").GetComponent<SolverScript>();
+            Debug.Log("found solver" +solver);
+            
+
         }
 
         
@@ -43,10 +50,36 @@ public class DisplayComponentValues : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(solver) checkIfAnswers = solver.showAnswer;
+        else checkIfAnswers = false;
 
-        voltage.text = component.Values[ComponentParameter.VOLTAGE].value.ToString();
-        current.text = component.Values[ComponentParameter.CURRENT].value.ToString();
-        resistance.text = component.Values[ComponentParameter.RESISTANCE].value.ToString();
+        if(!component.Values[ComponentParameter.VOLTAGE].hidden || !foundGen) voltage.text = component.Values[ComponentParameter.VOLTAGE].value.ToString();
+        else if (checkIfAnswers){
+            voltage.text = component.Values[ComponentParameter.VOLTAGE].value.ToString();
+
+        }
+        else{ voltage.text = "?"; voltage.color = hiddenColor;};
+
+        if(!component.Values[ComponentParameter.CURRENT].hidden || !foundGen) current.text = component.Values[ComponentParameter.CURRENT].value.ToString();
+        else if (checkIfAnswers){
+            current.text = component.Values[ComponentParameter.CURRENT].value.ToString();
+
+        }
+        else{ current.text = "?"; current.color = hiddenColor;};
+
+
+
+        if(!component.Values[ComponentParameter.RESISTANCE].hidden || !foundGen) resistance.text = System.Math.Round(component.Values[ComponentParameter.RESISTANCE].value,2).ToString();
+        else if (checkIfAnswers){
+            resistance.text = component.Values[ComponentParameter.RESISTANCE].value.ToString();
+
+        }
+        else{ resistance.text = "?"; resistance.color = hiddenColor;};
+
+
+
+
+
         type.text = component.type.ToString();
         name.text = component.name;
 

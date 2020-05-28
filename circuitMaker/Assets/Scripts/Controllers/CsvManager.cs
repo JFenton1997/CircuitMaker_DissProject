@@ -19,9 +19,9 @@ public class CsvManager : MonoBehaviour
     Dictionary<int, List<DiagramComponent>> diagramData;
     List<DiagramComponent> createdComponents;
 
-    public bool WriteDigram(Dictionary<int, List<DiagramComponent>> diagramData, String author, String diagramTitle, String diagramQuestion, bool[] diagramEnabled)
+    public bool WriteDigram(Dictionary<int, List<DiagramComponent>> diagramData, String author, String diagramTitle, String diagramQuestion, float scale, bool[] diagramEnabled)
     {
-        DiagramInstanceData diagram = new DiagramInstanceData(diagramTitle, author, diagramQuestion, diagramEnabled, diagramData);
+        DiagramInstanceData diagram = new DiagramInstanceData(diagramTitle, author, diagramQuestion, diagramEnabled, scale, diagramData);
 
         return (writeDataToCsv(diagram));
     }
@@ -99,7 +99,7 @@ public class CsvManager : MonoBehaviour
         filePath = GlobalValues.workingDirectory+"/";
         toWrite = new List<string>();
         this.diagramData = diagram.diagramData;
-        writeTitleBar(diagram.title, diagram.author, diagram.diagramQuestion, diagram.diagramEnabled);
+        writeTitleBar(diagram.title, diagram.author, diagram.diagramQuestion, diagram.diagramEnabled, diagram.scale);
         writeComponentBar();
         foreach (var d in diagramData)
         {
@@ -114,10 +114,10 @@ public class CsvManager : MonoBehaviour
 
 
 
-    private void writeTitleBar(string title, string author, string diagramQuestion, bool[] diagramEnabled)
+    private void writeTitleBar(string title, string author, string diagramQuestion, bool[] diagramEnabled, float scale)
     {
         string recordData = title + "," + author + "," + diagramQuestion + "," + diagramEnabled[0] + "," + diagramEnabled[1] + ","
-        + diagramEnabled[2] + "," + diagramEnabled[3] + "," + System.DateTime.Now + ",\0";
+        + diagramEnabled[2] + "," + diagramEnabled[3] + ","+scale.ToString() +","+ System.DateTime.Now + ",\0";
         toWrite.Add(recordData);
     }
     public void writeComponentBar()
@@ -188,6 +188,7 @@ public class CsvManager : MonoBehaviour
         string title = "";
         string question = "";
         bool[] diagramEnabled = new bool[4];
+        float scale = 1;
         createdComponents = new List<DiagramComponent>();
         diagramData = new Dictionary<int, List<DiagramComponent>>();
         
@@ -209,6 +210,8 @@ public class CsvManager : MonoBehaviour
                     diagramEnabled[1] = (bool.Parse(record[4]));
                     diagramEnabled[2] = (bool.Parse(record[5]));
                     diagramEnabled[3] = (bool.Parse(record[6]));
+                    scale = float.Parse(record[7]);
+                    
                 }
                 else if (lineNumber == 1)
                 {
@@ -228,7 +231,7 @@ public class CsvManager : MonoBehaviour
 
         }
         this.diagramData.Remove(diagramData.Count - 1);
-        return new DiagramInstanceData(title, author, question, diagramEnabled, this.diagramData);
+        return new DiagramInstanceData(title, author, question, diagramEnabled, scale, this.diagramData);
     }
 
 
