@@ -951,7 +951,7 @@ PrefabInstance:
     - target: {fileID: 2964908316994283436, guid: eea839b160b1cb44295dd3011dcd0f3f,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 36.581196
+      value: 52.94715
       objectReference: {fileID: 0}
     - target: {fileID: 2964908317243593758, guid: eea839b160b1cb44295dd3011dcd0f3f,
         type: 3}
@@ -1562,7 +1562,7 @@ PrefabInstance:
     - target: {fileID: 7559502191925766855, guid: 12572d9cfad3c204b874f065c04841f5,
         type: 3}
       propertyPath: m_Text
-      value: AVOW TO AVOW
+      value: AVOW TO AVOW PROBLEM
       objectReference: {fileID: 0}
     - target: {fileID: 7559502193288012400, guid: 12572d9cfad3c204b874f065c04841f5,
         type: 3}
@@ -2009,7 +2009,7 @@ PrefabInstance:
     - target: {fileID: 7797308596382505419, guid: e5e70f66ba170684ba8d86c3c0108f94,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 36.58117
+      value: 52.94712
       objectReference: {fileID: 0}
     - target: {fileID: 7797308596640852713, guid: e5e70f66ba170684ba8d86c3c0108f94,
         type: 3}

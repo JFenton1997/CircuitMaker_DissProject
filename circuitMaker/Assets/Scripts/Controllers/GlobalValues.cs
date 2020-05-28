@@ -14,11 +14,17 @@ public static class GlobalValues
     public static string workingDirectory;
 
     public static string fileSearch;
+    public static string authorName;
 
     public static DiagramInstanceData selectedDiagram;
      public static void getPlayerPrefs(){
-        Directory.CreateDirectory(Application.dataPath + "/diagramFiles");
-        workingDirectory  = PlayerPrefs.GetString("workingDirectory",Application.dataPath + "/diagramFiles");
+         if (!PlayerPrefs.HasKey(workingDirectory)){
+             if(!System.IO.Directory.Exists(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments) + "/diagramFiles"))
+             Directory.CreateDirectory(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments) + "/diagramFiles");
+         }
+
+        workingDirectory  = PlayerPrefs.GetString("workingDirectory",System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments) + "/diagramFiles");
+        authorName  = PlayerPrefs.GetString("author","");
         switch( PlayerPrefs.GetInt("toolTipsEnables", 1)){
             case 0:
                 ToolTipsEnabled = false;
@@ -36,6 +42,7 @@ public static class GlobalValues
 
     public static void updatePlayerPrefs(){
         PlayerPrefs.SetString("workingDirectory",workingDirectory);
+        PlayerPrefs.SetString("author",authorName);
          if(ToolTipsEnabled)  PlayerPrefs.SetInt("toolTipsEnables", 1);
          else PlayerPrefs.SetInt("toolTipsEnables",0);
     }

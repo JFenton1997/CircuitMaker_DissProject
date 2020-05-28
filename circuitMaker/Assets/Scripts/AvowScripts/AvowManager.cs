@@ -155,7 +155,10 @@ public class AvowManager : MonoBehaviour
         layerNumber++;
         listOfcomponents = new List<DiagramComponent>();
         //getting layer 1 = all AVOW with no top connections
+        allAvow.Sort((x1, x2) => x1.transform.position.x.CompareTo(x2.transform.position.x));
         listOfcomponents = allAvow.ConvertAll(x => x.component).FindAll(x => x.Aconnections.Count == 0);
+        //Sort((x1, x2) => x1.transform.position.x.CompareTo(x2.transform.position.x));
+
         diagramData.Add(layerNumber, listOfcomponents);
         visitedcomponents.AddRange(listOfcomponents);
         //keep looping until next layer has nothing i.e. end of diagram
@@ -226,12 +229,12 @@ data.Value
         x.LeftConnections.Count == 0 && x.RightConnections.Count == 0);
         if (unconnected.Count > 1 || (unconnected.Count == 1 && diagramData[1].Count > 1))
         {
-            if(isBuilder)
-            foreach (AvowComponent avow in unconnected)
-            {
-                foundErrors.Add(new DiagramError("   UNCONNECTED   ", "The Avow " + avow.gameObject.name + " is seen as unconnected, please either delete the avow or make sure it is connected", avow.component, allAvow));
+            if (isBuilder)
+                foreach (AvowComponent avow in unconnected)
+                {
+                    foundErrors.Add(new DiagramError("   UNCONNECTED   ", "The Avow " + avow.gameObject.name + " is seen as unconnected, please either delete the avow or make sure it is connected", avow.component, allAvow));
 
-            }
+                }
 
 
         }
@@ -330,8 +333,17 @@ data.Value
 
 
         }
+        foreach (var data in diagramData)
+        {
+            Debug.Log("layer" + data.Key.ToString() + " = " + String.Join("",
+data.Value
+.ConvertAll(i => i.name.ToString())
+.ToArray()));
+        }
 
-        Debug.Log("CELL GEN = "+Ccurrent + " " + current + "  " + voltage + "  " + Cvoltage+ "  s:"+ scale);
+
+
+        Debug.Log("CELL GEN = " + Ccurrent + " " + current + "  " + voltage + "  " + Cvoltage + "  s:" + scale);
         if (Cvoltage != voltage || Ccurrent != current)
         {
             foundErrors.Add(new DiagramError("  Layout Error   ", "A Avow must be a rectangle in shape. e.g. must be a complete box with no gaps and exactly 4 sides"));
@@ -360,9 +372,10 @@ data.Value
 
 
         // submit avow diagram to save window
-        if(isBuilder)
-        transform.Find("/UI/SaveDiagram").GetComponent<SaveFileWindow>().intialiseSaveWindow(diagramData,scale);
-        else{
+        if (isBuilder)
+            transform.Find("/UI/SaveDiagram").GetComponent<SaveFileWindow>().intialiseSaveWindow(diagramData, scale);
+        else
+        {
             transform.Find("/UI/SolverPanel").GetComponent<SolverScript>().compareAnswers(diagramData);
         }
 

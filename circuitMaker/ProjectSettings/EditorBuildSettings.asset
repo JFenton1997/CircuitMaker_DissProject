@@ -44,4 +44,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scene/Solvers/AvowToCircuitSolve.unity
     guid: d4ef34cbee48537479996052a866be8f
+  - enabled: 1
+    path: Assets/Scene/MenuScenes/OptionsPanel.unity
+    guid: e225cd2aeb74b0941a55a2975c59bb9a
   m_configObjects: {}

@@ -109,8 +109,9 @@ public class SolverScript : MonoBehaviour
 
             errorLog = (GameObject)Instantiate(errorMessagePrefab, ErrorsDisplay.position, Quaternion.identity, ErrorsDisplay);
             errorLog.transform.Find("ErrorName").GetComponent<Text>().text = "CORRECT";
-            errorLog.transform.Find("ErrorDesc").GetComponent<Text>().text = "you have successfully the question";
+            errorLog.transform.Find("ErrorDesc").GetComponent<Text>().text = "you have successfully solved the question";
             errorLog.transform.Find("forground").GetComponent<Image>().color = solvedColor;
+            ErrorMessages.Add(new Pair<GameObject, DiagramError>(errorLog, new DiagramError("","")));
 
             FinishButton.gameObject.SetActive(true);
         }
@@ -140,8 +141,41 @@ public class SolverScript : MonoBehaviour
 
     public void compareAnswers(Dictionary<int, List<DiagramComponent>> diagram)
     {
+        foreach (var data in diagram)
+        {
+            Debug.Log("layer" + data.Key.ToString() + " = " + String.Join(" \n",
+data.Value
+.ConvertAll(i => i.name.ToString() + "  " + i.Values[ComponentParameter.VOLTAGE].value + " "+   i.Values[ComponentParameter.CURRENT].value +"  "  +i.Values[ComponentParameter.RESISTANCE].value)
+.ToArray()));
+
+
+
+
+
+        }
+
+                foreach (var data in question.diagramData)
+        {
+            Debug.Log("layer" + data.Key.ToString() + " = " + String.Join(" \n",
+data.Value
+.ConvertAll(i => i.name.ToString() + "  " + i.Values[ComponentParameter.VOLTAGE].value + " "+   i.Values[ComponentParameter.CURRENT].value +"  "  +i.Values[ComponentParameter.RESISTANCE].value)
+.ToArray()));
+
+
+
+
+
+        }
+
+
+
+
+
+
+
         attempts++;
         foundErrors.Clear();
+        
         Dictionary<int, List<DiagramComponent>> solution = question.diagramData;
         List<DiagramComponent> allComponents = new List<DiagramComponent>();
         List<DiagramComponent> allSolutionComponents = new List<DiagramComponent>();
@@ -163,10 +197,10 @@ public class SolverScript : MonoBehaviour
             // comparing layout
             if (layers.Value.Count != solution[layers.Key].Count)
             {
-                foundErrors.Add(new DiagramError("LAYOUT INCORRECT    ", "the component dont follow the same layout , using max number of component away from the cell\n" +
-                "components which are " + layers.Key + "away from the cell are in the problem:\n" +
+                foundErrors.Add(new DiagramError("LAYOUT INCORRECT    ", "the components dont follow the same layout , using max number of components away from the cell\n" +
+                "components which are " + layers.Key + " away from the cell are:\n" +
                 string.Join(" , ", solution[layers.Key].ConvertAll(x => x.name)) +
-                "\nhowever you got:\n" + string.Join(" , ", layers.Value.ConvertAll(x => x.name))));
+                "\n\nHowever you got:\n" + string.Join(" , ", layers.Value.ConvertAll(x => x.name))));
             }
 
         }
@@ -199,69 +233,52 @@ public class SolverScript : MonoBehaviour
 
 
 
-        // // check all submitted values to ohms law
-        // foreach (DiagramComponent c in allComponents.FindAll(x => Math.Round(x.Values[ComponentParameter.VOLTAGE].value / x.Values[ComponentParameter.CURRENT].value
-        // , 2) != Math.Round(x.Values[ComponentParameter.RESISTANCE].value, 2)))
-        // {
-
-        //     if (c.type != ComponentType.CELL && c.type != ComponentType.UNTYPED)
-        //     {
-        //         Debug.Log(Math.Round(c.Values[ComponentParameter.VOLTAGE].value / c.Values[ComponentParameter.CURRENT].value
-        // , 2));
-
-        //         foundErrors.Add(new DiagramError("component VALUE ERROR    ", "the values for " + c.name + " dont add up correctly to ohm's law, fix values or use auto feature", c, allComponents));
-        //     }
-        // }
-
-
         if (foundErrors.Count != 0)
         {
             displayErrors(foundErrors);
             return;
         }
+        
 
-        // compare Values
-        foreach (var layers in diagram)
-        {
-            foreach (DiagramComponent d in layers.Value)
-            {
-                if (solution[layers.Key].FindAll(x => x.name == d.name &&
-                  Math.Round(d.Values[ComponentParameter.VOLTAGE].value, 2) == Math.Round(x.Values[ComponentParameter.VOLTAGE].value, 2) &&
-                   Math.Round(d.Values[ComponentParameter.CURRENT].value, 2) == Math.Round(x.Values[ComponentParameter.CURRENT].value, 2) &&
-                    Math.Round(d.Values[ComponentParameter.RESISTANCE].value, 2) == Math.Round(x.Values[ComponentParameter.RESISTANCE].value, 2) && d.type == x.type).Count == 0)
-                {
-                    foundErrors.Add(new DiagramError("Component Is INCORRECT    ", "the values for " + d.name + " correlate with the question", d, allComponents));
-                }
-
-                if (solution[layers.Key].Find(x => x.name == d.name) != null)
-                {
-                    foreach (string s in d.Aconnections.ConvertAll(x => x.name))
-                    {
-                        if (!solution[layers.Key].Find(x => x.name == d.name).Aconnections.ConvertAll(x => x.name).Contains(s))
-                        {
-                            foundErrors.Add(new DiagramError("Component Has Incorrect inputs ", " component "
-                            + d.name + " is missing a input ", d, allComponents));
-
-                        }
-
-                    }
-
-                }
-                if (solution[layers.Key].Find(x => x.name == d.name) != null)
-                {
-                    foreach (string s in d.Bconnections.ConvertAll(x => x.name))
-                    {
-                        if (!solution[layers.Key].Find(x => x.name == d.name).Bconnections.ConvertAll(x => x.name).Contains(s))
-                        {
-                            foundErrors.Add(new DiagramError("Component Has Incorrect Outputs ", " component "
-                            + d.name + " is missing a Output ", d, allComponents));
-
-                        }
-
-                    }
-
+        foreach(DiagramComponent d in allComponents){
+            DiagramComponent dSolution = allSolutionComponents.Find(x=> x.name == d.name);
+            string errorDesc ="";
+            if(d.Values[ComponentParameter.VOLTAGE].value != dSolution.Values[ComponentParameter.VOLTAGE].value ){
+                errorDesc +="\n Voltage is incorrect";
+            }
+            if(d.Values[ComponentParameter.CURRENT].value != dSolution.Values[ComponentParameter.CURRENT].value ){
+                errorDesc +="\n current is incorrect";
+            }
+            if(d.Values[ComponentParameter.RESISTANCE].value != dSolution.Values[ComponentParameter.RESISTANCE].value ){
+                errorDesc +="\n resistance is incorrect";
+            }
+            if((int)d.type != (int)dSolution.type){
+                errorDesc += "\n type is incorrect";
+            }
+            foreach(string sComp in dSolution.Aconnections.ConvertAll(x=>x.name)){
+                if(d.Aconnections.FindAll(x => x.name == sComp).Count != 1){
+                    errorDesc +="\n Missing Input "+ sComp;
                 }
             }
+            foreach(string sComp in dSolution.Bconnections.ConvertAll(x=>x.name)){
+                if(d.Bconnections.FindAll(x => x.name == sComp).Count != 1){
+                    errorDesc +="\n Missing Output "+ sComp;
+                }
+            }
+            if(errorDesc != ""){
+                 foundErrors.Add(new DiagramError("COMPONENT "+d.name +" INCORRECT", "Found ERRORS:"+errorDesc,d,allComponents));    
+
+            }
+
+
+
+        }
+
+       
+            
+
+     
+
 
 
             displayErrors(foundErrors);
@@ -280,7 +297,7 @@ public class SolverScript : MonoBehaviour
 
 
 
-        }
+        
     }
 
     public void showAnswers()
