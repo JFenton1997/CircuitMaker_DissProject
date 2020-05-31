@@ -44,7 +44,9 @@ public class AvowComponent : MonoBehaviour
 
 
 
-   // run on start 
+   /// <summary>
+   /// check if part of a solver scene, if so assign solver object. assign UI components
+   /// </summary>
     private void Awake()
     {try{
         // if part of solver scene (problem display found), get solver 
@@ -90,7 +92,9 @@ public class AvowComponent : MonoBehaviour
 
 
 
-    // Update is called once per frame
+    /// <summary>
+    ///  used to update size, check if blocked and control UI elements
+    /// </summary>
     void Update()
     {
         updateFill();
@@ -169,7 +173,10 @@ public class AvowComponent : MonoBehaviour
 
     
 
-
+/// <summary>
+///  update the size of the avow and border based on voltage and current values.
+/// uses camera size to set border size
+/// </summary>
     private void updateFill()
     {
         // updating the size of fill to keep the outline, uses camera to decide thickness of the avows borders.
