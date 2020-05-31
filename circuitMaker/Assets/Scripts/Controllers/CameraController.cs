@@ -1,12 +1,14 @@
 using UnityEngine;
-
+/// <summary>
+/// class for controling the main camera
+/// </summary>
 public class CameraController : MonoBehaviour
 {
-
+    //camrea parameters
     public float panSpeed = 30f;
     public float panBorderThickness = 10f;
     private Camera camera;
-
+    //keys used to move camera
     public KeyCode moveUp,moveDown, moveLeft,MoveRight;
 
     public float scrollSpeed = 5f;
@@ -21,29 +23,37 @@ public class CameraController : MonoBehaviour
 
     // Update is called once per frame
 
+/// <summary>
+/// get camera on start
+/// </summary>
     private void Awake()
     {
 		camera = transform.GetComponent<Camera>();
 
     }
 
+/// <summary>
+/// used for pan camera with middle mouse button
+/// </summary>
+/// <param name="Axis">axis of movement</param>
+/// <param name="dir">direction of pan</param>
+/// <param name="response">pan intensity</param>
      void GetInputForAxis(string Axis, Vector3 dir, float response)
     {
         
         float move = 0;
-        float speed = Input.GetAxis(Axis);
+        float speed = Input.GetAxis(Axis); //axis of movement on mouse
         move += speed * response;
  
         if (move != 0)
         {
-            transform.Translate(dir * move);
+            transform.Translate(dir * move); //translate camera to new location in rection
         }
     }
     void Update()
     {
-        Cursor.lockState = CursorLockMode.None;
-        
-         if(Input.GetMouseButton(3))
+        //if middle mouse button is down, pan camera
+         if(Input.GetMouseButton(2))
         {
             Cursor.visible = false;
             mouseLocation = Input.mousePosition;
@@ -52,14 +62,15 @@ public class CameraController : MonoBehaviour
             GetInputForAxis("Mouse Y", Vector3.up, panIntensity);
         }
 
-        if(Input.GetMouseButtonUp(3)){
+        // if middle mouse is up, show mouse, and unlock mouse
+        if(Input.GetMouseButtonUp(2)){
             Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
+            Cursor.lockState = CursorLockMode.Confined;
         }
 
 
 
-
+        //if key in direction is down, move camera in that directions
         if (Input.GetKey(moveUp) )//|| Input.mousePosition.y >= Screen.height - panBorderThickness)
         {
             transform.Translate(Vector3.up * panSpeed * Time.deltaTime, Space.World);
@@ -77,15 +88,17 @@ public class CameraController : MonoBehaviour
             transform.Translate(Vector3.left * panSpeed * Time.deltaTime, Space.World);
         }
 
+        //get scroll value 
         float scroll = Input.GetAxis("Mouse ScrollWheel");
 
         Vector3 pos = transform.position;
-
+        //increase camera size based of scroll, clamp to min and max zoom
         camera.orthographicSize -= scroll * 500 * scrollSpeed * Time.deltaTime;
         camera.orthographicSize = Mathf.Clamp(camera.orthographicSize, minY, maxY);
         camera.orthographicSize = Mathf.Clamp(camera.orthographicSize, minY, maxY);
           
         Vector3 checkPos = new Vector2();
+        //stop camera leaving diagram boundary
         checkPos.z =-10; 
         checkPos.x= Mathf.Clamp(  transform.position.x,-clamps, clamps);
         checkPos.y= Mathf.Clamp(transform.position.y, -clamps, clamps);
@@ -93,6 +106,9 @@ public class CameraController : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// resets camera position to middle, used incase user loses diagram
+    /// </summary>
     public void resetCam(){
         transform.position = new Vector3(0f,0f,-10f);
 

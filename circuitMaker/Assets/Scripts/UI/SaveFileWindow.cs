@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Utilities;
-
+/// <summary>
+/// UI class used to get additional information from the user to create a diagramInstanceData to be saved into a csv
+/// </summary>
 public class SaveFileWindow : MonoBehaviour
 {
 
@@ -15,7 +17,9 @@ public class SaveFileWindow : MonoBehaviour
     Dictionary<int, List<DiagramComponent>> diagramData;
     float scale;
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// get UI components and hide self
+    /// </summary>
     private void Start()
     {
         titleField = transform.Find("diagramName").GetComponent<InputField>();
@@ -34,7 +38,11 @@ public class SaveFileWindow : MonoBehaviour
         fieldColor = titleField.GetComponent<Image>().color;
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// show window and get diagram details
+    /// </summary>
+    /// <param name="diagramData">diagramData created from a diagram manager</param>
+    /// <param name="scale">scale value calculated or set by diagram manager</param>
     public void intialiseSaveWindow(Dictionary<int, List<DiagramComponent>> diagramData, float scale)
     {
         this.diagramData = diagramData;
@@ -46,29 +54,38 @@ public class SaveFileWindow : MonoBehaviour
         circuitToCiruitToggle.isOn= true;
         avowToCircuitToggle.isOn = true;
         this.scale = scale;
+        if(GlobalValues.authorName!=""){ // if prev author name been used preset author to this
+            authorField.text = GlobalValues.authorName;
+        }
 
     }
 
+/// <summary>
+/// if all filed been filled correctly, save diagramInstanceData to csv
+/// if successful load main menu
+/// else do nothing
+/// </summary>
     public void saveFile(){
-        if(titleField.text == ""){
+        //if field left empty, go red to show user the error
+        if(titleField.text == ""){ 
             titleField.GetComponent<Image>().color = errorColor;
         }
-        if(authorField.text == ""){
+        else if(authorField.text == ""){
             authorField.GetComponent<Image>().color = errorColor;
 
         }
-        if(questionField.text == ""){
+        else if(questionField.text == ""){
             questionField.GetComponent<Image>().color = errorColor;
 
-        }
-        if(!circuitToAvowToggle.isOn && !circuitToCiruitToggle.isOn && !avowToAvowToggle.isOn && !avowToCircuitToggle){
+        }//if file isnt of any type of problem
+        else if(!circuitToAvowToggle.isOn && !circuitToCiruitToggle.isOn && !avowToAvowToggle.isOn && !avowToCircuitToggle){
             circuitToAvowToggle.transform.Find("Background").GetComponent<Image>().color = errorColor;
             circuitToCiruitToggle.transform.Find("Background").GetComponent<Image>().color = errorColor;
             avowToCircuitToggle.transform.Find("Background").GetComponent<Image>().color = errorColor;
             avowToAvowToggle.transform.Find("Background").GetComponent<Image>().color = errorColor;
 
         }
-        else{
+        else{//if all fields filled, get values and sent to csv manager to be saved
             bool successfulSave;
             DiagramInstanceData diagramToSave =  new DiagramInstanceData(titleField.text,
             authorField.text,questionField.text
@@ -76,7 +93,8 @@ public class SaveFileWindow : MonoBehaviour
             ,scale,diagramData);
             successfulSave = transform.Find("/ProgramMaster").GetComponent<CsvManager>().writeDataToCsv(diagramToSave);
             if(successfulSave){
-                 transform.Find("/ProgramMaster").GetComponent<AppSceneManager>().loadScene(0);
+                GlobalValues.authorName = authorField.text;
+                 transform.Find("/ProgramMaster").GetComponent<AppSceneManager>().loadScene(0); //go back to main menu to successful
             }
             else{
                 Debug.LogError("FAILED TO SAVE FILE");

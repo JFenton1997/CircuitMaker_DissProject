@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Utilities;
+
+
+/// <summary>
+/// class for controlling UI elements of the Components values display
+/// </summary>
 public class DisplayComponentValues : MonoBehaviour
 {
 
@@ -18,7 +23,9 @@ public class DisplayComponentValues : MonoBehaviour
     private GenerateCircuit foundGen; 
     public Color hiddenColor;
     bool checkIfAnswers; 
-    // Start is called before the first frame update
+    /// <summary>
+    /// get all all UI elements
+    /// </summary>
     void Start()
     {
         voltage = transform.Find("Voltage").GetComponent<Text>();
@@ -34,6 +41,7 @@ public class DisplayComponentValues : MonoBehaviour
         canvasGroup.blocksRaycasts = false;
         canvasGroup.interactable = false;
 
+        //if part of a gen, get solver and viewer
         if (transform.parent.GetComponent<CircuitComponent>().foundGen)
         {
             foundGen = transform.parent.GetComponent<CircuitComponent>().foundGen;
@@ -47,11 +55,19 @@ public class DisplayComponentValues : MonoBehaviour
         
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// runs each frame, keeps all values updated
+    /// </summary>
     void Update()
     {
+        //if solve exists get if show answers else false
         if(solver) checkIfAnswers = solver.showAnswer;
         else checkIfAnswers = false;
+        
+
+        // for each value, if not hidden or and not part of a gen, show value
+        // if show answers is enabled, show hidden answers
+        // else show hidden as a ?
 
         if(!component.Values[ComponentParameter.VOLTAGE].hidden || !foundGen) voltage.text = component.Values[ComponentParameter.VOLTAGE].value.ToString();
         else if (checkIfAnswers){
@@ -79,7 +95,7 @@ public class DisplayComponentValues : MonoBehaviour
 
 
 
-
+        //showing type, name and direction
         type.text = component.type.ToString();
         name.text = component.name;
 
@@ -100,6 +116,9 @@ public class DisplayComponentValues : MonoBehaviour
     }
 
 
+/// <summary>
+/// show display
+/// </summary>
     public void display(){
         try{
         canvasGroup.alpha = 1f;
@@ -107,6 +126,9 @@ public class DisplayComponentValues : MonoBehaviour
         
     }
 
+/// <summary>
+/// hide display
+/// </summary>
     public void hide(){
         canvasGroup.alpha = 0f;
     }

@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
+/// <summary>
+/// class in charge of sceneManagement and interfacing with GlobalValues script
+/// </summary>
 public class AppSceneManager : MonoBehaviour
 {
+    /// <summary>
+    /// on scene load, get GlobalValues to get playerprefs values
+    /// </summary>
     private void Awake() {
               GlobalValues.getPlayerPrefs(); 
     }
 
-    private void Update() {
-        try{
-            transform.Find("/Canvas/Text").GetComponent<Text>().text = GlobalValues.workingDirectory;
-        }catch{}
-    }
-
+/// <summary>
+/// load scene of the give in scene int in the project build order
+/// </summary>
+/// <param name="sceneInt"></param>
     public void loadScene(int sceneInt){
         try{
             GlobalValues.updatePlayerPrefs();
@@ -25,10 +28,16 @@ public class AppSceneManager : MonoBehaviour
         }
     }
 
+/// <summary>
+/// exit app
+/// </summary>
     public void exitApp(){
         Application.Quit();
     }
 
+/// <summary>
+/// used to wipe playerprefs
+/// </summary>
     public void wipePlayerPref(){
         GlobalValues.clearPlayerPrefs();
     }

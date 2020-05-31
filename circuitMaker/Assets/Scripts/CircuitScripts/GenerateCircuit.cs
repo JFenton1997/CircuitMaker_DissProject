@@ -3,28 +3,32 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Utilities;
-
+/// <summary>
+/// class for generating a circuit diagram from a diagramData for viewing problems
+/// </summary>
 public class GenerateCircuit : MonoBehaviour
 {
-    public CircuitManager circuitTest;
-    public GameObject toCellLocation, toNextLayerLocation, emptyLocation;
-    Dictionary<int, List<DiagramComponent>> diagramData;
-    private int VertComponentGap = 4, HorizontalComponentGap = 3;
-    public Vector3 CellLocation, ComponentOrigin;
-    public GameObject cellPrefab;
+
+    public GameObject toCellLocation, toNextLayerLocation, emptyLocation; //gameobjects to build to fill spaces
+    Dictionary<int, List<DiagramComponent>> diagramData; //digramData to work with
+    private int VertComponentGap = 4, HorizontalComponentGap = 3; // values of have far apart components should be
+    public Vector3 CellLocation, ComponentOrigin; // locations to work with
+    public GameObject cellPrefab; //prefabs used
     public GameObject wirePrefab;
     public GameObject resistorPrefab;
     [SerializeField]
-    public List<List<CircuitComponent>> generatorMatrix;
-    private List<CircuitComponent> createdComponents;
-    public CircuitComponent cell;
+    public List<List<CircuitComponent>> generatorMatrix; //matrix to store the layout of the entire generated circuit 
+    private List<CircuitComponent> createdComponents; //list of call components created so far
+    public CircuitComponent cell; //cell component
 
     private float cellBottom;
     private DiagramComponent tempD;
     private List<DiagramComponent> connectionsA;
     private List<DiagramComponent> connectionsB;
 
-
+/// <summary>
+/// getting digram data from global values, if use debugging file 
+/// </summary>
     private void Start()
     {
         CellLocation = transform.position;
@@ -38,12 +42,16 @@ public class GenerateCircuit : MonoBehaviour
     }
 
 
+/// <summary>
+/// main method for generating a circuit diagram
+/// </summary>
+/// <param name="diagramData">diagram data from global Values</param>
     public void GenerateCircuitObject(Dictionary<int, List<DiagramComponent>> diagramData)
     {
-        DeletePrevGen();
-        createdComponents = new List<CircuitComponent>();
+        DeletePrevGen(); ///delete any prev generated diagrams, (used for debugging)
+        createdComponents = new List<CircuitComponent>(); //initialize list
         this.diagramData = diagramData;
-        initialiseMatrix();
+        initialiseMatrix(); //initialize matrix
         generateValues();
         foreach (var data in diagramData)
         {
@@ -53,61 +61,65 @@ data.Value
 .ToArray()));
         }
 
+        //for each layer in diagramData
         foreach (var layerComponents in diagramData)
         {
+            //for each component going left to right, in the layer
             foreach (DiagramComponent diagramComponent in layerComponents.Value)
             {
+                //if not cell and spaceCheck previous layer 
                 if (layerComponents.Key > 0) spaceCheck(layerComponents.Key - 1);
-                createComponent(layerComponents.Key, diagramComponent);
-                if (layerComponents.Key > 0)
+                createComponent(layerComponents.Key, diagramComponent); //create component
+                if (layerComponents.Key > 0)//if cell
                 {
                     tempD = new DiagramComponent();
                     connectionsA = new List<DiagramComponent>();
                     connectionsB = new List<DiagramComponent>();
-
+                    //for each output of the current diagram component
                     foreach (DiagramComponent output in getConnectionsOfDirection(diagramComponent, true).ToArray())
                     {
+                        //if not end of diagram
                         if (layerComponents.Key + 1 <= generatorMatrix.Count - 1)
                         {
                             if (diagramData[layerComponents.Key + 1].Contains(output) || output.type == ComponentType.CELL)
                             {
+                                //create the output component of current diagram component is a Cell or is on next layer
                                 createComponent(layerComponents.Key + 1, output);
 
                             }
                             else
                             {
-
-
+                                //add out to bConnections
                                 connectionsB.Add(output);
-
-
                             }
                         }
 
 
                     }
+                    //if B connections is more than 0
                     if (connectionsB.Count > 0)
                     {
-                        connectionsA.Add(diagramComponent);
-                        tempD.direction = Direction.A_to_B;
+                        connectionsA.Add(diagramComponent); //add diagram component to input(aconnections)
+                        tempD.direction = Direction.A_to_B;//set value
                         tempD.Aconnections = connectionsA;
                         tempD.Bconnections = connectionsB;
                         tempD.name = "toLayer";
-                        createComponent(layerComponents.Key + 1, tempD);
+                        createComponent(layerComponents.Key + 1, tempD); // create new component with tempD values
                     }
 
                 }
 
             }
+            //create new objects for tempD and connections
             tempD = new DiagramComponent();
             connectionsA = new List<DiagramComponent>();
             connectionsB = new List<DiagramComponent>();
-
+            // if another layer
             if (layerComponents.Key - 1 > 0 && layerComponents.Key < generatorMatrix.Count && diagramData.ContainsKey(layerComponents.Key + 1))
             {
-                foreach (DiagramComponent toLayerComp in generatorMatrix[layerComponents.Key - 1].ConvertAll(i => i.component).ToArray())
+                foreach (DiagramComponent toLayerComp in generatorMatrix[layerComponents.Key - 1].ConvertAll(i => i.component).ToArray()) // for each component on the layer 
                 {
-                    if (toLayerComp.name == "toLayer")
+                    if (toLayerComp.name == "toLayer") //if component is a toLayer component, create to Layer
                     {
                         if (!diagramData[layerComponents.Key + 1].Contains(getConnectionsOfDirection(toLayerComp, true)[0]))
                         {
@@ -127,10 +139,10 @@ data.Value
         }
 
 
-        removeLastLayer();
+        removeLastLayer(); //remove last layer as it will be empty
         int layerValue = -1;
-        addCellConnection();
-        foreach (List<CircuitComponent> circuitComponentLayer in generatorMatrix)
+        addCellConnection(); //add cell connection wires
+        foreach (List<CircuitComponent> circuitComponentLayer in generatorMatrix) //set connections for each component (add wires)
         {
             layerValue++;
             foreach (CircuitComponent c in circuitComponentLayer)
@@ -140,7 +152,7 @@ data.Value
                 connectcomponents(c, layerValue);
             }
         }
-
+        //convert wires to local space so the diagram can be moved from origin
         convertWiresToLocal();
 
 
@@ -169,6 +181,9 @@ generatorMatrix[i]
 
     }
 
+/// <summary>
+/// remove last layer from generator matrix
+/// </summary>
     private void removeLastLayer()
     {
         List<CircuitComponent> lastLayer = generatorMatrix[generatorMatrix.Count - 1];
@@ -179,9 +194,15 @@ generatorMatrix[i]
         }
 
     }
+
+
+    /// <summary>
+    /// creating wires for each type of component in the matrix
+    /// </summary>
+    /// <param name="c"></param>
     private void addComponentEnds(CircuitComponent c)
     {
-
+        //if to cell, go from top to bottom cell wire
         if (c.name == "toCell" && c.component.type == ComponentType.UNTYPED)
         {
             Vector2 wireAEnd = new Vector2(c.transform.position.x, c.transform.position.y + 2);
@@ -190,6 +211,7 @@ generatorMatrix[i]
             wireA.GetComponent<Wire>().createdFromCicuitGen(wireAEnd, wireBEnd);
             return;
         }
+        //if to layer, create wire going from though its node locations, acting as a layer skip
         else if (c.name == "toLayer" && c.component.type == ComponentType.UNTYPED)
         {
             Vector2 wireAEnd = new Vector2(c.transform.position.x, c.transform.position.y + 2);
@@ -198,6 +220,8 @@ generatorMatrix[i]
             wireA.GetComponent<Wire>().createdFromCicuitGen(wireAEnd, wireBEnd);
             return;
         }
+
+        //if empter space, do nothing
         else if (c.name == "empty" || c.name == "" && c.component.type == ComponentType.UNTYPED)
         {
             return;
@@ -205,6 +229,7 @@ generatorMatrix[i]
         }
         else
         {
+            // else, add a wire on top of the node A and node B ready for a vertical or horizontal connection
             Debug.Log(c);
             Debug.Log(c.nodeA + " " + c.nodeB);
             Vector2 wireAEnd = new Vector2(c.nodeA.transform.position.x, c.nodeA.transform.position.y + 1);
@@ -216,6 +241,9 @@ generatorMatrix[i]
         }
     }
 
+/// <summary>
+/// using size and contents of generator matrix, create top and bottom cell connection rails
+/// </summary>
     private void addCellConnection()
     {
         Vector2 wireAAEnd = new Vector2(cell.nodeA.transform.position.x,
@@ -224,6 +252,7 @@ generatorMatrix[i]
         Vector2 wireBAEnd = new Vector2(cell.nodeB.transform.position.x, cell.nodeB.transform.position.y - 1
             - ((generatorMatrix.Count - 1) * VertComponentGap));
         int largestRow = 0;
+        //find the largest row containing a to cell, else use size of last layer
         foreach (List<CircuitComponent> c in generatorMatrix)
         {
             foreach (CircuitComponent d in c)
@@ -238,6 +267,8 @@ generatorMatrix[i]
         {
             largestRow = generatorMatrix[generatorMatrix.Count - 1].Count - 1;
         }
+
+        //build wires using calculated vector2 s
         Vector2 wireBBEnd = new Vector2(wireBAEnd.x + ((largestRow + 1) * HorizontalComponentGap), wireBAEnd.y);
         cellBottom = wireBBEnd.y;
 
@@ -255,6 +286,10 @@ generatorMatrix[i]
 
     }
 
+/// <summary>
+/// fills spaces to match the layer above, row size
+/// </summary>
+/// <param name="layer">layer to fill up to</param>
     private void spaceCheck(int layer)
     {
         GameObject temp;
@@ -273,6 +308,11 @@ generatorMatrix[i]
     }
 
 
+/// <summary>
+/// same as space Check polymorphic method, but take a value of where to fill empty to
+/// </summary>
+/// <param name="layer"></param>
+/// <param name="index"></param>
     private void spaceCheck(int layer, int index)
     {
         GameObject temp;
@@ -292,19 +332,27 @@ generatorMatrix[i]
 
 
 
+/// <summary>
+/// method used to create a new component
+/// </summary>
+/// <param name="layerValue">int of the current layer</param>
+/// <param name="d">the component to build </param>
     private void createComponent(int layerValue, DiagramComponent d)
     {
         GameObject temp;
         CircuitComponent circuitComponent;
+        //check the component isnt already built or a cell
         if (createdComponents.ConvertAll(i => i.component).Contains(d) && d.type != ComponentType.CELL)
         {
             return;
         }
+        //if layer is 0, build a cell
         if (layerValue == 0)
         {
             temp = (GameObject)Instantiate(cellPrefab, CellLocation, Quaternion.identity, transform);
 
         }
+        //if the d is a cell and not on layer 0, make a toCell component
         else if (layerValue > 0 && d.type == ComponentType.CELL)
         {
             temp = (GameObject)Instantiate(toCellLocation, generateLocation(layerValue), Quaternion.identity, transform);
@@ -315,6 +363,8 @@ generatorMatrix[i]
             generatorMatrix[layerValue - 1].Add(circuitComponent);
             return;
         }
+
+        // if d is to layer, make a toLayer, used to add connections over multiple layers
         else if (layerValue > 0 && d.type != ComponentType.CELL && d.name == "toLayer")
         {
             temp = (GameObject)Instantiate(toNextLayerLocation, generateLocation(layerValue), Quaternion.identity, transform);
@@ -328,6 +378,7 @@ generatorMatrix[i]
         }
         else
         {
+            //else build a normal component
             switch (d.type)
             {
                 case ComponentType.RESISTOR:
@@ -344,7 +395,7 @@ generatorMatrix[i]
             }
 
         }
-
+        //fill out values from d
         circuitComponent = temp.GetComponent<CircuitComponent>();
         circuitComponent.component = d;
         circuitComponent.gameObject.name = d.name;
@@ -364,6 +415,10 @@ generatorMatrix[i]
 
     }
 
+
+/// <summary>
+/// initialises genarator matrix
+/// </summary>
     private void initialiseMatrix()
     {
         generatorMatrix = new List<List<CircuitComponent>>();
@@ -374,6 +429,11 @@ generatorMatrix[i]
         }
     }
 
+/// <summary>
+/// used to calculate location to to build a component
+/// </summary>
+/// <param name="layerValue">layer to build the component</param>
+/// <returns>vector 3 of where to build the new component</returns>
     private Vector3 generateLocation(int layerValue)
     {
         //x
@@ -383,6 +443,9 @@ generatorMatrix[i]
         return new Vector3Int(x, y, 0);
     }
 
+    /// <summary>
+    /// calculate values
+    /// </summary>
     private void generateValues()
     {
         int numberOfLayers = diagramData.Count;
@@ -395,11 +458,16 @@ generatorMatrix[i]
     }
 
 
-
+/// <summary>
+/// method used to link component to each other
+/// </summary>
+/// <param name="a">circuit to link</param>
+/// <param name="layerValue">layer the circuit is on</param>
     private void connectcomponents(CircuitComponent a, int layerValue)
     {
         int aIndex = generatorMatrix[layerValue].IndexOf(a);
-        Pair<CircuitComponent, int> lowestDiff = new Pair<CircuitComponent, int>(a, aIndex);
+        Pair<CircuitComponent, int> lowestDiff = new Pair<CircuitComponent, int>(a, aIndex); //go across layer to find the 
+        //                                                                                     all components on next layer to connect to in both left and right
         Pair<CircuitComponent, int> HighestDiff = new Pair<CircuitComponent, int>(a, aIndex);
         int itemIndex;
         foreach (DiagramComponent diagramComponent in getConnectionsOfDirection(a.component, true))
@@ -423,6 +491,7 @@ generatorMatrix[i]
         }
         if (lowestDiff.b != HighestDiff.b)
         {
+            //create wire across all component to connect them
 
             Vector2 WireA = new Vector2(ComponentOrigin.x + (lowestDiff.b * HorizontalComponentGap), ComponentOrigin.y - 2 - (VertComponentGap * layerValue));
             Vector2 WireB = new Vector2(ComponentOrigin.x + (HighestDiff.b * HorizontalComponentGap), ComponentOrigin.y - 2 - (VertComponentGap * layerValue));
@@ -436,11 +505,9 @@ generatorMatrix[i]
 
 
 
-    public void setData()
-    {
-        this.diagramData = circuitTest.diagramData;
-    }
-
+/// <summary>
+/// delete all children of this gen
+/// </summary>
     private void DeletePrevGen()
     {
         foreach (RectTransform g in transform.GetComponentInChildren<RectTransform>())
@@ -451,6 +518,13 @@ generatorMatrix[i]
 
         }
     }
+
+    /// <summary>
+    /// gets all desired inputs/outputs of a given component
+    /// </summary>
+    /// <param name="c">component ot</param>
+    /// <param name="output"></param>
+    /// <returns></returns>
 
     private List<DiagramComponent> getConnectionsOfDirection(DiagramComponent c, bool output)
     {

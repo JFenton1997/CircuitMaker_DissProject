@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+/// <summary>
+/// class operating majority of keypresses, futureproofed for keybinding
+/// </summary>
 public class UserControls : MonoBehaviour
 {
-
-
-
-    public KeyCode toggleSnap = KeyCode.LeftShift;
-    public KeyCode plusOffset = KeyCode.N;
-    public KeyCode minusOffset = KeyCode.M;
+    // get values set in inspector and key trigger
+    public KeyCode toggleSnap = KeyCode.LeftShift; 
+    public KeyCode plusOffset = KeyCode.Plus;
+    public KeyCode minusOffset = KeyCode.Minus;
     public KeyCode toggleToolTips = KeyCode.T;
 
     private Toggle avowSnapToggle;
@@ -20,6 +20,7 @@ public class UserControls : MonoBehaviour
     // Start is called before the first frame update
 
 
+// set values to be used
     private void Start()
     {
  
@@ -42,9 +43,10 @@ public class UserControls : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //if button do x
         if(avowSnapToggle)
         if(Input.GetKeyDown(toggleSnap))avowSnapToggleLastPos = avowSnapToggle.isOn;
-        if (Input.GetKey(toggleSnap) || Input.GetKeyDown(toggleSnap))
+        if (Input.GetKey(toggleSnap)|| Input.GetKeyDown(toggleSnap))
         {
             GlobalValues.AvowSnapping = true;
            if(avowSnapToggle)
@@ -63,7 +65,7 @@ public class UserControls : MonoBehaviour
 
 
 
-        if (Input.GetKeyDown(plusOffset) && GlobalValues.AvowSnappingOffset < 2.9f)
+        if (Input.GetKeyDown(plusOffset) && Input.GetKey(toggleSnap)&& GlobalValues.AvowSnappingOffset < 2.9f)
         {
 
             GlobalValues.AvowSnappingOffset += 0.1f;
@@ -71,7 +73,7 @@ public class UserControls : MonoBehaviour
         }
 
 
-        if (Input.GetKeyDown(minusOffset) && GlobalValues.AvowSnappingOffset > 0.1f)
+        if (Input.GetKeyDown(minusOffset) && Input.GetKey(toggleSnap) && GlobalValues.AvowSnappingOffset > 0.1f)
         {
             GlobalValues.AvowSnappingOffset -= 0.1f;
             Debug.Log("Snapping increassed to: " + GlobalValues.AvowSnappingOffset);

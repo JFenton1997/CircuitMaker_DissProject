@@ -5,25 +5,33 @@ using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(BoxCollider2D))]
 
+/// <summary>
+/// method used for both circuit and wire movement in circuit component builders
+/// </summary>
 public class CircuitClickAndDrag : MonoBehaviour
 {
 
 
 
 
-    public Color dragColor = Color.gray;
-    public Color blockedColor = Color.red;
-    private Color normColor;
-    public bool isMoving;
+    public Color dragColor = Color.gray; // colour when moving
+    public Color blockedColor = Color.red; // colour when blocked
+    private Color normColor;// colour for normal
+    public bool isMoving; // isMoving bool to check if component is still moving
 
     [SerializeField]
-    public LayerMask circuitLayer, nodeLayer;
-    private Vector2 colliderSize;
-    private BoxCollider2D collider2D;
-    private Wire w;
-    private Node n;
-    private bool attachable;
-    private bool isBlocked;
+    public LayerMask circuitLayer, nodeLayer; //layermask to filter boxcasts
+    private Vector2 colliderSize; // size of the collider
+    private BoxCollider2D collider2D; // the box collider attached to this object
+    private Wire w; // wire component if this is a wire 
+    private Node n; // used if wire
+    private bool attachable; // used if hit is attachable
+    private bool isBlocked; // used if blocked
+
+
+    /// <summary>
+    /// run on start moving , initializing values
+    /// </summary>
     public void MoveStart()
     {
         isMoving = true;
@@ -35,17 +43,22 @@ public class CircuitClickAndDrag : MonoBehaviour
 
     }
 
+
+/// <summary>
+/// update every frame, handle all movement functions of this class
+/// </summary>
     private void Update()
     {
-        if (isMoving)
+        if (isMoving) // if moving
         {
             
             Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
             Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint);
-            transform.position = new Vector2(Mathf.RoundToInt(curPosition.x), Mathf.RoundToInt(curPosition.y));
+            transform.position = new Vector2(Mathf.RoundToInt(curPosition.x), Mathf.RoundToInt(curPosition.y));// get mouse pos and round as circuit uses a grid base system
             
-
+            //check if gameobject is blocked
             isBlocked = checkToBlock();
+            //rotatation for circuit components
             if (Input.GetKeyDown(KeyCode.Q))
             {
                 transform.Rotate(0, 0, 90, Space.Self);
@@ -55,18 +68,20 @@ public class CircuitClickAndDrag : MonoBehaviour
                 transform.Rotate(0, 0, -90, Space.Self);
             }
 
+
+            //if placement is attempted
             else if (Input.GetMouseButtonDown(0))
             {
-                if (isMoving)
+                if (isMoving) //if moving
                 {
 
-                    if (!isBlocked)
+                    if (!isBlocked)// and not blocked
                     {
                         {
                             
-                            isMoving = false;
+                            isMoving = false; // stop moving and show cursor
                             Cursor.visible = true;
-                            if (gameObject.GetComponent<Wire>())
+                            if (gameObject.GetComponent<Wire>())//if this is a wire, check if placed on node, if so add this wire to node and add node to this wire
                             {
                                 n = CheckForNode();
                                 if (n)
@@ -81,18 +96,22 @@ public class CircuitClickAndDrag : MonoBehaviour
                                 }
                                 else
                                 {
+                                    //do nothing
 
                                 }
+                                // if component place 
                                 gameObject.GetComponent<Wire>().GridMoveEnded();
                             }
                         }
                     }
                     else
                     {
-                        Debug.Log("blocked");
+
+                    //if blocked do nothing
                     }
                 }
             }
+            //if rightclick destroy this gameobject
             else if (Input.GetMouseButtonDown(1))
             {
                 Cursor.visible = true;
@@ -111,27 +130,37 @@ public class CircuitClickAndDrag : MonoBehaviour
 
 
 
+    /// <summary>
+    /// check if gameobject is blocked
+    /// </summary>
+    /// <returns>if blocked</returns>
     private bool checkToBlock()
     {
         Wire wireCheck;
+        //get all colliders of hit by this gameobject collider
         List<Collider2D> collider2Ds = new List<Collider2D>(Physics2D.OverlapBoxAll(new Vector2(transform.position.x, transform.position.y), colliderSize / 2, 0, circuitLayer));
         collider2Ds.Remove(this.collider2D);
 //        Debug.Log("hits " + gameObject.name + "    " + string.Join(" ", collider2Ds.ConvertAll(x => x.gameObject.name)));
+       
+        //if colliders hit
         if (collider2Ds.Count > 0)
         {
-
+            //if this is a wire
             if (TryGetComponent<Wire>(out wireCheck))
             {
+                //cast on node layer for any nodes, if a node is present the return false, circuit and nodes overlap by defualt
                 if (Physics2D.OverlapBox(new Vector2(transform.position.x, transform.position.y), colliderSize, 0f, nodeLayer))
                 {
                     wireCheck.toConnectedColor();
                     return false;
                 }
+                // if no node found, check for anywires hit
                 else if (collider2Ds.FindAll(x => x.gameObject.tag != "Wire").Count == 0)
                 {
                     wireCheck.toConnectedColor();
                     return false;
                 }
+                //else blocked
                 else{
                     wireCheck.toErrorColor();
                     return true;
@@ -139,8 +168,9 @@ public class CircuitClickAndDrag : MonoBehaviour
 
 
             }
-            else
+            else // not a wire
             {
+                //if blocked show error return true
                 if (TryGetComponent<CircuitComponent>(out CircuitComponent c)){
                     c.toErrorColor();
                 } 
@@ -149,7 +179,7 @@ public class CircuitClickAndDrag : MonoBehaviour
             }
         }
 
-
+        //else wire or component to normal color
         if (TryGetComponent<Wire>(out wireCheck)) wireCheck.toNormalColor();
         else if (TryGetComponent<CircuitComponent>(out CircuitComponent c)) c.toNormColor();
         return false;
@@ -159,6 +189,10 @@ public class CircuitClickAndDrag : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// checks for a node
+    /// </summary>
+    /// <returns>node if found</returns>
     private Node CheckForNode()
     {
         try
@@ -171,51 +205,6 @@ public class CircuitClickAndDrag : MonoBehaviour
         }
 
     }
-
-
-    private void wireFuctionality(Collider2D hitInfo)
-    {
-        if (hitInfo.gameObject != gameObject)
-        {
-            if (hitInfo.gameObject.tag == "Wire")
-            {
-                w = hitInfo.gameObject.GetComponent<Wire>();
-                attachable = true;
-
-            }
-            else if (hitInfo.gameObject.tag == "Node")
-            {
-                if (hitInfo.gameObject.GetComponent<Node>().ConnectedWire == null)
-                {
-                    n = hitInfo.gameObject.GetComponent<Node>();
-                    attachable = true;
-                }
-                else
-                {
-                    isBlocked = true;
-                    this.GetComponent<SpriteRenderer>().color = blockedColor;
-                    attachable = false;
-                }
-
-            }
-            else if (hitInfo.gameObject.tag == "CircuitComponent")
-            {
-                isBlocked = true;
-                this.GetComponent<SpriteRenderer>().color = blockedColor;
-            }
-            else
-            {
-                isBlocked = false;
-                this.GetComponent<SpriteRenderer>().color = dragColor;
-            }
-        }
-        if (attachable == true)
-        {
-            isBlocked = false;
-            this.GetComponent<SpriteRenderer>().color = dragColor;
-        }
-    }
-
 
 
 

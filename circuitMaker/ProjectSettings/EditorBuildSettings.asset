@@ -47,4 +47,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scene/MenuScenes/OptionsPanel.unity
     guid: e225cd2aeb74b0941a55a2975c59bb9a
+  - enabled: 1
+    path: Assets/Scene/MenuScenes/LearnPage.unity
+    guid: ada396c46d09f96419ded9fbe61f0610
   m_configObjects: {}

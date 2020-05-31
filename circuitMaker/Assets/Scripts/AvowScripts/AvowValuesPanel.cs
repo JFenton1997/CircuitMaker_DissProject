@@ -6,6 +6,9 @@ using UnityEngine.EventSystems;
 using Utilities;
 using System;
 
+/// <summary>
+/// class which operates the avow value panel, including editing values of selected avows
+/// </summary>
 public class AvowValuesPanel : MonoBehaviour
 {
 
@@ -17,12 +20,22 @@ public class AvowValuesPanel : MonoBehaviour
     private CanvasGroup canvasGroup;
     // Start is called before the first frame update
 
+
+/// <summary>
+/// get canvas group
+/// </summary>
     private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
     }
+
+
+    /// <summary>
+    /// set selected to selected color , if rightclick, unselect
+    /// </summary>
     private void Update()
     {
+        // if none selected, hide
         if (!currentAvow)
         {
             canvasGroup.alpha = 0;
@@ -48,6 +61,10 @@ public class AvowValuesPanel : MonoBehaviour
 
 
 
+/// <summary>
+/// set UI components to show the values of the newly selected Avow
+/// </summary>
+/// <param name="avowComponent"> new selected Avow</param>
     public void newSelected(AvowComponent avowComponent)
     {
         if (currentAvow && currentAvow != avowComponent) updateAvowValues();
@@ -70,6 +87,7 @@ public class AvowValuesPanel : MonoBehaviour
 
         if (currentAvow)
         {
+            // if a builder, show hidden toggles
             if (currentAvow.isBuilder)
             {
                 currentHidden.transform.parent.gameObject.SetActive(true);
@@ -79,24 +97,19 @@ public class AvowValuesPanel : MonoBehaviour
             }
             else
             {
+                // dont show hidden
                 Debug.Log("noBuilder");
                 currentHidden.transform.parent.gameObject.SetActive(false);
 
             }
         }
 
-        // Debug.Log(currentAvow.component.Values[ComponentParameter.VOLTAGE].hidden+" "+
-        // currentAvow.component.Values[ComponentParameter.CURRENT].hidden +" "+currentAvow.component.Values[ComponentParameter.RESISTANCE ].hidden);
-
-
-
-
-
-
     }
 
 
-
+/// <summary>
+/// run this method on any UI element change, get UI element values and set them to the selected avow 
+/// </summary>
     public void updateAvowValues()
     {
         if (float.Parse(height.text
@@ -129,6 +142,9 @@ public class AvowValuesPanel : MonoBehaviour
 
     }
 
+/// <summary>
+/// call on destoy button press, destory current and hide
+/// </summary>
     public void DestoryCurrentSelected()
     {
         if (currentAvow)
@@ -139,6 +155,10 @@ public class AvowValuesPanel : MonoBehaviour
         }
     }
 
+
+/// <summary>
+/// call on close button press, unselect current
+/// </summary>
     public void Close()
     {
         if (currentAvow)

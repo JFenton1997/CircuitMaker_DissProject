@@ -7,6 +7,9 @@ using UnityEngine.EventSystems;
 using Utilities;
 using System;
 
+/// <summary>
+/// handles circuit component, stores DiagramComponent and UI feedback
+/// </summary>
 public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
 {
 
@@ -22,7 +25,7 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
     [HideInInspector]
     public Node nodeB;
 
-
+    //UI stuff
     public Sprite spriteCell, spriteResistor, spriteLight;
     private Image componentImage, highlight;
     private Color normalHighlightColor;
@@ -39,7 +42,9 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
 
 
-
+    /// <summary>
+    /// initialize UI components and checks if a builder
+    /// </summary>
     private void Awake()
     {
         isBuilder = transform.parent.GetComponent<CircuitManager>().isBuilder;
@@ -65,7 +70,7 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
         {
         }
 
-        if (transform.parent.TryGetComponent<GenerateCircuit>(out GenerateCircuit gen))
+        if (transform.parent.TryGetComponent<GenerateCircuit>(out GenerateCircuit gen))//if component is apart from a generator object
         {
             foundGen = gen;
             viewer = transform.Find("/UI/ProblemDisplayer/ProblemView").GetComponent<ProblemViewer>();
@@ -73,6 +78,9 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
     }
 
+/// <summary>
+/// diagram component constructor
+/// </summary>
     private void Start()
     {
 
@@ -86,7 +94,9 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
 
 
-
+/// <summary>
+/// use type to set the sprite the component uses
+/// </summary>
     private void Update()
     {
 
@@ -111,7 +121,8 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
 
         }
-
+        
+        // display circuit display if no gen and is set to show in the global values
         if (GlobalValues.circuitDisplayAll == true)
         {
             if (!foundGen)
@@ -131,7 +142,7 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
             }
 
         }
-
+        //if appart from gen show based on problem finders values
         if (foundGen)
         {
             if(component.type != ComponentType.UNTYPED)
@@ -152,6 +163,9 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
     }
 
+    /// <summary>
+    /// removes all connections from nodes, called on destroy
+    /// </summary>
     public void removeWireConnections()
     {
         if (nodeA.ConnectedWire)
@@ -161,7 +175,10 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
     }
 
 
-
+/// <summary>
+/// if pointer on gameobject run selected on Circuit UI panel
+/// </summary>
+/// <param name="eventData"> Unity event data</param>
     public void OnPointerDown(PointerEventData eventData)
     {
         if (!foundGen)
@@ -172,14 +189,11 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
 
 
-    // public void OnPointerUp(PointerEventData eventData)
-    // {
-    //     Cursor.visible = true;
 
-    // }
-
-
-
+    /// <summary>
+    /// if point enters circuit component, and not gen, show UI display
+    /// </summary>
+    /// <param name="eventData"> unity event data</param>
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (!foundGen)
@@ -191,6 +205,9 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
     }
 
+/// <summary>
+/// show highlight to colour component, used to show if selected or error
+/// </summary>
     public void ShowHighlight()
     {
         if (!foundGen)
@@ -200,16 +217,28 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
         }
     }
 
+/// <summary>
+/// set highlight to show and red error color
+/// </summary>
     public void toErrorColor() { if (component.type != ComponentType.UNTYPED) highlight.enabled = true; highlight.color = errorHighlightColor; }
+    /// <summary>
+    /// set highlight off and to normal colour of selected
+    /// </summary>
+    /// <param name="!"></param>
     public void toNormColor() { if (component.type != ComponentType.UNTYPED) highlight.enabled = false; highlight.color = normalHighlightColor; }
 
 
-
+/// <summary>
+/// hide highlight
+/// </summary>
     public void hideHighlight()
     {
         highlight.enabled = false;
     }
 
+/// <summary>
+/// run on destroy, remove this component from allcomponents to prevent null pointers
+/// </summary>
     private void OnDestroy()
     {
         if(! foundGen)
@@ -219,7 +248,10 @@ public class CircuitComponent : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
 
 
-
+/// <summary>
+/// on pointer exit, stop showing circuit details if not set to in global values
+/// </summary>
+/// <param name="eventData">unity event data</param>
     public void OnPointerExit(PointerEventData eventData)
     {
         if (!foundGen)

@@ -5,20 +5,30 @@ using System.IO;
 using Utilities;
 using System;
 
-
+/// <summary>
+/// class for reading and writing diagram instance Data
+/// </summary>
 public class CsvManager : MonoBehaviour
 {
-    private string fileExtension = ".csv";
-    public string filePath = "Assets/DiagramFiles/";
-    public String testNameWrite;
-    public string testNameRead;
-    public GenerateCircuit generate;
+    private string fileExtension = ".csv"; //file type created
+    public string filePath = "Assets/DiagramFiles/"; //original file path used for debugging
 
-    public CircuitManager circuitManager;
-    List<string> toWrite;
-    Dictionary<int, List<DiagramComponent>> diagramData;
-    List<DiagramComponent> createdComponents;
+    public string testNameRead; //test file for debugging
+ 
+    List<string> toWrite; //string list (item per line ) to be written to a file
+    Dictionary<int, List<DiagramComponent>> diagramData; //diagram data to be written or read
+    List<DiagramComponent> createdComponents; //list of component created
 
+/// <summary>
+///     used to write a singular file, used mainly for debugging purposes
+/// </summary>
+/// <param name="diagramData">diagram data to be witten</param>
+/// <param name="author">author of the diagram</param>
+/// <param name="diagramTitle">title of the diagram</param>
+/// <param name="diagramQuestion">question/desction of the problem to be solved</param>
+/// <param name="scale">scale used for avow diagram generation</param>
+/// <param name="diagramEnabled">bool[4], c>c , c>a , a>c , a>a</param>
+/// <returns> bool if the file was successfully witten to a csv</returns>
     public bool WriteDigram(Dictionary<int, List<DiagramComponent>> diagramData, String author, String diagramTitle, String diagramQuestion, float scale, bool[] diagramEnabled)
     {
         DiagramInstanceData diagram = new DiagramInstanceData(diagramTitle, author, diagramQuestion, diagramEnabled, scale, diagramData);
@@ -26,43 +36,54 @@ public class CsvManager : MonoBehaviour
         return (writeDataToCsv(diagram));
     }
 
+/// <summary>
+/// used for debugging to read a hardCoded file set as public parameters
+/// </summary>
+/// <returns> diagramInstanceData</returns>
     public DiagramInstanceData testRead()
     {
-       return ReadFile(filePath +testNameRead, "JamesTest"+fileExtension);
+       return ReadFile(filePath +testNameRead, "JamesTest"+fileExtension).a;
 
 
     }
 
-    public List<DiagramInstanceData> GetAllFilesType(DiagramFilter filter)
+/// <summary>
+/// Main method used to read files
+/// reads all file in directory set in globalValues
+/// returns all valid csv files in the directory after filter is applied
+/// </summary>
+/// <param name="filter">the type of problems to be returned</param>
+/// <returns>diagramInstance data to be used to generate and show problem and a string containing time the file was saved</returns>
+    public List<Pair<DiagramInstanceData,string>> GetAllFilesType(DiagramFilter filter)
     {
-        List<DiagramInstanceData> diagramsToReturn = new List<DiagramInstanceData>();
-        List<String> files = new List<string>(Directory.GetFiles(@GlobalValues.workingDirectory+"/", "*_*.csv"));
-        Debug.Log(string.Join("\n", files));
-
+        List<Pair<DiagramInstanceData,string>> diagramsToReturn = new List<Pair<DiagramInstanceData, string>>();//initialize return list
+        List<String> files = new List<string>(Directory.GetFiles(@GlobalValues.workingDirectory+"/", "*_*.csv")); //get a list of all file names in the directory following the 
+                                                                                                                // following the correct format 
+    //for each file
         foreach (String filename in files)
         {
             try
             {
-                diagramsToReturn.Add(ReadFile(filename));
+                diagramsToReturn.Add(ReadFile(filename));//read file 
 
             }
-            catch (System.Exception e)
+            catch (System.Exception e)//if file is invalid and breads reader, report and move on
             {
-                Debug.LogError(e);
+                Debug.Log(filename + " in valid Structure");
             }
         }
-        switch(filter){
+        switch(filter){ //filter all return diagramInstances
             case DiagramFilter.CIRCUIT_TO_CIRCUIT:
-                return diagramsToReturn.FindAll(x => x.diagramEnabled[0]);
+                return diagramsToReturn.FindAll(x => x.a.diagramEnabled[0]);
 
             case DiagramFilter.CIRCUIT_TO_AVOW:
-                return diagramsToReturn.FindAll(x => x.diagramEnabled[1]);
+                return diagramsToReturn.FindAll(x => x.a.diagramEnabled[1]);
 
             case DiagramFilter.AVOW_TO_CIRCUIT:
-                return diagramsToReturn.FindAll(x => x.diagramEnabled[2]);
+                return diagramsToReturn.FindAll(x => x.a.diagramEnabled[2]);
 
             case DiagramFilter.AVOW_TO_AVOW:
-                return diagramsToReturn.FindAll(x => x.diagramEnabled[3]);
+                return diagramsToReturn.FindAll(x => x.a.diagramEnabled[3]);
 
             default:
                 Debug.LogError("INVALID FILTER");
@@ -84,28 +105,25 @@ public class CsvManager : MonoBehaviour
 
     }
 
-    public Dictionary<int, List<DiagramComponent>> avowTestRead()
-    {
-        return ReadFile(testNameRead, "JamesTest").diagramData;
-    }
 
-
-
-
-
-    // Update is called once per frame
+    /// <summary>
+    /// writes a digramInstanceData to a file
+    /// </summary>
+    /// <param name="diagram">diagram created from a problem builder</param>
+    /// <returns> bool to show if the file was successfully saved</returns>
     public bool writeDataToCsv(DiagramInstanceData diagram)
     {
-        filePath = GlobalValues.workingDirectory+"/";
-        toWrite = new List<string>();
+        filePath = GlobalValues.workingDirectory+"/"; //get filepath
+        toWrite = new List<string>(); 
         this.diagramData = diagram.diagramData;
-        writeTitleBar(diagram.title, diagram.author, diagram.diagramQuestion, diagram.diagramEnabled, diagram.scale);
-        writeComponentBar();
+        writeTitleBar(diagram.title, diagram.author, diagram.diagramQuestion, diagram.diagramEnabled, diagram.scale); //write titlebar
+        writeComponentBar(); //write component bar
+        //for each layer, write each component in order with it values
         foreach (var d in diagramData)
         {
             foreach (DiagramComponent e in d.Value)
             {
-                addComponentRecord(e);
+                addComponentRecord(e); 
             }
         }
         return writeFile(diagram.title, diagram.author);
@@ -113,13 +131,25 @@ public class CsvManager : MonoBehaviour
 
 
 
-
+/// <summary>
+/// used to write the first line into the csv
+/// </summary>
+/// <param name="title">diagram title</param>
+/// <param name="author">diagram author</param>
+/// <param name="diagramQuestion">question/description</param>
+/// <param name="diagramEnabled"> problem the diagram is enabled for </param>
+/// <param name="scale">scale value used by avow generation</param>
     private void writeTitleBar(string title, string author, string diagramQuestion, bool[] diagramEnabled, float scale)
-    {
+    {//create string
         string recordData = title + "," + author + "," + diagramQuestion + "," + diagramEnabled[0] + "," + diagramEnabled[1] + ","
         + diagramEnabled[2] + "," + diagramEnabled[3] + ","+scale.ToString() +","+ System.DateTime.Now + ",\0";
         toWrite.Add(recordData);
     }
+
+
+    /// <summary>
+    /// write the list of component names following structure, using NULL to separate layers
+    /// </summary>
     public void writeComponentBar()
     {
         string recordData = "";
@@ -135,6 +165,10 @@ public class CsvManager : MonoBehaviour
         toWrite.Add(recordData);
     }
 
+/// <summary>
+/// filling a row filled with DiagramComponent data
+/// </summary>
+/// <param name="d">diagramData to write value for into a line </param>
     private void addComponentRecord(DiagramComponent d)
     {
         string recordData = d.name + "," + (int)d.type + "," + (int)d.direction + ",";
@@ -155,6 +189,12 @@ public class CsvManager : MonoBehaviour
         toWrite.Add(recordData);
     }
 
+/// <summary>
+/// used to write a List<String> into a csv, line by line with a streamWriter
+/// </summary>
+/// <param name="title">title of diagram used to make filename</param>
+/// <param name="author">author of the diagram used to make filename</param>
+/// <returns>bool if the file was successfully saved</returns>
     private bool writeFile(string title, string author)
     {
         try
@@ -175,33 +215,46 @@ public class CsvManager : MonoBehaviour
         }
     }
 
-    public DiagramInstanceData ReadFile(string title, string author)
+/// <summary>
+/// reading a file from a given title and author
+/// </summary>
+/// <param name="title">title in file to read</param>
+/// <param name="author">author of file to read</param>
+/// <returns></returns>
+    public Pair<DiagramInstanceData, string> ReadFile(string title, string author)
     {
         return ReadFile(title + "_" + author);
 
     }
 
-    public DiagramInstanceData ReadFile(string filename)
+/// <summary>
+/// from a given filename read the csv and returns diagramInstanceData and time the file was created
+/// </summary>
+/// <param name="filename">name of file to read</param>
+/// <returns></returns>
+    public Pair<DiagramInstanceData, string> ReadFile(string filename)
     {
-        filePath = GlobalValues.workingDirectory+"/";
+        filePath = GlobalValues.workingDirectory+"/"; //get directory
+        //initializing values.
         string author = "";
         string title = "";
         string question = "";
+        string time = "";
         bool[] diagramEnabled = new bool[4];
         float scale = 1;
         createdComponents = new List<DiagramComponent>();
         diagramData = new Dictionary<int, List<DiagramComponent>>();
         
-
+        
         int lineNumber = 0;
         using (var reader = new StreamReader(@filename))
         {
-            while (!reader.EndOfStream)
+            while (!reader.EndOfStream) //while a line still to read
             {
                 var line = reader.ReadLine();
-                
-                var record = line.Split(',');
-                if (lineNumber == 0)
+
+                var record = line.Split(','); //split each line by cells ( , )
+                if (lineNumber == 0)//if line number is 0, the value will be diagramInstanceData data
                 {
                     author = record[1];
                     title = record[0];
@@ -211,44 +264,50 @@ public class CsvManager : MonoBehaviour
                     diagramEnabled[2] = (bool.Parse(record[5]));
                     diagramEnabled[3] = (bool.Parse(record[6]));
                     scale = float.Parse(record[7]);
+                    time = record[8];
                     
                 }
+                //if line is ==1 then the line will contain component row
                 else if (lineNumber == 1)
                 {
                     generateDiagramData(record);
 
                 }
-                else
+                else//if line >1 the must contain component values
                 {
                     fillOutComponent(record);
                 }
                 lineNumber++;
-                if (lineNumber > 1000)
+                if (lineNumber > 1000) //if more than 1000lines , then likely to be infinite loop from reader and file is invalid
                 {
                     throw new Exception("Invalid Data, while infiloop, >1000 lines");
                 }
             }
 
         }
-        this.diagramData.Remove(diagramData.Count - 1);
-        return new DiagramInstanceData(title, author, question, diagramEnabled, scale, this.diagramData);
+        this.diagramData.Remove(diagramData.Count - 1); //remove last row as it will be empty 
+        return new Pair<DiagramInstanceData, string>(new DiagramInstanceData(title, author, question, diagramEnabled, scale, this.diagramData),time);
     }
 
 
+/// <summary>
+/// construct all components in the components row and store them in diagram data in the correct location based on structure
+/// </summary>
+/// <param name="record">component line (linenumber 1) in csv split by " , "</param>
     private void generateDiagramData(string[] record)
     {
-        int key = 0;
+        int key = 0; //layer 
         List<DiagramComponent> layerComponents = new List<DiagramComponent>();
         foreach (string s in record)
         {
-            if (s == "\0")
+            if (s == "\0") //if null, start a new layer of diagram data and store current layerComponent int the diagramData
             {
                 diagramData.Add(key, layerComponents);
                 layerComponents = new List<DiagramComponent>();
                 key++;
             }
             else
-            {
+            { //construct diagramComponent, give it the correct name from csv and add to layer and created components
                 DiagramComponent d = new DiagramComponent();
                 d.name = s;
                 layerComponents.Add(d);
@@ -258,6 +317,10 @@ public class CsvManager : MonoBehaviour
         }
     }
 
+/// <summary>
+/// used to read a component values layer in the csv and fill the corresponding diagramComponent in the diagramData
+/// </summary>
+/// <param name="record">component values line (linenumber >1) in csv split by " , "</param>
     private void fillOutComponent(string[] record)
     {
         DiagramComponent d = createdComponents[createdComponents.ConvertAll(i => i.name).IndexOf(record[0])];

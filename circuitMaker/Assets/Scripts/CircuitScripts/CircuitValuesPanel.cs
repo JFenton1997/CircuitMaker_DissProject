@@ -6,11 +6,13 @@ using Lean.Gui;
 using UnityEngine.EventSystems;
 using Utilities;
 using System;
-
+/// <summary>
+/// class in charge of controlling values panel for circuit builder
+/// </summary>
 public class CircuitValuesPanel : MonoBehaviour
 {
 
-
+//current selected and UI elements
     private CircuitComponent currentCircuit;
     private InputField voltage, current, resistance, selectedText;
     private Toggle voltHidden, currentHidden, resistanceHidden;
@@ -23,6 +25,9 @@ public class CircuitValuesPanel : MonoBehaviour
     private GameObject autoV, autoC;
     // Start is called before the first frame update
 
+/// <summary>
+/// get all UI elements 
+/// </summary>
     private void Start()
     {
         canvasGroup = GetComponent<CanvasGroup>();
@@ -47,6 +52,11 @@ public class CircuitValuesPanel : MonoBehaviour
         autoC = current.transform.Find("AutoC").gameObject;
     }
 
+/// <summary>
+/// run on each frame
+/// if no selected, hide
+/// update direction images
+/// </summary>
     private void Update()
     {
         if (!currentCircuit)
@@ -72,7 +82,7 @@ public class CircuitValuesPanel : MonoBehaviour
 
             // currentCircuit.ColorToSelected();
 
-
+            //unselecte 
             if (Input.GetMouseButtonDown(1))
             {
                 updatecomponentValues();
@@ -81,6 +91,8 @@ public class CircuitValuesPanel : MonoBehaviour
                 currentCircuit = null;
 
             }
+
+            //if selected if a cell, hide resistance, and set name to CELL
             if (componentType.value == 0)
             {
                 currentCircuit.component.Values[ComponentParameter.RESISTANCE].value = 0;
@@ -91,7 +103,7 @@ public class CircuitValuesPanel : MonoBehaviour
                 selectedText.text = "CELL";
                 selectedText.interactable = false;
             }
-            else
+            else //if not Cell, allow for editing of the name and re enable hidden UI elements
             {
                 resistance.gameObject.SetActive(true);
                 direction.gameObject.SetActive(true);
@@ -108,7 +120,10 @@ public class CircuitValuesPanel : MonoBehaviour
     }
 
 
-
+/// <summary>
+/// invoked when a new circuit component is selected, update UI elements to show new selected values
+/// </summary>
+/// <param name="selectedComponent">the new selected CircuitComponent </param>
     public void newSelected(CircuitComponent selectedComponent)
     {
         if (currentCircuit && currentCircuit != selectedComponent)
@@ -124,7 +139,7 @@ public class CircuitValuesPanel : MonoBehaviour
 
         // canvasGroup.blocksRaycasts = true;
 
-
+        //if selected if part of problem builder show hidden toggles, if not hide
         this.currentCircuit = selectedComponent;
         if (currentCircuit)
         {
@@ -167,7 +182,9 @@ public class CircuitValuesPanel : MonoBehaviour
     }
 
 
-
+/// <summary>
+/// on UI element value change, update component value
+/// </summary>
     public void updatecomponentValues()
     {
         if (decimal.Parse(voltage.text
@@ -217,6 +234,9 @@ public class CircuitValuesPanel : MonoBehaviour
         newSelected(currentCircuit);
     }
 
+/// <summary>
+/// invoked on delete button press, delete current component
+/// </summary>
     public void DestoryCurrentSelected()
     {
         if (currentCircuit)
@@ -227,21 +247,31 @@ public class CircuitValuesPanel : MonoBehaviour
         }
     }
 
+/// <summary>
+/// invoked by autoV button
+/// </summary>
     public void btnAutoV()
     {
         autoPick(ComponentParameter.VOLTAGE);
     }
-
+/// <summary>
+/// invoked by autoC button
+/// </summary>
     public void btnAutoC()
     {
         autoPick(ComponentParameter.CURRENT);
     }
-
+/// <summary>
+/// invoked by autoR button
+/// </summary>
     public void btnAutoR()
     {
         autoPick(ComponentParameter.RESISTANCE);
     }
-
+/// <summary>
+/// from the selected value to auto generate, recalculate the values using ohms law of the other values
+/// </summary>
+/// <param name="c">ComponentParameter selected from the button press</param>
     public void autoPick(ComponentParameter c)
     {
         float voltageT = 0f;
@@ -290,12 +320,17 @@ public class CircuitValuesPanel : MonoBehaviour
 
     }
 
+/// <summary>
+/// invoked from close button press, set current selected to null
+/// </summary>
     public void close()
     {
         currentCircuit.hideHighlight();
         currentCircuit = null;
     }
-
+/// <summary>
+/// invoked from a button to delete component
+/// </summary>
     public void delete()
     {
         currentCircuit.hideHighlight();
@@ -304,6 +339,9 @@ public class CircuitValuesPanel : MonoBehaviour
         close();
     }
 
+/// <summary>
+/// invoked from move button, starts the movestart of current component and unselected
+/// </summary>
     public void Move()
     {
         currentCircuit.hideHighlight();

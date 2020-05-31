@@ -3,19 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using Utilities;
 using UnityEngine.UI;
-
+/// <summary>
+/// UI class used to display errors to the user
+/// </summary>
 public class ErrorPanel : MonoBehaviour
 {
 
     private CanvasGroup canvasGroup;
-    public GameObject errorMessagePrefab;
-    private Transform ErrorsDisplay;
-    private List<Pair<GameObject, DiagramError>> ErrorMessages;
+    public GameObject errorMessagePrefab; //error message prefab
+    private Transform ErrorsDisplay; //the display window
+    private List<Pair<GameObject, DiagramError>> ErrorMessages; //list of error messages and their objects
 
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// get UI elements
+    /// </summary>
     void Start()
     {
+        
         canvasGroup = GetComponent<CanvasGroup>();
         ErrorMessages = new List<Pair<GameObject, DiagramError>>();
         ErrorsDisplay = transform.Find("Image/Image/Panel/Scroll View/Viewport/ErrorsDisplay");
@@ -25,16 +30,21 @@ public class ErrorPanel : MonoBehaviour
 
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// show window and display all errors received in a error window viewport
+    /// </summary>
+    /// <param name="diagramErrors"> unique list of error message to be displayed to user </param>
     public void displayErrors(HashSet<DiagramError> diagramErrors)
     {
         Debug.Log("displayErrors");
         clear();
-        canvasGroup.alpha = 1f;
+        canvasGroup.alpha = 1f; //make window visible and interactable
         canvasGroup.blocksRaycasts = true;
         canvasGroup.interactable = true;
+        //set scrollbar  to be at the top
         transform.Find("Image/Image/Panel/Scroll View/Scrollbar Vertical").GetComponent<Scrollbar>().value = 1f;
         
+        // for each diagramError, create a errorlog to be displayed to the user
         foreach (DiagramError d in diagramErrors)
         {
             GameObject errorLog = (GameObject)Instantiate(errorMessagePrefab, ErrorsDisplay.position, Quaternion.identity, ErrorsDisplay);
@@ -45,6 +55,9 @@ public class ErrorPanel : MonoBehaviour
 
     }
 
+/// <summary>
+/// closes error window
+/// </summary>
     public void close()
     {
         clear();
@@ -53,6 +66,9 @@ public class ErrorPanel : MonoBehaviour
 
     }
 
+/// <summary>
+/// clears error windows messages, used to prevent old message being shown
+/// </summary>
     public void clear()
     {
         canvasGroup.interactable = false;

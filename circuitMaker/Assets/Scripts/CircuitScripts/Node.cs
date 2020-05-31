@@ -2,29 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// node class for all operation dealing with nodes
+/// </summary>
 public class Node : MonoBehaviour
 {
-    private CircuitComponent circuitComponent;
-    private RectTransform rect;
-    public Wire ConnectedWire;
+    private CircuitComponent circuitComponent; //perant
+
+    public Wire ConnectedWire;//the wire connected to the node if there is one
+/// <summary>
+/// get perant
+/// </summary>
     private void Awake() {
-        rect = GetComponent<RectTransform>();
         circuitComponent = transform.GetComponentInParent<CircuitComponent>();
     }
 
+//update wireConnected
     public void updateWire(Wire w){
         ConnectedWire = w;
     }
 
-    // private void Update() {
-    //     // List<Collider2D> hits = new List<Collider2D>(Physics2D.OverlapCircleAll(new Vector2(transform.position.x,transform.position.y), (rect.sizeDelta.x/4)*rect.localScale.x));
-    //     // if(hits.Find(x => x.name == "wire")){
-    //     //     ConnectedWire = hits.Find(x => x.name == "wire").GetComponent<Wire>();
-    //     //     if(!ConnectedWire.connectedNode.Contains(this))
-    //     //     ConnectedWire.connectedNode.Add(this);
-    //     //}
-        
-        
-    // }
+
 }
 

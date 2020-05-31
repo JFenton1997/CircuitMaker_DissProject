@@ -5,6 +5,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using Utilities;
 
+
+/// <summary>
+/// Class handling the main key operations of avows in a avow diagram and the generation of the digramData from a avow, is a perant to all avows in diagram 
+/// </summary>
 public class AvowManager : MonoBehaviour
 {
 
@@ -19,7 +23,9 @@ public class AvowManager : MonoBehaviour
     private HashSet<DiagramError> foundErrors;
 
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// initialize allAvow list and name conventions
+    /// </summary>
     private void Awake()
     {
         allAvow = new List<AvowComponent>();
@@ -27,16 +33,12 @@ public class AvowManager : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-
-    }
-
+    /// <summary>
+    /// called to update all connections of all child avows
+    /// </summary>
     public void updateConnections()
     {
-
+        //get new list of all children
         allAvow.Clear();
         foreach (Transform t in transform.GetComponentInChildren<Transform>())
         {
@@ -49,21 +51,30 @@ public class AvowManager : MonoBehaviour
 
             }
         }
+
+        //reset connections to empty to prevent carry over from previous connections
         foreach (AvowComponent avow in allAvow)
         {
             avow.clearConnections();
         }
 
+        //run update connections on all
         foreach (AvowComponent avow in allAvow)
         {
             avow.updateConnections();
         }
+
+        // run check same layer on all children, run seperately after update connections to prevent errors of adding avows with no connections
         foreach (AvowComponent avow in allAvow)
         {
             avow.updateSameLayerConnections();
         }
     }
 
+
+/// <summary>
+/// builds a new avow to the diagram above cursor position
+/// </summary>
     public void buildAvow()
     {
         Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
@@ -78,6 +89,7 @@ public class AvowManager : MonoBehaviour
         currentName++;
         allAvow.Clear();
 
+//add new avow to all avow
         foreach (Transform t in transform.GetComponentInChildren<Transform>())
         {
             if (t.parent == transform)
@@ -90,6 +102,11 @@ public class AvowManager : MonoBehaviour
         }
     }
 
+
+/// <summary>
+/// remove a avow from all connections of all child avows, called when a avow is deleted
+/// </summary>
+/// <param name="avowToDestroy"> the avow to remove </param>
     public void removeAvow(AvowComponent avowToDestroy)
     {
         allAvow.Clear();
@@ -110,6 +127,9 @@ public class AvowManager : MonoBehaviour
 
 
 
+/// <summary>
+/// updates all values of a avow to be set in each avows DiagramComponent component
+/// </summary>
     public void updateAllValue()
     {
         foreach (AvowComponent avow in allAvow)
@@ -126,10 +146,17 @@ public class AvowManager : MonoBehaviour
         }
     }
 
+/// <summary>
+/// generate DigramData from all child avows, run checks for build errors
+/// if builder is true, show all errors to user and run save window if none
+/// else, ignore errors mild errors for solution menu, run solver window when finish, call out major errors
+/// </summary>
     public void GenerateDiagramData()
     {
+        // initialize error hashset, to keep track of any found errors
         foundErrors = new HashSet<DiagramError>();
 
+        // if no avows show error
         if (allAvow.Count == 0)
         {
             foundErrors.Add(new DiagramError("NO componentS FOUND", "theres no components to use to create a diagram"));
@@ -138,6 +165,7 @@ public class AvowManager : MonoBehaviour
 
 
         }
+        //double check connections
         updateConnections();
         // update Diagram component of the Avows
         updateAllValue();
@@ -195,7 +223,7 @@ public class AvowManager : MonoBehaviour
                 }
 
             }
-            // incase of infinite loop
+            // incase of infinite loop, will happen if 
             if (j > 1000)
             {
                 Debug.LogError("infi while");
@@ -229,6 +257,7 @@ data.Value
         x.LeftConnections.Count == 0 && x.RightConnections.Count == 0);
         if (unconnected.Count > 1 || (unconnected.Count == 1 && diagramData[1].Count > 1))
         {
+            // if builder
             if (isBuilder)
                 foreach (AvowComponent avow in unconnected)
                 {
@@ -238,23 +267,13 @@ data.Value
 
 
         }
+        //check if any are blocked
 
         foreach (AvowComponent avow in allAvow.FindAll(x => x.isBlocked == true))
         {
             foundErrors.Add(new DiagramError("   BLOCKED   ", "The Avow " + avow.gameObject.name + " is seen as Blocked, please either delete the avow or Move it", avow.component, allAvow));
 
         }
-        //check for box;
-        // Vector3 tl = allAvow.Find(x => x.component == diagramData[1][0]).transform.position;
-        // Vector3 tr = allAvow.Find(x => x.component == diagramData[1][diagramData[1].Count-1]).transform.position;
-        // Vector3 bl = allAvow.Find(x => x.component == diagramData[diagramData.Count-1][0]).transform.position;
-        // Vector3 br = allAvow.Find(x => x.component == diagramData[diagramData.Count-1][diagramData[diagramData.Count-1].Count-1]).transform.position;
-
-
-
-
-
-
 
         //ERRORS DISPLAY IF ANY
 
@@ -309,7 +328,7 @@ data.Value
         diagramData[0][0].Values[ComponentParameter.CURRENT].value = current;
         diagramData[0][0].Values[ComponentParameter.RESISTANCE].value = 0f;
 
-        //box check
+        //check if diagram forms a rectangle, simple basic check, calculate total voltage and current of bottom and far right and see if they match
         float Cvoltage = 0;
         float Ccurrent = 0;
         foreach (DiagramComponent d in diagramData[0][0].Bconnections)
@@ -335,6 +354,8 @@ data.Value
         }
         foreach (var data in diagramData)
         {
+
+            //debugging
             Debug.Log("layer" + data.Key.ToString() + " = " + String.Join("",
 data.Value
 .ConvertAll(i => i.name.ToString())
@@ -343,7 +364,7 @@ data.Value
 
 
 
-        Debug.Log("CELL GEN = " + Ccurrent + " " + current + "  " + voltage + "  " + Cvoltage + "  s:" + scale);
+        // Debug.Log("CELL GEN = " + Ccurrent + " " + current + "  " + voltage + "  " + Cvoltage + "  s:" + scale);
         if (Cvoltage != voltage || Ccurrent != current)
         {
             foundErrors.Add(new DiagramError("  Layout Error   ", "A Avow must be a rectangle in shape. e.g. must be a complete box with no gaps and exactly 4 sides"));
@@ -351,7 +372,7 @@ data.Value
 
 
 
-
+        // if errors exist, run error panels
         if (foundErrors.Count != 0)
         {
             Debug.Log(transform.Find("/UI/ErrorsPanel").name);
@@ -371,7 +392,7 @@ data.Value
 
 
 
-        // submit avow diagram to save window
+        // submit diagram data to save window or solver depending if builder or not
         if (isBuilder)
             transform.Find("/UI/SaveDiagram").GetComponent<SaveFileWindow>().intialiseSaveWindow(diagramData, scale);
         else
@@ -385,6 +406,8 @@ data.Value
 
     }
 
+
+//get scale value from dropbox in scene
     public void updateScale(Dropdown dropdown)
     {
         switch (dropdown.value)
