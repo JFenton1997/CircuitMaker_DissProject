@@ -137,9 +137,9 @@ public class AvowManager : MonoBehaviour
             avow.component.direction = Direction.A_to_B;
             avow.component.Values[ComponentParameter.VOLTAGE].value = avow.voltage * scale;
             avow.component.Values[ComponentParameter.CURRENT].value = avow.current * scale;
-            avow.component.Values[ComponentParameter.RESISTANCE].value =
-                avow.component.Values[ComponentParameter.VOLTAGE].value
-                / avow.component.Values[ComponentParameter.CURRENT].value;
+            avow.component.Values[ComponentParameter.RESISTANCE].value =(float)Math.Round(
+                (decimal)avow.component.Values[ComponentParameter.VOLTAGE].value
+                / (decimal) avow.component.Values[ComponentParameter.CURRENT].value,2);
             avow.component.Aconnections = avow.TopConnections.ConvertAll(x => x.component);
             avow.component.Bconnections = avow.BotConnections.ConvertAll(x => x.component);
             avow.component.name = avow.gameObject.name;

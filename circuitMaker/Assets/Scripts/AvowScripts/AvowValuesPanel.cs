@@ -67,14 +67,16 @@ public class AvowValuesPanel : MonoBehaviour
 /// <param name="avowComponent"> new selected Avow</param>
     public void newSelected(AvowComponent avowComponent)
     {
-        if (currentAvow && currentAvow != avowComponent) updateAvowValues();
 
-        if (currentAvow && currentAvow != avowComponent) currentAvow.ColorToMain();
+        if (currentAvow && currentAvow != avowComponent){
+            updateAvowValues();
+            currentAvow.ColorToMain();
+        }
+
+
+
         currentAvow = null;
         canvasGroup.blocksRaycasts = true;
-
-
-
 
 
         currentAvow = avowComponent;
@@ -90,8 +92,10 @@ public class AvowValuesPanel : MonoBehaviour
             // if a builder, show hidden toggles
             if (currentAvow.isBuilder)
             {
+                Debug.Log("newSelected");
                 currentHidden.transform.parent.gameObject.SetActive(true);
                 voltHidden.isOn = currentAvow.component.Values[ComponentParameter.VOLTAGE].hidden;
+                Debug.Log(currentAvow.component.Values[ComponentParameter.VOLTAGE].hidden);
                 currentHidden.isOn = currentAvow.component.Values[ComponentParameter.CURRENT].hidden;
                 resistanceHidden.isOn = currentAvow.component.Values[ComponentParameter.RESISTANCE].hidden;
             }
@@ -130,11 +134,11 @@ public class AvowValuesPanel : MonoBehaviour
         }
         Debug.Log(currentAvow.current + "  " + currentAvow.voltage);
 
-        currentAvow.component.type = (ComponentType)AvowComponentType.value + 2;
-        AvowComponentType.value = (int)currentAvow.component.type - 2;
+        
         currentAvow.component.Values[ComponentParameter.VOLTAGE].hidden = voltHidden.isOn;
         currentAvow.component.Values[ComponentParameter.CURRENT].hidden = currentHidden.isOn;
         currentAvow.component.Values[ComponentParameter.RESISTANCE].hidden = resistanceHidden.isOn;
+        currentAvow.component.type = (ComponentType)AvowComponentType.value + 2;
 
         //         Debug.Log(currentAvow.component.Values[ComponentParameter.VOLTAGE].hidden+" "+
         // currentAvow.component.Values[ComponentParameter.CURRENT].hidden +" "+currentAvow.component.Values[ComponentParameter.RESISTANCE ].hidden);

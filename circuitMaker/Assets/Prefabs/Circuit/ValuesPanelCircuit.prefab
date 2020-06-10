@@ -1843,7 +1843,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2676777533830071243}
-        m_MethodName: updateConponentValues
+        m_MethodName: updatecomponentValues
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -359,35 +359,41 @@ public class CircuitManager : MonoBehaviour
         //calculating a scale value to be used when generated to a avow, finding the largest scale smaller than smallest value in diagram
         float scale = 1;
         float smallest = Mathf.Infinity;
-        foreach (float lowestVal in allcomponents.ConvertAll(x => x.component.Values[ComponentParameter.CURRENT].value.CompareTo(
-         x.component.Values[ComponentParameter.VOLTAGE].value)))
+        Debug.Log(allcomponents.Count);
+        foreach (var values in allcomponents.ConvertAll(x => x.component.Values))
         {
-            if (smallest < lowestVal)
+            foreach (var lowestVal in values)
             {
-                smallest = lowestVal;
+                if(lowestVal.Key != ComponentParameter.RESISTANCE)
+                if (smallest > lowestVal.Value.value)
+                {
+                    smallest = lowestVal.Value.value;
+                }
             }
         }
+        Debug.Log(smallest);
         scale = 0.001f;
-        if (smallest > 0.1)
+        if (smallest >= 0.1)
         {
             scale = 0.1f;
         }
-        if (smallest > 1)
+        if (smallest >= 1)
         {
             scale = 1f;
         }
-        if (smallest > 10)
+        if (smallest >= 10)
         {
             scale = 10f;
         }
-        if (smallest > 100)
+        if (smallest >= 100)
         {
             scale = 100f;
         }
-        if (smallest > 1000)
+        if (smallest >= 1000)
         {
             scale = 1000f;
         }
+        Debug.Log(scale);
 
         //if in problem builder, run save window, else send to solver
         if (isBuilder)

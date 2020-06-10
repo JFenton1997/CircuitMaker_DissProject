@@ -69,7 +69,7 @@ public class CsvManager : MonoBehaviour
             }
             catch (System.Exception e)//if file is invalid and breads reader, report and move on
             {
-                Debug.Log(filename + " in valid Structure");
+                Debug.Log(filename + " invalid Structure");
             }
         }
         switch(filter){ //filter all return diagramInstances

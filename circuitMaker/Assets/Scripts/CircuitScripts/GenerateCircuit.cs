@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Text.RegularExpressions;
+using System.Collections;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,26 +27,29 @@ public class GenerateCircuit : MonoBehaviour
     private List<DiagramComponent> connectionsA;
     private List<DiagramComponent> connectionsB;
 
-/// <summary>
-/// getting digram data from global values, if use debugging file 
-/// </summary>
+    /// <summary>
+    /// getting digram data from global values, if use debugging file 
+    /// </summary>
     private void Start()
     {
         CellLocation = transform.position;
-        if(GlobalValues.selectedDiagram.diagramData != null){
+        if (GlobalValues.selectedDiagram.diagramData != null)
+        {
             GenerateCircuitObject(GlobalValues.selectedDiagram.diagramData);
-        }else{
+        }
+        else
+        {
             GenerateCircuitObject(transform.Find("/ProgramMaster").GetComponent<CsvManager>().testRead().diagramData);
 
         }
-        
+
     }
 
 
-/// <summary>
-/// main method for generating a circuit diagram
-/// </summary>
-/// <param name="diagramData">diagram data from global Values</param>
+    /// <summary>
+    /// main method for generating a circuit diagram
+    /// </summary>
+    /// <param name="diagramData">diagram data from global Values</param>
     public void GenerateCircuitObject(Dictionary<int, List<DiagramComponent>> diagramData)
     {
         DeletePrevGen(); ///delete any prev generated diagrams, (used for debugging)
@@ -70,7 +74,7 @@ data.Value
                 //if not cell and spaceCheck previous layer 
                 if (layerComponents.Key > 0) spaceCheck(layerComponents.Key - 1);
                 createComponent(layerComponents.Key, diagramComponent); //create component
-                if (layerComponents.Key > 0)//if cell
+                if (layerComponents.Key > 0)//if not cell
                 {
                     tempD = new DiagramComponent();
                     connectionsA = new List<DiagramComponent>();
@@ -84,6 +88,7 @@ data.Value
                             if (diagramData[layerComponents.Key + 1].Contains(output) || output.type == ComponentType.CELL)
                             {
                                 //create the output component of current diagram component is a Cell or is on next layer
+                                spaceCheck(layerComponents.Key);
                                 createComponent(layerComponents.Key + 1, output);
 
                             }
@@ -110,7 +115,7 @@ data.Value
                 }
 
             }
-            //create new objects for tempD and connections
+            //create new objects for tempD and connections, sorting out multiple to layers
             tempD = new DiagramComponent();
             connectionsA = new List<DiagramComponent>();
             connectionsB = new List<DiagramComponent>();
@@ -166,12 +171,12 @@ generatorMatrix[i]
         }
 
         //getSizeAndMidPoint
-    
+
         RectTransform rt = GetComponent<RectTransform>();
-        List<RectTransform> allChildren = new List<RectTransform> (GetComponentsInChildren<RectTransform>());
+        List<RectTransform> allChildren = new List<RectTransform>(GetComponentsInChildren<RectTransform>());
         Vector2 tl = CellLocation;
 
-        
+
 
 
 
@@ -181,9 +186,9 @@ generatorMatrix[i]
 
     }
 
-/// <summary>
-/// remove last layer from generator matrix
-/// </summary>
+    /// <summary>
+    /// remove last layer from generator matrix
+    /// </summary>
     private void removeLastLayer()
     {
         List<CircuitComponent> lastLayer = generatorMatrix[generatorMatrix.Count - 1];
@@ -241,9 +246,9 @@ generatorMatrix[i]
         }
     }
 
-/// <summary>
-/// using size and contents of generator matrix, create top and bottom cell connection rails
-/// </summary>
+    /// <summary>
+    /// using size and contents of generator matrix, create top and bottom cell connection rails
+    /// </summary>
     private void addCellConnection()
     {
         Vector2 wireAAEnd = new Vector2(cell.nodeA.transform.position.x,
@@ -286,10 +291,10 @@ generatorMatrix[i]
 
     }
 
-/// <summary>
-/// fills spaces to match the layer above, row size
-/// </summary>
-/// <param name="layer">layer to fill up to</param>
+    /// <summary>
+    /// fills spaces to match the layer above, row size
+    /// </summary>
+    /// <param name="layer">layer to fill up to</param>
     private void spaceCheck(int layer)
     {
         GameObject temp;
@@ -308,11 +313,13 @@ generatorMatrix[i]
     }
 
 
-/// <summary>
-/// same as space Check polymorphic method, but take a value of where to fill empty to
-/// </summary>
-/// <param name="layer"></param>
-/// <param name="index"></param>
+
+
+    /// <summary>
+    /// same as space Check polymorphic method, but take a value of where to fill empty to
+    /// </summary>
+    /// <param name="layer"></param>
+    /// <param name="index"></param>
     private void spaceCheck(int layer, int index)
     {
         GameObject temp;
@@ -331,12 +338,11 @@ generatorMatrix[i]
     }
 
 
-
-/// <summary>
-/// method used to create a new component
-/// </summary>
-/// <param name="layerValue">int of the current layer</param>
-/// <param name="d">the component to build </param>
+    /// <summary>
+    /// method used to create a new component
+    /// </summary>
+    /// <param name="layerValue">int of the current layer</param>
+    /// <param name="d">the component to build </param>
     private void createComponent(int layerValue, DiagramComponent d)
     {
         GameObject temp;
@@ -416,9 +422,9 @@ generatorMatrix[i]
     }
 
 
-/// <summary>
-/// initialises genarator matrix
-/// </summary>
+    /// <summary>
+    /// initialises genarator matrix
+    /// </summary>
     private void initialiseMatrix()
     {
         generatorMatrix = new List<List<CircuitComponent>>();
@@ -429,17 +435,53 @@ generatorMatrix[i]
         }
     }
 
-/// <summary>
-/// used to calculate location to to build a component
-/// </summary>
-/// <param name="layerValue">layer to build the component</param>
-/// <returns>vector 3 of where to build the new component</returns>
+    /// <summary>
+    /// used to calculate location to to build a component, builds empty of a toCell above current location
+    /// </summary>
+    /// <param name="layerValue">layer to build the component</param>
+    /// <returns>vector 3 of where to build the new component</returns>
     private Vector3 generateLocation(int layerValue)
     {
-        //x
-        int x = Mathf.RoundToInt(ComponentOrigin.x + ((generatorMatrix[layerValue - 1].Count) * HorizontalComponentGap));
+        int x, y;
+        GameObject temp;
+        CircuitComponent circuitComponent;
+        bool foundToCell = false;
+        if (layerValue > 2)
+        {
+            for (int i = layerValue - 2; i > 0; i--)
+            {
+                try
+                {
+                    if (generatorMatrix[i][generatorMatrix[layerValue - 1].Count].name == "toCell")
+                    {
+                        Debug.Log("found:" + generatorMatrix[i][generatorMatrix[layerValue - 1].Count]);
+                        Debug.Log("Empty");
+                        foundToCell = true;
+                    }
+                }
+                catch { }
+            }
+        }
+        if (foundToCell)
+        {
+            x = Mathf.RoundToInt(ComponentOrigin.x + ((generatorMatrix[layerValue - 1].Count) * HorizontalComponentGap));
+            y = Mathf.RoundToInt(ComponentOrigin.y - ((layerValue - 1) * VertComponentGap));
+
+
+            temp = (GameObject)Instantiate(emptyLocation, new Vector3Int(x, y, 0), Quaternion.identity, transform);
+            circuitComponent = temp.GetComponent<CircuitComponent>();
+            circuitComponent.gameObject.name = "empty" + layerValue;
+            circuitComponent.name = "empty";
+            Debug.Log(temp);
+            circuitComponent.component.name = circuitComponent.name;
+            generatorMatrix[layerValue - 1].Add(circuitComponent);
+            return generateLocation(layerValue);
+            
+        }
+
+        x = Mathf.RoundToInt(ComponentOrigin.x + ((generatorMatrix[layerValue - 1].Count) * HorizontalComponentGap));
         //y
-        int y = Mathf.RoundToInt(ComponentOrigin.y - ((layerValue - 1) * VertComponentGap));
+        y = Mathf.RoundToInt(ComponentOrigin.y - ((layerValue - 1) * VertComponentGap));
         return new Vector3Int(x, y, 0);
     }
 
@@ -458,16 +500,16 @@ generatorMatrix[i]
     }
 
 
-/// <summary>
-/// method used to link component to each other
-/// </summary>
-/// <param name="a">circuit to link</param>
-/// <param name="layerValue">layer the circuit is on</param>
+    /// <summary>
+    /// method used to link component to each other
+    /// </summary>
+    /// <param name="a">circuit to link</param>
+    /// <param name="layerValue">layer the circuit is on</param>
     private void connectcomponents(CircuitComponent a, int layerValue)
     {
         int aIndex = generatorMatrix[layerValue].IndexOf(a);
         Pair<CircuitComponent, int> lowestDiff = new Pair<CircuitComponent, int>(a, aIndex); //go across layer to find the 
-        //                                                                                     all components on next layer to connect to in both left and right
+                                                                                             //                                                                                     all components on next layer to connect to in both left and right
         Pair<CircuitComponent, int> HighestDiff = new Pair<CircuitComponent, int>(a, aIndex);
         int itemIndex;
         foreach (DiagramComponent diagramComponent in getConnectionsOfDirection(a.component, true))
@@ -505,15 +547,15 @@ generatorMatrix[i]
 
 
 
-/// <summary>
-/// delete all children of this gen
-/// </summary>
+    /// <summary>
+    /// delete all children of this gen
+    /// </summary>
     private void DeletePrevGen()
     {
         foreach (RectTransform g in transform.GetComponentInChildren<RectTransform>())
         {
             if (g.parent == transform)
-            DestroyImmediate(g.gameObject);
+                DestroyImmediate(g.gameObject);
 
 
         }

@@ -23,6 +23,8 @@ public class AvowGenerator : AvowManager
         startLocation = transform.position;
         if(GlobalValues.selectedDiagram.diagramData != null){
             GenerateAvowDiagram(GlobalValues.selectedDiagram.diagramData,  GlobalValues.selectedDiagram.scale);
+            Debug.Log("SCALE "+GlobalValues.selectedDiagram.scale);
+            Debug.Log("TITLE "+ GlobalValues.selectedDiagram.title);
         }else{
             GenerateAvowDiagram(transform.Find("/ProgramMaster").GetComponent<CsvManager>().testRead().diagramData,transform.Find("/ProgramMaster").GetComponent<CsvManager>().testRead().scale);
 
@@ -42,7 +44,7 @@ public class AvowGenerator : AvowManager
         List<AvowComponent> builtAvows = new List<AvowComponent>();
         // setting scale text in problem viewer
         transform.Find("/UI/ProblemDisplayer/ProblemView").GetComponent<ProblemViewer>().showScaleText(scale);
-
+        Debug.Log("scaleValues " + scale);
         //building first avow at current position
         int prevAvowInRow = 0;
         DiagramComponent firstAvow = diagramData[1][0];

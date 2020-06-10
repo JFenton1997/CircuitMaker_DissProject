@@ -115,7 +115,7 @@ public class SolverScript : MonoBehaviour
                 errorLog.transform.Find("ErrorDesc").GetComponent<Text>().text = "you solve correctly with the hidden values shown, try and work out where you struggled to calculate the correct value";
                 errorLog.transform.Find("forground").GetComponent<Image>().color = attemptColor;
                 ErrorMessages.Add(new Pair<GameObject, DiagramError>(errorLog, new DiagramError("", "")));
-                errorLog = (GameObject)Instantiate(errorMessagePrefab, ErrorsDisplay.position, Quaternion.identity, ErrorsDisplay);
+  
 
 
 
